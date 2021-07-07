@@ -2,6 +2,8 @@ package com.example.gait_health_prediction_for_galaxytab;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -35,8 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private double RAD2DGR = 180 / Math.PI;
     private static final float NS2S = 1.0f / 1000000000.0f;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 계정확인
+        AccountManager am = AccountManager.get(this); // "this" references the current Context
+        Account[] accounts = am.getAccountsByType("com.google");
+        Log.d("LOG", String.valueOf(accounts));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

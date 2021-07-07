@@ -1,0 +1,2 @@
+rootProject.name = "Gait-Health-Prediction-For-GalaxyTab"
+include ':app'

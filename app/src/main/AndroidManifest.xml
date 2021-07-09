@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gait_health_prediction_for_galaxytab">
+    package="com.example.gait_health_prediction_androidphone">
 
     <application
         android:allowBackup="true"
@@ -12,11 +12,10 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    </manifest>
+</manifest>

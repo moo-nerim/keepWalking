@@ -1,4 +1,4 @@
-package com.example.gait_health_prediction_for_galaxytab;
+package com.example.gait_health_prediction_androidphone;
 
 import android.content.Context;
 

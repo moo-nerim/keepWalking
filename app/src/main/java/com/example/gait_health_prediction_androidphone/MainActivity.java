@@ -1,7 +1,6 @@
 package com.example.gait_health_prediction_androidphone;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,25 +9,17 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-//import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.gms.common.AccountPicker;
-
-import static android.content.ContentValues.TAG;
-
-
 public class MainActivity extends AppCompatActivity {
 
     //Using the Accelometer & Gyroscoper
@@ -92,12 +83,11 @@ public class MainActivity extends AppCompatActivity {
         });
 //
 
-//        checkPermission();
+        checkPermission();
 
         // 계정확인
         // Dialog
 //        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
 //
         ActivityCompat.requestPermissions(this, new String[]
                 {Manifest.permission.GET_ACCOUNTS}, 1);
@@ -108,110 +98,28 @@ public class MainActivity extends AppCompatActivity {
         AccountManager am = AccountManager.get(this);
         Account[] accounts = am.getAccounts();
         System.out.println(accounts.length);
-        String user_name = "";
         for (Account ac : accounts) {
             String acname = ac.name;
             String actype = ac.type;
             // Take your time to look at all available accounts
             System.out.println("Accounts : " + acname + ", " + actype);
-           user_name = acname;
+            Log.e("Tag", "계정:" + acname);
         }
-        Log.e("Tag", "길이:" + user_name);
-
-
-        // ver 2.
-//        int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 0;
-//        // Here, thisActivity is the current activity
-//        if (ContextCompat.checkSelfPermission(this,
-//                android.Manifest.permission.GET_ACCOUNTS)
-//                != PackageManager.PERMISSION_GRANTED) {
-//
-//            // Should we show an explanation?
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                    android.Manifest.permission.GET_ACCOUNTS)) {
-//
-//                // Show an expanation to the user *asynchronously* -- don't block
-//                // this thread waiting for the user's response! After the user
-//                // sees the explanation, try again to request the permission.
-//
-//            } else {
-//
-//                // No explanation needed, we can request the permission.
-//
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{android.Manifest.permission.GET_ACCOUNTS},
-//                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
-//            }
-//        }
-//        String possibleEmail="";
-//        try{
-//            possibleEmail += "************* Get Registered Gmail Account *************\n\n";
-//            Account[] accounts = AccountManager.get(this).getAccountsByType("com.google");
-//
-//            Log.e("EXCEPTION", "mails: " + accounts.length);
-//
-//            for (Account account : accounts) {
-//
-//                possibleEmail += " --> "+account.name+" : "+account.type+" , \n";
-//                possibleEmail += " \n\n";
-//
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        Log.e("EXCEPTION", "mails: " + possibleEmail);
-
-        // ver3.
-//        Intent intent = AccountPicker.newChooseAccountIntent(null, null,
-//                new String[] {"com.google", "com.google.android.legacyimap"},
-//                false, null, null, null, null);
-//        AccountManager accountManager = AccountManager.get(getApplicationContext());
-//        Account[] accounts = accountManager.getAccountsByType(null);
-//        for (Account account : accounts) {
-//            Log.e(TAG, "account: " + account.name + " : " + account.type);
-//        }
-//        Log.e("EXCEPTION", "mails: " + accounts[0]);
-        // ver 4.
-
-//            Intent intent = AccountManager.newChooseAccountIntent(
-//                    null, null, new String[]{"com.google"}, null, null, null, null);
-//            startActivityForResult(intent, REQUEST_CODE);
-//
-//
-//        @Override
-//        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//            super.onActivityResult(requestCode, resultCode, data);
-//
-//            if (requestCode == REQUEST_CODE) {
-//                if (data != null) {
-//                    Bundle extras = data.getExtras();
-//                    final String accountName = extras.getString(AccountManager.KEY_ACCOUNT_NAME);
-//                    final String accountType = extras.getString(AccountManager.KEY_ACCOUNT_TYPE);
-//                    Log.d(TAG, "Account Name: " + accountName);
-//                    Log.d(TAG, "Account Type: " + accountType);
-//                }
-//            }
-//        }
-
-        // ver 5.
-
-
     }
 
-    public void checkPermission(){
+    public void checkPermission() {
         //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
         //안드로이드6.0 (마시멜로) 이후 버전부터 유저 권한설정 필요
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
             return;
 
-        for(String permission : permission_list){
+        for (String permission : permission_list) {
             //권한 허용 여부를 확인한다.
             int chk = checkCallingOrSelfPermission(permission);
 
-            if(chk == PackageManager.PERMISSION_DENIED){
+            if (chk == PackageManager.PERMISSION_DENIED) {
                 //권한 허용을여부를 확인하는 창을 띄운다
-                requestPermissions(permission_list,0);
+                requestPermissions(permission_list, 0);
             }
         }
     }
@@ -219,22 +127,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==0)
-        {
-            for(int i=0; i<grantResults.length; i++)
-            {
+        if (requestCode == 0) {
+            for (int i = 0; i < grantResults.length; i++) {
                 //허용됬다면
-                if(grantResults[i]==PackageManager.PERMISSION_GRANTED){
-                }
-                else {
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                } else {
                     //권한을 하나라도 허용하지 않는다면 앱 종료
-                    Toast.makeText(getApplicationContext(),"앱권한설정하세요", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
         }
     }
-
 
 
     @Override

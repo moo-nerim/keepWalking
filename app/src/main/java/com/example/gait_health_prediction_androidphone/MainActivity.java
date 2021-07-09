@@ -1,10 +1,5 @@
 package com.example.gait_health_prediction_androidphone;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -16,11 +11,35 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    TextView textView;
+    Button start, pause, reset, lap;
+    long MillisecondTime, StartTime, TimeBuff, UpdateTime = 0L;
+    Handler handler;
+    int Seconds, Minutes, MilliSeconds;
+    ListView listView;
+    String[] ListElements = new String[]{};
+    List<String> ListElementsArrayList;
+    ArrayAdapter<String> adapter;
 
     //Using the Accelometer & Gyroscoper
     private SensorManager mSensorManager = null;
@@ -42,53 +61,42 @@ public class MainActivity extends AppCompatActivity {
     private double RAD2DGR = 180 / Math.PI;
     private static final float NS2S = 1.0f / 1000000000.0f;
 
-    //    권한
+    // access permission
     String[] permission_list = {
 //            Manifest.permission.INTERNET,
             Manifest.permission.GET_ACCOUNTS
 //            Manifest.permission.READ_PHONE_STATE
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Using the Gyroscope & Accelometer
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        textView = findViewById(R.id.textView);
+        start = findViewById(R.id.button);
+        pause = findViewById(R.id.button2);
+        reset = findViewById(R.id.button3);
+        lap = findViewById(R.id.button4);
+        listView = findViewById(R.id.listview1);
 
-        //Using the Accelometer
-        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        mGyroLis = new GyroscopeListener();
+        handler = new Handler();
 
-        //Touch Listener for Accelometer
-        findViewById(R.id.a_start).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
+        ListElementsArrayList = new ArrayList<String>(Arrays.asList(ListElements));
 
-                    case MotionEvent.ACTION_DOWN:
-                        mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-                        break;
+        adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                ListElementsArrayList
+        );
 
-                    case MotionEvent.ACTION_UP:
-                        mSensorManager.unregisterListener(mGyroLis);
-                        break;
-                }
-                return false;
-            }
-        });
-//
+        listView.setAdapter(adapter);
 
         checkPermission();
 
         // 계정확인
         // Dialog
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
+        // AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         ActivityCompat.requestPermissions(this, new String[]
                 {Manifest.permission.GET_ACCOUNTS}, 1);
 
@@ -105,6 +113,47 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Accounts : " + acname + ", " + actype);
             Log.e("Tag", "계정:" + acname);
         }
+
+        start.setOnClickListener(view -> {
+            StartTime = SystemClock.uptimeMillis();
+            handler.postDelayed(runnable, 0);
+            reset.setEnabled(false);
+            // 측정
+            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+        });
+
+        pause.setOnClickListener(view -> {
+            TimeBuff += MillisecondTime;
+            handler.removeCallbacks(runnable);
+            reset.setEnabled(true);
+            // 측정 중지
+            mSensorManager.unregisterListener(mGyroLis);
+        });
+
+        reset.setOnClickListener(view -> {
+            MillisecondTime = 0L;
+            StartTime = 0L;
+            TimeBuff = 0L;
+            UpdateTime = 0L;
+            Seconds = 0;
+            Minutes = 0;
+            MilliSeconds = 0;
+            textView.setText("00:00:00");
+            ListElementsArrayList.clear();
+            adapter.notifyDataSetChanged();
+        });
+
+        lap.setOnClickListener(view -> {
+            ListElementsArrayList.add(textView.getText().toString());
+            adapter.notifyDataSetChanged();
+        });
+
+        //Using the Gyroscope & Accelometer
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        //Using the Accelometer
+        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mGyroLis = new GyroscopeListener();
     }
 
     public void checkPermission() {
@@ -129,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0) {
             for (int i = 0; i < grantResults.length; i++) {
-                //허용됬다면
+                //허용됐다면
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                 } else {
                     //권한을 하나라도 허용하지 않는다면 앱 종료
@@ -140,6 +189,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public Runnable runnable = new Runnable() {
+
+        public void run() {
+
+            MillisecondTime = SystemClock.uptimeMillis() - StartTime;
+
+            UpdateTime = TimeBuff + MillisecondTime;
+            Seconds = (int) (UpdateTime / 1000);
+            Minutes = Seconds / 60;
+            Seconds = Seconds % 60;
+            MilliSeconds = (int) (UpdateTime % 1000);
+
+            textView.setText("" + Minutes + ":"
+                    + String.format("%02d", Seconds) + ":"
+                    + String.format("%03d", MilliSeconds));
+            handler.postDelayed(this, 0);
+        }
+
+    };
 
     @Override
     public void onPause() {

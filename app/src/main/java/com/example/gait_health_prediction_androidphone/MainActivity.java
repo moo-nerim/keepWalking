@@ -1,30 +1,20 @@
 package com.example.gait_health_prediction_androidphone;
 
-import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.Toast;
 
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     Button startBtn, pauseBtn, resetBtn;
     long stopTime = 0;
 
+    MyAsyncTask task = new MyAsyncTask();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,50 +69,33 @@ public class MainActivity extends AppCompatActivity {
         mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mAccLis = new AccelometerListener();
 
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chronometer.setBase(SystemClock.elapsedRealtime() + stopTime);
-                chronometer.start();
-                startBtn.setVisibility(View.GONE);
-                pauseBtn.setVisibility(View.VISIBLE);
-                Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
-                startService(intent); // 서비스 실행!
-
-                Intent passedIntent = getIntent();
-                processCommand(passedIntent);
-
-                // Using the Gyroscope & Accelometer
-                mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-                mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
-            }
+        startBtn.setOnClickListener(v -> {
+            chronometer.setBase(SystemClock.elapsedRealtime() + stopTime);
+            chronometer.start();
+            startBtn.setVisibility(View.GONE);
+            pauseBtn.setVisibility(View.VISIBLE);
+            task.execute();
         });
 
-        pauseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopTime = chronometer.getBase() - SystemClock.elapsedRealtime();
-                chronometer.stop();
-                startBtn.setVisibility(View.VISIBLE);
-                pauseBtn.setVisibility(View.GONE);
-                // Unusing the Gyroscope & Accelometer
-                mSensorManager.unregisterListener(mGyroLis);
-                mSensorManager.unregisterListener(mAccLis);
-            }
+        pauseBtn.setOnClickListener(v -> {
+            stopTime = chronometer.getBase() - SystemClock.elapsedRealtime();
+            chronometer.stop();
+            startBtn.setVisibility(View.VISIBLE);
+            pauseBtn.setVisibility(View.GONE);
+            // Unusing the Gyroscope & Accelometer
+            mSensorManager.unregisterListener(mGyroLis);
+            mSensorManager.unregisterListener(mAccLis);
         });
 
-        resetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chronometer.setBase(SystemClock.elapsedRealtime());
-                stopTime = 0;
-                chronometer.stop();
-                startBtn.setVisibility(View.VISIBLE);
-                pauseBtn.setVisibility(View.GONE);
-                // Unusing the Gyroscope & Accelometer
-                mSensorManager.unregisterListener(mGyroLis);
-                mSensorManager.unregisterListener(mAccLis);
-            }
+        resetBtn.setOnClickListener(v -> {
+            chronometer.setBase(SystemClock.elapsedRealtime());
+            stopTime = 0;
+            chronometer.stop();
+            startBtn.setVisibility(View.VISIBLE);
+            pauseBtn.setVisibility(View.GONE);
+            // Unusing the Gyroscope & Accelometer
+            mSensorManager.unregisterListener(mGyroLis);
+            mSensorManager.unregisterListener(mAccLis);
         });
     }
 
@@ -210,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
             double accY = event.values[1];
             double accZ = event.values[2];
 
-            double angleXZ = Math.atan2(accX,  accZ) * 180/Math.PI;
-            double angleYZ = Math.atan2(accY,  accZ) * 180/Math.PI;
+            double angleXZ = Math.atan2(accX, accZ) * 180 / Math.PI;
+            double angleYZ = Math.atan2(accY, accZ) * 180 / Math.PI;
 
             Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
                     + "           [Y]:" + String.format("%.4f", event.values[1])
@@ -226,6 +201,39 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
+
+
+    public class MyAsyncTask extends AsyncTask<Void, Integer, String> {
+
+        @Override
+
+        protected String doInBackground(Void... params) {
+            Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
+            startService(intent); // 서비스 실행!
+
+            Intent passedIntent = getIntent();
+            processCommand(passedIntent);
+
+            // Using the Gyroscope & Accelometer
+            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+            return "Finish";
+        }
+
+        @Override
+
+        protected void onProgressUpdate(Integer... values) {
+
+        }
+
+        @Override
+
+        protected void onPostExecute(String values) {
+
+        }
+    }
+
 
 //    public static class ServiceThread extends Thread {
 //        Handler handler;

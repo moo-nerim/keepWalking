@@ -1,10 +1,5 @@
 package com.example.gait_health_prediction_androidphone;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -16,10 +11,18 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 public class MainActivity extends AppCompatActivity {
 
     //Using the Accelometer & Gyroscoper
@@ -42,53 +45,66 @@ public class MainActivity extends AppCompatActivity {
     private double RAD2DGR = 180 / Math.PI;
     private static final float NS2S = 1.0f / 1000000000.0f;
 
-    //    권한
-    String[] permission_list = {
-//            Manifest.permission.INTERNET,
-            Manifest.permission.GET_ACCOUNTS
-//            Manifest.permission.READ_PHONE_STATE
-    };
+    Chronometer chronometer;
+    Button startBtn, pauseBtn, resetBtn;
+    long stopTime = 0;
 
+    // access permission
+    String[] permission_list = {
+            // Manifest.permission.INTERNET,
+            Manifest.permission.GET_ACCOUNTS
+            // Manifest.permission.READ_PHONE_STATE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Using the Gyroscope & Accelometer
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
+        startBtn = (Button) findViewById(R.id.startBtn);
+        pauseBtn = (Button) findViewById(R.id.pauseBtn);
+        resetBtn = (Button) findViewById(R.id.resetBtn);
 
-        //Using the Accelometer
-        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        mGyroLis = new GyroscopeListener();
-
-        //Touch Listener for Accelometer
-        findViewById(R.id.a_start).setOnTouchListener(new View.OnTouchListener() {
+        startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-
-                    case MotionEvent.ACTION_DOWN:
-                        mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-                        break;
-
-                    case MotionEvent.ACTION_UP:
-                        mSensorManager.unregisterListener(mGyroLis);
-                        break;
-                }
-                return false;
+            public void onClick(View v) {
+                chronometer.setBase(SystemClock.elapsedRealtime() + stopTime);
+                chronometer.start();
+                startBtn.setVisibility(View.GONE);
+                pauseBtn.setVisibility(View.VISIBLE);
+                mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
             }
         });
-//
+
+        pauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopTime = chronometer.getBase() - SystemClock.elapsedRealtime();
+                chronometer.stop();
+                startBtn.setVisibility(View.VISIBLE);
+                pauseBtn.setVisibility(View.GONE);
+                mSensorManager.unregisterListener(mGyroLis);
+            }
+        });
+
+        resetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                stopTime = 0;
+                chronometer.stop();
+                startBtn.setVisibility(View.VISIBLE);
+                pauseBtn.setVisibility(View.GONE);
+            }
+        });
 
         checkPermission();
 
         // 계정확인
         // Dialog
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//
+        // AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         ActivityCompat.requestPermissions(this, new String[]
                 {Manifest.permission.GET_ACCOUNTS}, 1);
 
@@ -105,6 +121,13 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Accounts : " + acname + ", " + actype);
             Log.e("Tag", "계정:" + acname);
         }
+
+        // Using the Gyroscope & Accelometer
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        // Using the Accelometer
+        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mGyroLis = new GyroscopeListener();
     }
 
     public void checkPermission() {
@@ -116,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         for (String permission : permission_list) {
             //권한 허용 여부를 확인한다.
             int chk = checkCallingOrSelfPermission(permission);
-
             if (chk == PackageManager.PERMISSION_DENIED) {
                 //권한 허용을여부를 확인하는 창을 띄운다
                 requestPermissions(permission_list, 0);
@@ -129,17 +151,16 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 0) {
             for (int i = 0; i < grantResults.length; i++) {
-                //허용됬다면
+                //허용됐다면
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                 } else {
                     //권한을 하나라도 허용하지 않는다면 앱 종료
-                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "앱 권한을 설정하세요", Toast.LENGTH_LONG).show();
                     finish();
                 }
             }
         }
     }
-
 
     @Override
     public void onPause() {

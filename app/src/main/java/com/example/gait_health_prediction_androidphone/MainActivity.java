@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.Toast;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -85,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
                 pauseBtn.setVisibility(View.VISIBLE);
                 Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
                 startService(intent); // 서비스 실행!
+
+                Intent passedIntent = getIntent();
+                processCommand(passedIntent);
+
                 // Using the Gyroscope & Accelometer
                 mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
                 mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
@@ -117,6 +122,25 @@ public class MainActivity extends AppCompatActivity {
                 mSensorManager.unregisterListener(mAccLis);
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        processCommand(intent);
+
+        super.onNewIntent(intent);
+    }
+
+// 이와 같이 모든 경우에 서비스로부터 받은 인텐트가 처리 될 수 있도록한다.
+// 이제 processCommand() 메서드 정의.
+
+    private void processCommand(Intent intent) {
+        if (intent != null) {
+            String command = intent.getStringExtra("command");
+            String name = intent.getStringExtra("name");
+
+//            Toast.makeText(this, "서비스로부터 전달받은 데이터: "+ command + ", " + name).show();
+        }
     }
 
     @Override
@@ -203,28 +227,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static class ServiceThread extends Thread {
-        Handler handler;
-        boolean isRun = true;
-
-        public ServiceThread(Handler handler) {
-            this.handler = handler;
-        }
-
-        public void stopForever() {
-            synchronized (this) {
-                this.isRun = false;
-            }
-        }
-
-        public void run() { //반복적으로 수행할 작업을 한다.
-            while (isRun) {
-                handler.sendEmptyMessage(0);//쓰레드에 있는 핸들러에게 메세지를 보냄
-                try {
-                    Thread.sleep(1000); //10초씩 쉰다.
-                } catch (Exception e) {
-                }
-            }
-        }
-    }
+//    public static class ServiceThread extends Thread {
+//        Handler handler;
+//        boolean isRun = true;
+//
+//        public ServiceThread(Handler handler) {
+//            this.handler = handler;
+//        }
+//
+//        public void stopForever() {
+//            synchronized (this) {
+//                this.isRun = false;
+//            }
+//        }
+//
+//        public void run() { //반복적으로 수행할 작업을 한다.
+//            while (isRun) {
+//                handler.sendEmptyMessage(0);//쓰레드에 있는 핸들러에게 메세지를 보냄
+//                try {
+//                    Thread.sleep(1000); //10초씩 쉰다.
+//                } catch (Exception e) {
+//                }
+//            }
+//        }
+//    }
 }

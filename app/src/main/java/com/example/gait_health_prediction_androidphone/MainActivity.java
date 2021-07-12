@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private SensorEventListener mGyroLis;
     private Sensor mGgyroSensor = null;
 
+    //Using the Accelometer
+    private SensorEventListener mAccLis;
+    private Sensor mAccelometerSensor = null;
+
     //Roll and Pitch
     private double pitch;
     private double roll;
@@ -60,6 +64,17 @@ public class MainActivity extends AppCompatActivity {
         pauseBtn = (Button) findViewById(R.id.pauseBtn);
         resetBtn = (Button) findViewById(R.id.resetBtn);
 
+        // Using the Gyroscope & Accelometer
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        // Using the Gyroscope
+        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mGyroLis = new GyroscopeListener();
+
+        // Using the Accelometer
+        mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccLis = new AccelometerListener();
+
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 pauseBtn.setVisibility(View.VISIBLE);
                 Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
                 startService(intent); // 서비스 실행!
+                // Using the Gyroscope & Accelometer
                 mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+                mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
             }
         });
 
@@ -80,7 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 chronometer.stop();
                 startBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setVisibility(View.GONE);
+                // Unusing the Gyroscope & Accelometer
                 mSensorManager.unregisterListener(mGyroLis);
+                mSensorManager.unregisterListener(mAccLis);
             }
         });
 
@@ -92,15 +111,11 @@ public class MainActivity extends AppCompatActivity {
                 chronometer.stop();
                 startBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setVisibility(View.GONE);
+                // Unusing the Gyroscope & Accelometer
+                mSensorManager.unregisterListener(mGyroLis);
+                mSensorManager.unregisterListener(mAccLis);
             }
         });
-
-        // Using the Gyroscope & Accelometer
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        // Using the Accelometer
-        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        mGyroLis = new GyroscopeListener();
     }
 
     @Override
@@ -108,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.e("LOG", "onPause()");
         mSensorManager.unregisterListener(mGyroLis);
+        mSensorManager.unregisterListener(mAccLis);
     }
 
     @Override
@@ -115,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.e("LOG", "onDestroy()");
         mSensorManager.unregisterListener(mGyroLis);
+        mSensorManager.unregisterListener(mAccLis);
     }
 
     private class GyroscopeListener implements SensorEventListener {
@@ -151,6 +168,32 @@ public class MainActivity extends AppCompatActivity {
                         + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                         + "           [dt]: " + String.format("%.4f", dt));
             }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
+    private class AccelometerListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            double accX = event.values[0];
+            double accY = event.values[1];
+            double accZ = event.values[2];
+
+            double angleXZ = Math.atan2(accX,  accZ) * 180/Math.PI;
+            double angleYZ = Math.atan2(accY,  accZ) * 180/Math.PI;
+
+            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
+                    + "           [Y]:" + String.format("%.4f", event.values[1])
+                    + "           [Z]:" + String.format("%.4f", event.values[2])
+                    + "           [angleXZ]: " + String.format("%.4f", angleXZ)
+                    + "           [angleYZ]: " + String.format("%.4f", angleYZ));
+
         }
 
         @Override

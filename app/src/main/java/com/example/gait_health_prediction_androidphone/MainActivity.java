@@ -1,20 +1,28 @@
 package com.example.gait_health_prediction_androidphone;
 
+import android.Manifest;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,12 +54,41 @@ public class MainActivity extends AppCompatActivity {
     Button startBtn, pauseBtn, resetBtn;
     long stopTime = 0;
 
-    MyAsyncTask task = new MyAsyncTask();
+    //    권한
+    String[] permission_list = {
+//            Manifest.permission.INTERNET,
+            Manifest.permission.GET_ACCOUNTS
+//            Manifest.permission.READ_PHONE_STATE
+    };
+
+//    MyAsyncTask task = new MyAsyncTask();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        // AccountPermission class 호출
+//        Intent intent = new Intent(getApplicationContext(),AccountPermission.class);
+//        startActivity(intent);
+
+        checkPermission();
+
+        // 계정확인
+
+        ActivityCompat.requestPermissions(this, new String[]
+                {Manifest.permission.GET_ACCOUNTS}, 1);
+
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccounts();
+        System.out.println(accounts.length);
+        for (Account ac : accounts) {
+            String acname = ac.name;
+            String actype = ac.type;
+            // Take your time to look at all available accounts
+            System.out.println("Accounts : " + acname + ", " + actype);
+            Log.e("Tag", "계정:" + acname);
+        }
 
         chronometer = (Chronometer) findViewById(R.id.chronometer);
         startBtn = (Button) findViewById(R.id.startBtn);
@@ -74,7 +111,9 @@ public class MainActivity extends AppCompatActivity {
             chronometer.start();
             startBtn.setVisibility(View.GONE);
             pauseBtn.setVisibility(View.VISIBLE);
-            task.execute();
+//            task.execute();
+            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
         });
 
         pauseBtn.setOnClickListener(v -> {
@@ -99,24 +138,57 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        processCommand(intent);
+    public void checkPermission() {
+        //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
+        //안드로이드6.0 (마시멜로) 이후 버전부터 유저 권한설정 필요
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return;
 
-        super.onNewIntent(intent);
+        for (String permission : permission_list) {
+            //권한 허용 여부를 확인한다.
+            int chk = checkCallingOrSelfPermission(permission);
+
+            if (chk == PackageManager.PERMISSION_DENIED) {
+                //권한 허용을여부를 확인하는 창을 띄운다
+                requestPermissions(permission_list, 0);
+            }
+        }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            for (int i = 0; i < grantResults.length; i++) {
+                //허용됬다면
+                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    //권한을 하나라도 허용하지 않는다면 앱 종료
+                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
+        }
+    }
+
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        processCommand(intent);
+//
+//        super.onNewIntent(intent);
+//    }
 
 // 이와 같이 모든 경우에 서비스로부터 받은 인텐트가 처리 될 수 있도록한다.
 // 이제 processCommand() 메서드 정의.
 
-    private void processCommand(Intent intent) {
-        if (intent != null) {
-            String command = intent.getStringExtra("command");
-            String name = intent.getStringExtra("name");
-
-//            Toast.makeText(this, "서비스로부터 전달받은 데이터: "+ command + ", " + name).show();
-        }
-    }
+//    private void processCommand(Intent intent) {
+//        if (intent != null) {
+//            String command = intent.getStringExtra("command");
+//            String name = intent.getStringExtra("name");
+//
+////            Toast.makeText(this, "서비스로부터 전달받은 데이터: "+ command + ", " + name).show();
+//        }
+//    }
 
     @Override
     public void onPause() {
@@ -204,35 +276,35 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public class MyAsyncTask extends AsyncTask<Void, Integer, String> {
-
-        @Override
-
-        protected String doInBackground(Void... params) {
-            Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
-            startService(intent); // 서비스 실행!
-
-            Intent passedIntent = getIntent();
-            processCommand(passedIntent);
-
-            // Using the Gyroscope & Accelometer
-            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
-            return "Finish";
-        }
-
-        @Override
-
-        protected void onProgressUpdate(Integer... values) {
-
-        }
-
-        @Override
-
-        protected void onPostExecute(String values) {
-
-        }
-    }
+//    public class MyAsyncTask extends AsyncTask<Void, Integer, String> {
+//
+//        @Override
+//
+//        protected String doInBackground(Void... params) {
+//            Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
+//            startService(intent); // 서비스 실행!
+//
+//            Intent passedIntent = getIntent();
+//            processCommand(passedIntent);
+//
+//            // Using the Gyroscope & Accelometer
+//            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+//            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+//            return "Finish";
+//        }
+//
+//        @Override
+//
+//        protected void onProgressUpdate(Integer... values) {
+//
+//        }
+//
+//        @Override
+//
+//        protected void onPostExecute(String values) {
+//
+//        }
+//    }
 
 
 //    public static class ServiceThread extends Thread {

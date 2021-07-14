@@ -44,6 +44,14 @@
         android:textColor="@color/colorYellow"
         android:textSize="40sp" />
 
+    <TextView
+        android:id="@+id/tv_output"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/colorYellow"
+        android:textSize="40sp" />
+
     <ImageView
         android:id="@+id/imageViewReset"
         android:layout_width="30dp"

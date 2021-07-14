@@ -4,27 +4,29 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Chronometer;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.concurrent.TimeUnit;
+
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Using the Accelometer & Gyroscoper
     private SensorManager mSensorManager = null;
@@ -50,10 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private double RAD2DGR = 180 / Math.PI;
     private static final float NS2S = 1.0f / 1000000000.0f;
 
-    Chronometer chronometer;
-    Button startBtn, pauseBtn, resetBtn;
-    long stopTime = 0;
-
     //    권한
     String[] permission_list = {
 //            Manifest.permission.INTERNET,
@@ -61,21 +59,31 @@ public class MainActivity extends AppCompatActivity {
 //            Manifest.permission.READ_PHONE_STATE
     };
 
-//    MyAsyncTask task = new MyAsyncTask();
+
+    private long timeCountInMilliSeconds = 1 * 60000;
+
+    private enum TimerStatus {
+        STARTED,
+        STOPPED
+    }
+
+    private TimerStatus timerStatus = TimerStatus.STOPPED;
+
+    private ProgressBar progressBarCircle;
+    private EditText editTextMinute;
+    private TextView textViewTime;
+    private ImageView imageViewReset;
+    private ImageView imageViewStartStop;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        // AccountPermission class 호출
-//        Intent intent = new Intent(getApplicationContext(),AccountPermission.class);
-//        startActivity(intent);
-
         checkPermission();
 
         // 계정확인
-
         ActivityCompat.requestPermissions(this, new String[]
                 {Manifest.permission.GET_ACCOUNTS}, 1);
 
@@ -89,12 +97,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Accounts : " + acname + ", " + actype);
             Log.e("Tag", "계정:" + acname);
         }
-
-        chronometer = (Chronometer) findViewById(R.id.chronometer);
-        startBtn = (Button) findViewById(R.id.startBtn);
-        pauseBtn = (Button) findViewById(R.id.pauseBtn);
-        resetBtn = (Button) findViewById(R.id.resetBtn);
-
         // Using the Gyroscope & Accelometer
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
@@ -106,36 +108,13 @@ public class MainActivity extends AppCompatActivity {
         mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mAccLis = new AccelometerListener();
 
-        startBtn.setOnClickListener(v -> {
-            chronometer.setBase(SystemClock.elapsedRealtime() + stopTime);
-            chronometer.start();
-            startBtn.setVisibility(View.GONE);
-            pauseBtn.setVisibility(View.VISIBLE);
-//            task.execute();
-            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
-        });
 
-        pauseBtn.setOnClickListener(v -> {
-            stopTime = chronometer.getBase() - SystemClock.elapsedRealtime();
-            chronometer.stop();
-            startBtn.setVisibility(View.VISIBLE);
-            pauseBtn.setVisibility(View.GONE);
-            // Unusing the Gyroscope & Accelometer
-            mSensorManager.unregisterListener(mGyroLis);
-            mSensorManager.unregisterListener(mAccLis);
-        });
+        // method call to initialize the views
+        initViews();
+        // method call to initialize the listeners
+        initListeners();
 
-        resetBtn.setOnClickListener(v -> {
-            chronometer.setBase(SystemClock.elapsedRealtime());
-            stopTime = 0;
-            chronometer.stop();
-            startBtn.setVisibility(View.VISIBLE);
-            pauseBtn.setVisibility(View.GONE);
-            // Unusing the Gyroscope & Accelometer
-            mSensorManager.unregisterListener(mGyroLis);
-            mSensorManager.unregisterListener(mAccLis);
-        });
+
     }
 
     public void checkPermission() {
@@ -155,41 +134,67 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 0) {
-            for (int i = 0; i < grantResults.length; i++) {
-                //허용됬다면
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                } else {
-                    //권한을 하나라도 허용하지 않는다면 앱 종료
-                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            }
-        }
-    }
-
 //    @Override
-//    protected void onNewIntent(Intent intent) {
-//        processCommand(intent);
-//
-//        super.onNewIntent(intent);
-//    }
-
-// 이와 같이 모든 경우에 서비스로부터 받은 인텐트가 처리 될 수 있도록한다.
-// 이제 processCommand() 메서드 정의.
-
-//    private void processCommand(Intent intent) {
-//        if (intent != null) {
-//            String command = intent.getStringExtra("command");
-//            String name = intent.getStringExtra("name");
-//
-////            Toast.makeText(this, "서비스로부터 전달받은 데이터: "+ command + ", " + name).show();
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == 0) {
+//            for (int i = 0; i < grantResults.length; i++) {
+//                //허용됬다면
+//                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+//                } else {
+//                    //권한을 하나라도 허용하지 않는다면 앱 종료
+//                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
+//                    finish();
+//                }
+//            }
 //        }
 //    }
 
+    /**
+     * method to initialize the views
+     */
+    private void initViews() {
+        progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
+        editTextMinute = (EditText) findViewById(R.id.editTextMinute);
+        textViewTime = (TextView) findViewById(R.id.textViewTime);
+        imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
+        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
+    }
+
+    /**
+     * method to initialize the click listeners
+     */
+    private void initListeners() {
+        imageViewReset.setOnClickListener(this);
+        imageViewStartStop.setOnClickListener(this);
+    }
+
+    /**
+     * implemented method to listen clicks
+     *
+     * @param view
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.imageViewReset:
+                reset();
+                break;
+            case R.id.imageViewStartStop:
+                startStop();
+                break;
+        }
+    }
+
+    /**
+     * method to reset count down timer
+     */
+    private void reset() {
+        stopCountDownTimer();
+        startCountDownTimer();
+    }
+
+    // 추가
     @Override
     public void onPause() {
         super.onPause();
@@ -204,6 +209,131 @@ public class MainActivity extends AppCompatActivity {
         Log.e("LOG", "onDestroy()");
         mSensorManager.unregisterListener(mGyroLis);
         mSensorManager.unregisterListener(mAccLis);
+    }
+
+    /**
+     * method to start and stop count down timer
+     */
+    private void startStop() {
+        if (timerStatus == TimerStatus.STOPPED) {
+
+            // call to initialize the timer values
+            setTimerValues();
+            // call to initialize the progress bar values
+            setProgressBarValues();
+            // showing the reset icon
+            imageViewReset.setVisibility(View.VISIBLE);
+            // changing play icon to stop icon
+            imageViewStartStop.setImageResource(R.drawable.icon_stop);
+            // making edit text not editable
+            editTextMinute.setEnabled(false);
+            // changing the timer status to started
+            timerStatus = TimerStatus.STARTED;
+            // call to start the count down timer
+            startCountDownTimer();
+
+            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
+
+        } else {
+
+            // hiding the reset icon
+            imageViewReset.setVisibility(View.GONE);
+            // changing stop icon to start icon
+            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            // making edit text editable
+            editTextMinute.setEnabled(true);
+            // changing the timer status to stopped
+            timerStatus = TimerStatus.STOPPED;
+            stopCountDownTimer();
+
+            mSensorManager.unregisterListener(mGyroLis);
+            mSensorManager.unregisterListener(mAccLis);
+        }
+
+    }
+
+    /**
+     * method to initialize the values for count down timer
+     */
+    private void setTimerValues() {
+        int time = 0;
+        if (!editTextMinute.getText().toString().isEmpty()) {
+            // fetching value from edit text and type cast to integer
+            time = Integer.parseInt(editTextMinute.getText().toString().trim());
+        } else {
+            // toast message to fill edit text
+            Toast.makeText(getApplicationContext(), getString(R.string.message_minutes), Toast.LENGTH_LONG).show();
+        }
+        // assigning values after converting to milliseconds
+        timeCountInMilliSeconds = time * 60 * 1000;
+    }
+
+    /**
+     * method to start count down timer
+     */
+    private void startCountDownTimer() {
+
+        countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
+
+                progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+
+            }
+
+            @Override
+            public void onFinish() {
+
+                textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+                // call to initialize the progress bar values
+                setProgressBarValues();
+                // hiding the reset icon
+                imageViewReset.setVisibility(View.GONE);
+                // changing stop icon to start icon
+                imageViewStartStop.setImageResource(R.drawable.icon_start);
+                // making edit text editable
+                editTextMinute.setEnabled(true);
+                // changing the timer status to stopped
+                timerStatus = TimerStatus.STOPPED;
+            }
+
+        }.start();
+        countDownTimer.start();
+    }
+
+    /**
+     * method to stop count down timer
+     */
+    private void stopCountDownTimer() {
+        countDownTimer.cancel();
+    }
+
+    /**
+     * method to set circular progress bar values
+     */
+    private void setProgressBarValues() {
+        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
+        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
+    }
+
+
+    /**
+     * method to convert millisecond to time format
+     *
+     * @param milliSeconds
+     * @return HH:mm:ss time formatted string
+     */
+    private String hmsTimeFormatter(long milliSeconds) {
+
+        String hms = String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(milliSeconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
+                TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
+
+        return hms;
     }
 
     private class GyroscopeListener implements SensorEventListener {
@@ -273,62 +403,4 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
-
-
-//    public class MyAsyncTask extends AsyncTask<Void, Integer, String> {
-//
-//        @Override
-//
-//        protected String doInBackground(Void... params) {
-//            Intent intent = new Intent(getApplicationContext(), GaitService.class); // 실행시키고픈 서비스클래스 이름
-//            startService(intent); // 서비스 실행!
-//
-//            Intent passedIntent = getIntent();
-//            processCommand(passedIntent);
-//
-//            // Using the Gyroscope & Accelometer
-//            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-//            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
-//            return "Finish";
-//        }
-//
-//        @Override
-//
-//        protected void onProgressUpdate(Integer... values) {
-//
-//        }
-//
-//        @Override
-//
-//        protected void onPostExecute(String values) {
-//
-//        }
-//    }
-
-
-//    public static class ServiceThread extends Thread {
-//        Handler handler;
-//        boolean isRun = true;
-//
-//        public ServiceThread(Handler handler) {
-//            this.handler = handler;
-//        }
-//
-//        public void stopForever() {
-//            synchronized (this) {
-//                this.isRun = false;
-//            }
-//        }
-//
-//        public void run() { //반복적으로 수행할 작업을 한다.
-//            while (isRun) {
-//                handler.sendEmptyMessage(0);//쓰레드에 있는 핸들러에게 메세지를 보냄
-//                try {
-//                    Thread.sleep(1000); //10초씩 쉰다.
-//                } catch (Exception e) {
-//                }
-//            }
-//        }
-//    }
 }

@@ -20,7 +20,7 @@ public class ActivityClassifier {
     private TensorFlowInferenceInterface inferenceInterface;
 
     public ActivityClassifier(Context context) {
-        inferenceInterface = new TensorFlowInferenceInterface(context.getAssets(), MODEL_FILE);
+//        inferenceInterface = new TensorFlowInferenceInterface(context.getAssets(), MODEL_FILE);
     }
 
     public float[] predictProbabilities(float[] data) {

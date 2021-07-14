@@ -20,7 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -38,18 +37,18 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SensorEventListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Using the Accelometer & Gyroscoper
     private SensorManager mSensorManager = null;
 
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
-    private Sensor mGgyroSensor;
+    private Sensor mGgyroSensor = null;
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
-    private Sensor mAccelometerSensor;
+    private Sensor mAccelometerSensor = null;
 
     //Roll and Pitch
     private double pitch;
@@ -60,28 +59,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private double timestamp;
     private double dt;
 
-    //***************************************
-    // global variable
-    private static List<Float> accX, accY, accZ;
-    private static List<Float> gyroX, gyroY, gyroZ;
+    // for radian -> dgree
+    private double RAD2DGR = 180 / Math.PI;
+    private static final float NS2S = 1.0f / 1000000000.0f;
 
+    //*************************
     private float[] results;
     private ActivityClassifier classifier;
 
     private static final int TIME_STAMP = 100;
     private static final String TAG = "MainActivity";
-    //***************************************
-    // for radian -> dgree
-    private double RAD2DGR = 180 / Math.PI;
-    private static final float NS2S = 1.0f / 1000000000.0f;
+    private static List<Float> accX, accY, accZ;
+    private static List<Float> gyroX, gyroY, gyroZ;
+    private TextView walkingTextView;
+    //*************************
 
     //    권한
     String[] permission_list = {
+//            Manifest.permission.INTERNET,
             Manifest.permission.GET_ACCOUNTS
+//            Manifest.permission.READ_PHONE_STATE
     };
 
 
-    private long timeCountInMilliSeconds = 1 * 60000;
+    private long timeCountInMilliSeconds = 3000;
 
     private enum TimerStatus {
         STARTED,
@@ -96,7 +97,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
-    private TextView walkingTextView;
+
+    private Interpreter getTfliteInterpreter(String modelPath) {
+        try {
+            return new Interpreter(loadModelFile(MainActivity.this, modelPath));
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
+        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(modelPath);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AccountManager am = AccountManager.get(this);
         Account[] accounts = am.getAccounts();
         System.out.println(accounts.length);
+
         for (Account ac : accounts) {
             String acname = ac.name;
             String actype = ac.type;
@@ -122,108 +142,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Using the Gyroscope & Accelometer
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+        // Using the Gyroscope
+        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mGyroLis = new GyroscopeListener();
+
+        // Using the Accelometer
+        mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccLis = new AccelometerListener();
 
         // method call to initialize the views
         initViews();
         // method call to initialize the listeners
         initListeners();
 
-        //************************
-
+        //********************
+        classifier = new ActivityClassifier(getApplicationContext());
         accX = new ArrayList<>();
         accY = new ArrayList<>();
         accZ = new ArrayList<>();
         gyroX = new ArrayList<>();
         gyroY = new ArrayList<>();
         gyroZ = new ArrayList<>();
-
-        mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-
-//        classifier = new ActivityClassifier(getApplicationContext());
-
-        mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
-
-        //**********************
+        //********************
     }
-
-    //**************************************
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        Sensor sensor = event.sensor;
-        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            accX.add(event.values[0]);
-            accY.add(event.values[1]);
-            accZ.add(event.values[2]);
-        } else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
-            gyroX.add(event.values[0]);
-            gyroY.add(event.values[1]);
-            gyroZ.add(event.values[2]);
-        }
-//        predictActivity();
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    private void predictActivity() {
-        List<Float> data = new ArrayList<>();
-        if (accX.size() >= TIME_STAMP && accY.size() >= TIME_STAMP && accZ.size() >= TIME_STAMP
-                && gyroX.size() >= TIME_STAMP && gyroY.size() >= TIME_STAMP && gyroZ.size() >= TIME_STAMP) {
-            data.addAll(accX.subList(0, TIME_STAMP));
-            data.addAll(accY.subList(0, TIME_STAMP));
-            data.addAll(accZ.subList(0, TIME_STAMP));
-
-            data.addAll(gyroX.subList(0, TIME_STAMP));
-            data.addAll(gyroY.subList(0, TIME_STAMP));
-            data.addAll(gyroZ.subList(0, TIME_STAMP));
-
-//            results = classifier.predictProbabilities(toFloatArray(data));
-            Log.i(TAG, "predictActivity: " + Arrays.toString(results));
-
-            // ??
-            walkingTextView.setText("Walking: \t" + round(results[0], 2));
-
-
-            data.clear();
-            accX.clear();
-            accY.clear();
-            accZ.clear();
-
-            gyroX.clear();
-            gyroY.clear();
-            gyroZ.clear();
-        }
-    }
-
-    private float round(float value, int decimal_places) {
-        BigDecimal bigDecimal = new BigDecimal(Float.toString(value));
-        bigDecimal = bigDecimal.setScale(decimal_places, BigDecimal.ROUND_HALF_UP);
-        return bigDecimal.floatValue();
-    }
-
-    private float[] toFloatArray(List<Float> data) {
-        int i = 0;
-        float[] array = new float[data.size()];
-        for (Float f : data) {
-            array[i++] = (f != null ? f : Float.NaN);
-        }
-        return array;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
-    }
-
-
-    //*************************************
 
     public void checkPermission() {
         //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
@@ -234,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (String permission : permission_list) {
             //권한 허용 여부를 확인한다.
             int chk = checkCallingOrSelfPermission(permission);
-
             if (chk == PackageManager.PERMISSION_DENIED) {
                 //권한 허용을여부를 확인하는 창을 띄운다
                 requestPermissions(permission_list, 0);
@@ -242,52 +182,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == 0) {
-//            for (int i = 0; i < grantResults.length; i++) {
-//                //허용됬다면
-//                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-//                } else {
-//                    //권한을 하나라도 허용하지 않는다면 앱 종료
-//                    Toast.makeText(getApplicationContext(), "앱권한설정하세요", Toast.LENGTH_LONG).show();
-//                    finish();
-//                }
-//            }
-//        }
-//    }
-
-    // Tensorflow
-    private Interpreter getTfliteInterpreter(String modelPath) {
-        try {
-            return new Interpreter(loadModelFile(this, modelPath));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
-        AssetFileDescriptor fileDescriptor;
-        fileDescriptor = activity.getAssets().openFd(modelPath);
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-    }
-
     /**
      * method to initialize the views
      */
     private void initViews() {
-        progressBarCircle = (ProgressBar) findViewById(R.id.progressBarCircle);
-        editTextMinute = (EditText) findViewById(R.id.editTextMinute);
-        textViewTime = (TextView) findViewById(R.id.textViewTime);
-        imageViewReset = (ImageView) findViewById(R.id.imageViewReset);
-        imageViewStartStop = (ImageView) findViewById(R.id.imageViewStartStop);
-        walkingTextView = (TextView) findViewById(R.id.tv_output);
+        progressBarCircle = findViewById(R.id.progressBarCircle);
+        textViewTime = findViewById(R.id.textViewTime);
+        imageViewReset = findViewById(R.id.imageViewReset);
+        imageViewStartStop = findViewById(R.id.imageViewStartStop);
     }
 
     /**
@@ -323,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startCountDownTimer();
     }
 
-    // 추가
     @Override
     public void onPause() {
         super.onPause();
@@ -340,51 +241,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSensorManager.unregisterListener(mAccLis);
     }
 
+    int a = 0;
     /**
      * method to start and stop count down timer
      */
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
-            // call to initialize the timer values
-            setTimerValues();
             // call to initialize the progress bar values
             setProgressBarValues();
             // showing the reset icon
             imageViewReset.setVisibility(View.VISIBLE);
             // changing play icon to stop icon
             imageViewStartStop.setImageResource(R.drawable.icon_stop);
-            // making edit text not editable
-            editTextMinute.setEnabled(false);
             // changing the timer status to started
             timerStatus = TimerStatus.STARTED;
             // call to start the count down timer
             startCountDownTimer();
 
-            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_UI);
-
-//            // Tensorflow model
-//            float[][][][] input = new float[1][128][6][1];
-//            float[] output = new float[]{};
-//
-//            // 1번 모델을 해석할 인터프리터 생성
-//            Interpreter tflite = getTfliteInterpreter("converted_model.tflite");
-//
-//            // 모델 구동.
-//            // 정확하게는 from_session 함수의 output_tensors 매개변수에 전달된 연산 호출
-//            tflite.run(input, output);
-//
-//            // 출력을 배열에 저장하기 때문에 0번째 요소를 가져와서 문자열로 변환
-//            tv_output.setText(String.valueOf(output[0]));
-
+            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
         } else {
+            a = 0;
 
             // hiding the reset icon
             imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
             imageViewStartStop.setImageResource(R.drawable.icon_start);
-            // making edit text editable
-            editTextMinute.setEnabled(true);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
             stopCountDownTimer();
@@ -392,43 +274,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mSensorManager.unregisterListener(mGyroLis);
             mSensorManager.unregisterListener(mAccLis);
         }
-
-    }
-
-    /**
-     * method to initialize the values for count down timer
-     */
-    private void setTimerValues() {
-        int time = 0;
-        if (!editTextMinute.getText().toString().isEmpty()) {
-            // fetching value from edit text and type cast to integer
-            time = Integer.parseInt(editTextMinute.getText().toString().trim());
-        } else {
-            // toast message to fill edit text
-            Toast.makeText(getApplicationContext(), getString(R.string.message_minutes), Toast.LENGTH_LONG).show();
-        }
-        // assigning values after converting to milliseconds
-        timeCountInMilliSeconds = time * 60 * 1000;
     }
 
     /**
      * method to start count down timer
      */
     private void startCountDownTimer() {
-
         countDownTimer = new CountDownTimer(timeCountInMilliSeconds, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
                 textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-
                 progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
-
             }
 
             @Override
             public void onFinish() {
-
                 textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
                 // call to initialize the progress bar values
                 setProgressBarValues();
@@ -436,10 +296,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 imageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
                 imageViewStartStop.setImageResource(R.drawable.icon_start);
-                // making edit text editable
-                editTextMinute.setEnabled(true);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
+
+                mSensorManager.unregisterListener(mGyroLis);
+                mSensorManager.unregisterListener(mAccLis);
             }
 
         }.start();
@@ -457,6 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * method to set circular progress bar values
      */
     private void setProgressBarValues() {
+
         progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
         progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
     }
@@ -478,5 +340,131 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return hms;
     }
 
+    private class GyroscopeListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            /* 각 축의 각속도 성분을 받는다. */
+            float gyroXX = event.values[0];
+            float gyroYY = event.values[1];
+            float gyroZZ = event.values[2];
+
+            gyroX.add(gyroXX);
+            gyroY.add(gyroYY);
+            gyroZ.add(gyroZZ);
+
+
+            /* 각속도를 적분하여 회전각을 추출하기 위해 적분 간격(dt)을 구한다.
+             * dt : 센서가 현재 상태를 감지하는 시간 간격
+             * NS2S : nano second -> second */
+            dt = (event.timestamp - timestamp) * NS2S;
+            timestamp = event.timestamp;
+
+            /* 맨 센서 인식을 활성화 하여 처음 timestamp가 0일때는 dt값이 올바르지 않으므로 넘어간다. */
+            if (dt - timestamp * NS2S != 0) {
+
+                /* 각속도 성분을 적분 -> 회전각(pitch, roll)으로 변환.
+                 * 여기까지의 pitch, roll의 단위는 '라디안'이다.
+                 * SO 아래 로그 출력부분에서 멤버변수 'RAD2DGR'를 곱해주어 degree로 변환해줌.  */
+                pitch = pitch + gyroYY * dt;
+                roll = roll + gyroXX * dt;
+                yaw = yaw + gyroZZ * dt;
+
+                a+= 1;
+                Log.e("CNT", String.valueOf(a));
+
+                Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
+                        + "           [Y]:" + String.format("%.4f", event.values[1])
+                        + "           [Z]:" + String.format("%.4f", event.values[2])
+                        + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
+                        + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
+                        + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
+                        + "           [dt]: " + String.format("%.4f", dt));
+                predictActivity();
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
+    private class AccelometerListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            double accXX = event.values[0];
+            double accYY = event.values[1];
+            double accZZ = event.values[2];
+
+            accX.add(event.values[0]);
+            accY.add(event.values[1]);
+            accZ.add(event.values[2]);
+
+
+            double angleXZ = Math.atan2(accXX, accZZ) * 180 / Math.PI;
+            double angleYZ = Math.atan2(accYY, accZZ) * 180 / Math.PI;
+
+            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
+                    + "           [Y]:" + String.format("%.4f", event.values[1])
+                    + "           [Z]:" + String.format("%.4f", event.values[2])
+                    + "           [angleXZ]: " + String.format("%.4f", angleXZ)
+                    + "           [angleYZ]: " + String.format("%.4f", angleYZ));
+            predictActivity();
+
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+        }
+    }
+
+    private void predictActivity() {
+        List<Float> data = new ArrayList<>();
+        if (accX.size() >= TIME_STAMP && accY.size() >= TIME_STAMP && accZ.size() >= TIME_STAMP
+                && gyroX.size() >= TIME_STAMP && gyroY.size() >= TIME_STAMP && gyroZ.size() >= TIME_STAMP) {
+            data.addAll(accX.subList(0, TIME_STAMP));
+            data.addAll(accY.subList(0, TIME_STAMP));
+            data.addAll(accZ.subList(0, TIME_STAMP));
+
+            data.addAll(gyroX.subList(0, TIME_STAMP));
+            data.addAll(gyroY.subList(0, TIME_STAMP));
+            data.addAll(gyroZ.subList(0, TIME_STAMP));
+
+//            results = classifier.predictProbabilities(toFloatArray(data));
+            Log.i(TAG, "predictActivity: " + Arrays.toString(results));
+
+            // ??
+            walkingTextView.setText("Walking: \t" + round(results[0], 2));
+
+            data.clear();
+            accX.clear();
+            accY.clear();
+            accZ.clear();
+
+            gyroX.clear();
+            gyroY.clear();
+            gyroZ.clear();
+        }
+    }
+
+    private float round(float value, int decimal_places) {
+        BigDecimal bigDecimal = new BigDecimal(Float.toString(value));
+        bigDecimal = bigDecimal.setScale(decimal_places, BigDecimal.ROUND_HALF_UP);
+        return bigDecimal.floatValue();
+    }
+
+    private float[] toFloatArray(List<Float> data) {
+        int i = 0;
+        float[] array = new float[data.size()];
+        for (Float f : data) {
+            array[i++] = (f != null ? f : Float.NaN);
+        }
+        return array;
+    }
 
 }

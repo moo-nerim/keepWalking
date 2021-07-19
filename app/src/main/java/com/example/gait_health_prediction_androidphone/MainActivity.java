@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Interpreter getTfliteInterpreter(String modelPath) {
         try {
             return new Interpreter(loadModelFile(MainActivity.this, modelPath));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -242,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     int a = 0;
+
     /**
      * method to start and stop count down timer
      */
@@ -318,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * method to set circular progress bar values
      */
     private void setProgressBarValues() {
-
         progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
         progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
     }
@@ -371,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 roll = roll + gyroXX * dt;
                 yaw = yaw + gyroZZ * dt;
 
-                a+= 1;
+                a += 1;
                 Log.e("CNT", String.valueOf(a));
 
                 Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])

@@ -5,7 +5,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.AssetFileDescriptor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,13 +26,19 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import org.tensorflow.lite.Interpreter;
+//import org.tensorflow.lite.Interpreter;
+
+import com.kakao.kakaolink.KakaoLink;
+import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+import com.kakao.util.KakaoParameterException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -97,24 +105,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
+    private ImageView kakaotalkShare;
 
-    private Interpreter getTfliteInterpreter(String modelPath) {
-        try {
-            return new Interpreter(loadModelFile(MainActivity.this, modelPath));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    private Interpreter getTfliteInterpreter(String modelPath) {
+//        try {
+//            return new Interpreter(loadModelFile(MainActivity.this, modelPath));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
-    public MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
-        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(modelPath);
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-    }
+//    public MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
+//        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(modelPath);
+//        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+//        FileChannel fileChannel = inputStream.getChannel();
+//        long startOffset = fileDescriptor.getStartOffset();
+//        long declaredLength = fileDescriptor.getDeclaredLength();
+//        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,14 +164,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initListeners();
 
         //********************
-        classifier = new ActivityClassifier(getApplicationContext());
+//        classifier = new ActivityClassifier(getApplicationContext());
         accX = new ArrayList<>();
         accY = new ArrayList<>();
         accZ = new ArrayList<>();
         gyroX = new ArrayList<>();
         gyroY = new ArrayList<>();
         gyroZ = new ArrayList<>();
+        Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
+
+        try {
+            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+            final KakaoTalkLinkMessageBuilder kakaoBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+
+            kakaoBuilder.addText("카카오링크 테스트");
+            kakaoBuilder.addAppButton("앱 실행하기");
+            kakaoLink.sendMessage(kakaoBuilder,this);
+
+        } catch (KakaoParameterException e) {
+            e.printStackTrace();
+        }
+
+
         //********************
+    }
+
+    public static String getKeyHash(final Context context) {
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+            if (packageInfo == null)
+                return null;
+
+            for (Signature signature : packageInfo.signatures) {
+                try {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(signature.toByteArray());
+                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void checkPermission() {
@@ -189,6 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewTime = findViewById(R.id.textViewTime);
         imageViewReset = findViewById(R.id.imageViewReset);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
+        kakaotalkShare = findViewById(R.id.imageViewShare);
     }
 
     /**
@@ -380,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                         + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                         + "           [dt]: " + String.format("%.4f", dt));
-                predictActivity();
+//                predictActivity();
             }
         }
 
@@ -412,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     + "           [Z]:" + String.format("%.4f", event.values[2])
                     + "           [angleXZ]: " + String.format("%.4f", angleXZ)
                     + "           [angleYZ]: " + String.format("%.4f", angleYZ));
-            predictActivity();
+//            predictActivity();
 
         }
 

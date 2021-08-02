@@ -4,9 +4,11 @@ import android.content.Context;
 
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
+import java.io.InputStream;
+
 public class ActivityClassifier {
 
-    private static final String MODEL_FILE = "frozen_graph.pb";
+    private static final String MODEL_FILE = "file:///android_asset/juu.pb";
     private static final String INPUT_NODE = "lstm_1_input";
     private static final String[] OUTPUT_NODES = {"output/Softmax"};
     private static final String OUTPUT_NODE = "output/Softmax";
@@ -20,7 +22,7 @@ public class ActivityClassifier {
     private TensorFlowInferenceInterface inferenceInterface;
 
     public ActivityClassifier(Context context) {
-//        inferenceInterface = new TensorFlowInferenceInterface(context.getAssets(), MODEL_FILE);
+        inferenceInterface = new TensorFlowInferenceInterface(context.getAssets(), MODEL_FILE);
     }
 
     public float[] predictProbabilities(float[] data) {

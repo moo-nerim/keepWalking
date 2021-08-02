@@ -71,4 +71,13 @@
         android:layout_marginTop="20dp"
         android:src="@drawable/icon_start" />
 
+    <ImageView
+        android:id="@+id/imageViewShare"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/progressBarCircle"
+        android:layout_marginLeft="350dp"
+        android:layout_marginTop="-473dp"
+        android:src="@drawable/share_ico" />
+
 </RelativeLayout>

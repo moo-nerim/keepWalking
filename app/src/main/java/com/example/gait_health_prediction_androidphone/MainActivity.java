@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
-    private ImageView kakaotalkShare;
+    private ImageView kakaoLinkBtn;
 
 //    private Interpreter getTfliteInterpreter(String modelPath) {
 //        try {
@@ -173,20 +173,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gyroZ = new ArrayList<>();
         Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
 
-        try {
-            final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
-            final KakaoTalkLinkMessageBuilder kakaoBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+        kakaoLinkBtn.setOnClickListener(v -> {
+            try {
+                final KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+                final KakaoTalkLinkMessageBuilder kakaoBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
 
-            kakaoBuilder.addText("카카오링크 테스트");
-            kakaoBuilder.addAppButton("앱 실행하기");
-            kakaoLink.sendMessage(kakaoBuilder,this);
+                kakaoBuilder.addText("카카오링크 테스트");
+                kakaoBuilder.addAppButton("앱 실행하기");
+                kakaoLink.sendMessage(kakaoBuilder,this);
 
-        } catch (KakaoParameterException e) {
-            e.printStackTrace();
-        }
-
-
-        //********************
+            } catch (KakaoParameterException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public static String getKeyHash(final Context context) {
@@ -211,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return null;
     }
 
+    // 계정 권한 허용
     public void checkPermission() {
         //현재 안드로이드 버전이 6.0미만이면 메서드를 종료한다.
         //안드로이드6.0 (마시멜로) 이후 버전부터 유저 권한설정 필요
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewTime = findViewById(R.id.textViewTime);
         imageViewReset = findViewById(R.id.imageViewReset);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
-        kakaotalkShare = findViewById(R.id.imageViewShare);
+        kakaoLinkBtn = findViewById(R.id.imageViewShare);
     }
 
     /**

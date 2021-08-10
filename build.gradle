@@ -20,8 +20,6 @@ allprojects {
         maven {
             url "https://maven.google.com"
         }
-        /*카카오*/
-        maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
     }
 }
 
@@ -30,12 +28,16 @@ task clean(type: Delete) {
 }
 
 subprojects {
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'com.android.support'
-                    && !details.requested.name.contains('multidex') ) {
-                details.useVersion "version which should be used - in your case 26.0.0-beta2"
-            }
-        }
+    repositories {
+        mavenCentral()
+        maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
     }
+//    project.configurations.all {
+//        resolutionStrategy.eachDependency { details ->
+//            if (details.requested.group == 'com.android.support'
+//                    && !details.requested.name.contains('multidex') ) {
+//                details.useVersion "version which should be used - in your case 26.0.0-beta2"
+//            }
+//        }
+//    }
 }

@@ -77,7 +77,8 @@
         android:layout_height="40dp"
         android:layout_below="@id/progressBarCircle"
         android:layout_marginLeft="350dp"
-        android:layout_marginTop="-473dp"
+        android:layout_marginTop="-400dp"
         android:src="@drawable/share_ico" />
+
 
 </RelativeLayout>

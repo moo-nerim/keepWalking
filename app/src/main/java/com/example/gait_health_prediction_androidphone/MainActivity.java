@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -35,6 +36,7 @@ import com.kakao.network.ErrorResult;
 import com.kakao.network.callback.ResponseCallback;
 import com.kakao.util.helper.log.Logger;
 
+
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,9 +47,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-//import org.tensorflow.lite.Interpreter;
-//import com.kakao.kakaolink.KakaoLink;
-//import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.LegendRenderer;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -85,6 +89,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static List<Float> accX, accY, accZ;
     private static List<Float> gyroX, gyroY, gyroZ;
     private TextView walkingTextView;
+
+    private LineGraphSeries<DataPoint> mSeriesAccelX,mSeriesAccelY,mSeriesAccelZ;
+    private GraphView mGraphAccel;
+    private double graphLastAccelXValue = 10d;
+    private GraphView line_graph;
     //*************************
 
     //    권한
@@ -169,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initListeners();
 
         //********************
-//        classifier = new ActivityClassifier(getApplicationContext());
+        classifier = new ActivityClassifier(getApplicationContext());
         accX = new ArrayList<>();
         accY = new ArrayList<>();
         accZ = new ArrayList<>();
@@ -179,11 +188,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
 
         kakaoLinkBtn.setOnClickListener(v -> {
-//            Intent shareIntent = new Intent();
-//            shareIntent.addCategory(Intent.CATEGORY_DEFAULT);
-//            shareIntent.putExtra(Intent.EXTRA_STREAM, "https://mblogthumb-phinf.pstatic.net/MjAxODEyMTlfMjY5/MDAxNTQ1MjAxOTY4MDg3.yq0mJoekIDWZeAtXOZ85qRCMZ6hQzgbib6uvjC4isWwg.0raHYlfOXNYEDxrbhq-sYHAgGLiNbTFR3xpaC-DGIRQg.GIF.darda_design/03.gif?type=w800");
-//            shareIntent.setType("text/plain");
-//            startActivity(Intent.createChooser(shareIntent,"안녕하세유!"));
             FeedTemplate params = FeedTemplate
                     .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
                             "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
@@ -218,7 +222,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         });
+        mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
+        mSeriesAccelY = initSeries(Color.RED, "Y");
+        mSeriesAccelZ = initSeries(Color.GREEN, "Z");
+//        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
+
+        //그래프에 x,y,z 추가
+        mGraphAccel.addSeries(mSeriesAccelX);
+        mGraphAccel.addSeries(mSeriesAccelY);
+        mGraphAccel.addSeries(mSeriesAccelZ);
     }
+
+    //**********************
+    //그래프 초기화
+    public GraphView initGraph(int id, String title) {
+        GraphView graph = findViewById(id);
+        //데이터가 늘어날때 x축 scroll이 생기도록
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(5);
+        graph.getGridLabelRenderer().setLabelVerticalWidth(100);
+        graph.setTitle(title);
+        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        return graph;
+    }
+
+    //x,y,z 데이터 그래프 추가
+    public LineGraphSeries<DataPoint> initSeries(int color, String title){
+        LineGraphSeries<DataPoint> series;
+        series = new LineGraphSeries<>();
+        series.setDrawDataPoints(true);
+        series.setDrawBackground(true);
+        series.setColor(color);
+        series.setTitle(title);
+        return series;
+    }
+
+    // *******************
 
     public static String getKeyHash(final Context context) {
         PackageManager pm = context.getPackageManager();
@@ -459,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                         + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                         + "           [dt]: " + String.format("%.4f", dt));
-//                predictActivity();
+                predictActivity();
             }
         }
 
@@ -490,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     + "           [Z]:" + String.format("%.4f", event.values[2])
                     + "           [angleXZ]: " + String.format("%.4f", angleXZ)
                     + "           [angleYZ]: " + String.format("%.4f", angleYZ));
-//            predictActivity();
+            predictActivity();
 
         }
 

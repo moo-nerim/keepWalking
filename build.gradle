@@ -15,10 +15,12 @@ buildscript {
 allprojects {
     repositories {
         google()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
-        maven {
-            url "https://maven.google.com"
+    }
+    subprojects {
+        repositories {
+            mavenCentral()
+            maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
         }
     }
 }

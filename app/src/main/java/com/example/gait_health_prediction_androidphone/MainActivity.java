@@ -185,11 +185,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            shareIntent.setType("text/plain");
 //            startActivity(Intent.createChooser(shareIntent,"안녕하세유!"));
             FeedTemplate params = FeedTemplate
-                    .newBuilder(ContentObject.newBuilder("디저트 사진",
-                            "http://mud-kage.kakao.co.kr/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg",
+                    .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
+                            "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
                             LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                                     .setMobileWebUrl("https://developers.kakao.com").build())
-                            .setDescrption("아메리카노, 빵, 케익")
+                            .setDescrption("측정 결과 확인하기")
                             .build())
                     .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
                             .setSharedCount(30).setViewCount(40).build())

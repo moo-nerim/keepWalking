@@ -222,43 +222,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             });
         });
-        mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
-        mSeriesAccelY = initSeries(Color.RED, "Y");
-        mSeriesAccelZ = initSeries(Color.GREEN, "Z");
-//        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
-
-        //그래프에 x,y,z 추가
-        mGraphAccel.addSeries(mSeriesAccelX);
-        mGraphAccel.addSeries(mSeriesAccelY);
-        mGraphAccel.addSeries(mSeriesAccelZ);
+//        mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
+//        mSeriesAccelY = initSeries(Color.RED, "Y");
+//        mSeriesAccelZ = initSeries(Color.GREEN, "Z");
+////        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
+//
+//        //그래프에 x,y,z 추가
+//        mGraphAccel.addSeries(mSeriesAccelX);
+//        mGraphAccel.addSeries(mSeriesAccelY);
+//        mGraphAccel.addSeries(mSeriesAccelZ);
     }
 
     //**********************
     //그래프 초기화
-    public GraphView initGraph(int id, String title) {
-        GraphView graph = findViewById(id);
-        //데이터가 늘어날때 x축 scroll이 생기도록
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(5);
-        graph.getGridLabelRenderer().setLabelVerticalWidth(100);
-        graph.setTitle(title);
-        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-        return graph;
-    }
+//    public GraphView initGraph(int id, String title) {
+//        GraphView graph = findViewById(id);
+//        //데이터가 늘어날때 x축 scroll이 생기도록
+//        graph.getViewport().setXAxisBoundsManual(true);
+//        graph.getViewport().setMinX(0);
+//        graph.getViewport().setMaxX(5);
+//        graph.getGridLabelRenderer().setLabelVerticalWidth(100);
+//        graph.setTitle(title);
+//        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
+//        graph.getLegendRenderer().setVisible(true);
+//        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+//        return graph;
+//    }
 
     //x,y,z 데이터 그래프 추가
-    public LineGraphSeries<DataPoint> initSeries(int color, String title){
-        LineGraphSeries<DataPoint> series;
-        series = new LineGraphSeries<>();
-        series.setDrawDataPoints(true);
-        series.setDrawBackground(true);
-        series.setColor(color);
-        series.setTitle(title);
-        return series;
-    }
+//    public LineGraphSeries<DataPoint> initSeries(int color, String title){
+//        LineGraphSeries<DataPoint> series;
+//        series = new LineGraphSeries<>();
+//        series.setDrawDataPoints(true);
+//        series.setDrawBackground(true);
+//        series.setColor(color);
+//        series.setTitle(title);
+//        return series;
+//    }
 
     // *******************
 

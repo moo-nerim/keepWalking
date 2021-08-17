@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 public class ActivityClassifier {
 
-    private static final String MODEL_FILE = "model7.pb";
+    private static final String MODEL_FILE = "model8.pb";
     private static final String INPUT_NODE = "lstm_1_input";
     private static final String[] OUTPUT_NODES = {"output/Softmax"};
     private static final String OUTPUT_NODE = "output/Softmax";

@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initListeners();
 
         //********************
-        classifier = new ActivityClassifier(getApplicationContext());
+//        classifier = new ActivityClassifier(getApplicationContext());
         accX = new ArrayList<>();
         accY = new ArrayList<>();
         accZ = new ArrayList<>();
@@ -501,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                         + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                         + "           [dt]: " + String.format("%.4f", dt));
-                predictActivity();
+//                predictActivity();
             }
         }
 
@@ -532,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     + "           [Z]:" + String.format("%.4f", event.values[2])
                     + "           [angleXZ]: " + String.format("%.4f", angleXZ)
                     + "           [angleYZ]: " + String.format("%.4f", angleYZ));
-            predictActivity();
+//            predictActivity();
 
         }
 

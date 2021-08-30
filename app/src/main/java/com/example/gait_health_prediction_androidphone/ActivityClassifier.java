@@ -6,12 +6,12 @@ import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
 public class ActivityClassifier {
 
-    private static final String MODEL_FILE = "model10.pb";
+    private static final String MODEL_FILE = "frozen_final.pb";
     private static final String INPUT_NODE = "lstm_1_input";
-    private static final String[] OUTPUT_NODES = {"output"};
-    private static final String OUTPUT_NODE = "output";
+    private static final String[] OUTPUT_NODES = {"output/Softmax"};
+    private static final String OUTPUT_NODE = "output/Softmax";
     private static final long[] INPUT_SIZE = {1, 100, 9};
-    private static final int OUTPUT_SIZE = 2;
+    private static final int OUTPUT_SIZE = 7;
 
     static {
         System.loadLibrary("tensorflow_inference");

@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -49,18 +50,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
     //Using the Accelometer & Gyroscoper
-    private SensorManager mSensorManager = null;
+    private SensorManager mSensorManager;
 
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
-    private Sensor mGgyroSensor = null;
+//    private Sensor mGgyroSensor = null;
+    private Sensor mGgyroSensor,mAccelometerSensor,mLinearAcceleration;
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
-    private Sensor mAccelometerSensor = null;
+//    private Sensor mAccelometerSensor = null;
 
     //Roll and Pitch
     private double pitch;
@@ -83,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String TAG = "MainActivity";
     private static List<Float> accX, accY, accZ;
     private static List<Float> gyroX, gyroY, gyroZ;
+    private static List<Float> lx,ly,lz;
+
     private TextView walkingTextView;
 
     private LineGraphSeries<DataPoint> mSeriesAccelX,mSeriesAccelY,mSeriesAccelZ;
@@ -116,24 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private CountDownTimer countDownTimer;
     private ImageView kakaoLinkBtn;
 
-//    private Interpreter getTfliteInterpreter(String modelPath) {
-//        try {
-//            return new Interpreter(loadModelFile(MainActivity.this, modelPath));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
-//    public MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
-//        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(modelPath);
-//        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-//        FileChannel fileChannel = inputStream.getChannel();
-//        long startOffset = fileDescriptor.getStartOffset();
-//        long declaredLength = fileDescriptor.getDeclaredLength();
-//        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,11 +147,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         // Using the Gyroscope
         mGgyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        mGyroLis = new GyroscopeListener();
+//        mGyroLis = new GyroscopeListener();
 
         // Using the Accelometer
         mAccelometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mAccLis = new AccelometerListener();
+//        mAccLis = new AccelometerListener();
+
+        mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+
 
         // method call to initialize the views
         initViews();
@@ -173,14 +162,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initListeners();
 
         //********************
-        classifier = new ActivityClassifier(getApplicationContext());
+
         accX = new ArrayList<>();
         accY = new ArrayList<>();
         accZ = new ArrayList<>();
         gyroX = new ArrayList<>();
         gyroY = new ArrayList<>();
         gyroZ = new ArrayList<>();
+
+        lx = new ArrayList<>();
+        ly = new ArrayList<>();
+        lz = new ArrayList<>();
+
         Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
+
+        classifier = new ActivityClassifier(getApplicationContext());
 
         kakaoLinkBtn.setOnClickListener(v -> {
             FeedTemplate params = FeedTemplate
@@ -305,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageViewReset = findViewById(R.id.imageViewReset);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
+        walkingTextView = findViewById(R.id.tv_output);
     }
 
     /**
@@ -320,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *
      * @param view
      */
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -374,8 +372,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // call to start the count down timer
             startCountDownTimer();
 
-            mSensorManager.registerListener(mGyroLis, mGgyroSensor, SensorManager.SENSOR_DELAY_GAME);
-            mSensorManager.registerListener(mAccLis, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this,mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
         } else {
             a = 0;
 
@@ -455,92 +454,138 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return hms;
     }
 
-    private class GyroscopeListener implements SensorEventListener {
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-
-            /* 각 축의 각속도 성분을 받는다. */
-            float gyroXX = event.values[0];
-            float gyroYY = event.values[1];
-            float gyroZZ = event.values[2];
-
-            gyroX.add(gyroXX);
-            gyroY.add(gyroYY);
-            gyroZ.add(gyroZZ);
-
-
-            /* 각속도를 적분하여 회전각을 추출하기 위해 적분 간격(dt)을 구한다.
-             * dt : 센서가 현재 상태를 감지하는 시간 간격
-             * NS2S : nano second -> second */
-            dt = (event.timestamp - timestamp) * NS2S;
-            timestamp = event.timestamp;
-
-            /* 맨 센서 인식을 활성화 하여 처음 timestamp가 0일때는 dt값이 올바르지 않으므로 넘어간다. */
-            if (dt - timestamp * NS2S != 0) {
-
-                /* 각속도 성분을 적분 -> 회전각(pitch, roll)으로 변환.
-                 * 여기까지의 pitch, roll의 단위는 '라디안'이다.
-                 * SO 아래 로그 출력부분에서 멤버변수 'RAD2DGR'를 곱해주어 degree로 변환해줌.  */
-                pitch = pitch + gyroYY * dt;
-                roll = roll + gyroXX * dt;
-                yaw = yaw + gyroZZ * dt;
-
-                a += 1;
-                Log.e("CNT", String.valueOf(a));
-
-                Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
-                        + "           [Y]:" + String.format("%.4f", event.values[1])
-                        + "           [Z]:" + String.format("%.4f", event.values[2])
-                        + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
-                        + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
-                        + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
-                        + "           [dt]: " + String.format("%.4f", dt));
-//                predictActivity();
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    }
-
-    private class AccelometerListener implements SensorEventListener {
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-
-            double accXX = event.values[0];
-            double accYY = event.values[1];
-            double accZZ = event.values[2];
-
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        Sensor sensor = event.sensor;
+        if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             accX.add(event.values[0]);
             accY.add(event.values[1]);
             accZ.add(event.values[2]);
 
-            double angleXZ = Math.atan2(accXX, accZZ) * 180 / Math.PI;
-            double angleYZ = Math.atan2(accYY, accZZ) * 180 / Math.PI;
-
             Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
                     + "           [Y]:" + String.format("%.4f", event.values[1])
+                    + "           [Z]:" + String.format("%.4f", event.values[2]));
+
+        } else if(sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+            gyroX.add(event.values[0]);
+            gyroY.add(event.values[1]);
+            gyroZ.add(event.values[2]);
+
+            Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
+                    + "           [Y]:" + String.format("%.4f", event.values[1])
                     + "           [Z]:" + String.format("%.4f", event.values[2])
-                    + "           [angleXZ]: " + String.format("%.4f", angleXZ)
-                    + "           [angleYZ]: " + String.format("%.4f", angleYZ));
-//            predictActivity();
-
+                    + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
+                    + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
+                    + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
+                    + "           [dt]: " + String.format("%.4f", dt));
         }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        else{
+            lx.add(event.values[0]);
+            ly.add(event.values[1]);
+            lz.add(event.values[2]);
         }
+        predictActivity();
+
+
+        Log.e("Log", "acc크기: " + accX.size());
+        Log.e("Log", "gyro크기: " + gyroX.size());
     }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+//    private class GyroscopeListener implements SensorEventListener {
+//
+//        @Override
+//        public void onSensorChanged(SensorEvent event) {
+//
+//            /* 각 축의 각속도 성분을 받는다. */
+//            float gyroXX = event.values[0];
+//            float gyroYY = event.values[1];
+//            float gyroZZ = event.values[2];
+//
+//            gyroX.add(gyroXX);
+//            gyroY.add(gyroYY);
+//            gyroZ.add(gyroZZ);
+//
+//
+//            /* 각속도를 적분하여 회전각을 추출하기 위해 적분 간격(dt)을 구한다.
+//             * dt : 센서가 현재 상태를 감지하는 시간 간격
+//             * NS2S : nano second -> second */
+//            dt = (event.timestamp - timestamp) * NS2S;
+//            timestamp = event.timestamp;
+//
+//            /* 맨 센서 인식을 활성화 하여 처음 timestamp가 0일때는 dt값이 올바르지 않으므로 넘어간다. */
+//            if (dt - timestamp * NS2S != 0) {
+//
+//                /* 각속도 성분을 적분 -> 회전각(pitch, roll)으로 변환.
+//                 * 여기까지의 pitch, roll의 단위는 '라디안'이다.
+//                 * SO 아래 로그 출력부분에서 멤버변수 'RAD2DGR'를 곱해주어 degree로 변환해줌.  */
+//                pitch = pitch + gyroYY * dt;
+//                roll = roll + gyroXX * dt;
+//                yaw = yaw + gyroZZ * dt;
+//
+//                a += 1;
+//                Log.e("CNT", String.valueOf(a));
+//
+//                Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
+//                        + "           [Y]:" + String.format("%.4f", event.values[1])
+//                        + "           [Z]:" + String.format("%.4f", event.values[2])
+//                        + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
+//                        + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
+//                        + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
+//                        + "           [dt]: " + String.format("%.4f", dt));
+//                predictActivity();
+//            }
+//        }
+//
+//        @Override
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//
+//        }
+//    }
+//
+//    private class AccelometerListener implements SensorEventListener {
+//
+//        @Override
+//        public void onSensorChanged(SensorEvent event) {
+//
+//            double accXX = event.values[0];
+//            double accYY = event.values[1];
+//            double accZZ = event.values[2];
+//
+//            accX.add(event.values[0]);
+//            accY.add(event.values[1]);
+//            accZ.add(event.values[2]);
+//
+//            double angleXZ = Math.atan2(accXX, accZZ) * 180 / Math.PI;
+//            double angleYZ = Math.atan2(accYY, accZZ) * 180 / Math.PI;
+//
+//            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
+//                    + "           [Y]:" + String.format("%.4f", event.values[1])
+//                    + "           [Z]:" + String.format("%.4f", event.values[2])
+//                    + "           [angleXZ]: " + String.format("%.4f", angleXZ)
+//                    + "           [angleYZ]: " + String.format("%.4f", angleYZ));
+//            predictActivity();
+//            Log.e("Log", "Acc 크기: " + accX.size());
+//            Log.e("Log", "Gyro 크기: " + gyroX.size());
+//        }
+//
+//        @Override
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//
+//        }
+//    }
 
     private void predictActivity() {
         List<Float> data = new ArrayList<>();
         if (accX.size() >= TIME_STAMP && accY.size() >= TIME_STAMP && accZ.size() >= TIME_STAMP
-                && gyroX.size() >= TIME_STAMP && gyroY.size() >= TIME_STAMP && gyroZ.size() >= TIME_STAMP) {
+                && gyroX.size() >= TIME_STAMP && gyroY.size() >= TIME_STAMP && gyroZ.size() >= TIME_STAMP
+                && lx.size() >= TIME_STAMP && ly.size() >= TIME_STAMP && lz.size() >= TIME_STAMP
+        ) {
+
             data.addAll(accX.subList(0, TIME_STAMP));
             data.addAll(accY.subList(0, TIME_STAMP));
             data.addAll(accZ.subList(0, TIME_STAMP));
@@ -549,11 +594,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             data.addAll(gyroY.subList(0, TIME_STAMP));
             data.addAll(gyroZ.subList(0, TIME_STAMP));
 
-//            results = classifier.predictProbabilities(toFloatArray(data));
-            Log.i(TAG, "predictActivity: " + Arrays.toString(results));
+            data.addAll(lx.subList(0,TIME_STAMP));
+            data.addAll(ly.subList(0,TIME_STAMP));
+            data.addAll(lz.subList(0,TIME_STAMP));
+
+            results = classifier.predictProbabilities(toFloatArray(data));
+            Log.e("Log", "predictActivity: " + Arrays.toString(results));
 
             // ??
-            walkingTextView.setText("Walking: \t" + round(results[0], 2));
+            walkingTextView.setText("Walking: \t" + results[0]);
 
             data.clear();
             accX.clear();
@@ -563,7 +612,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             gyroX.clear();
             gyroY.clear();
             gyroZ.clear();
+
+            lx.clear();
+            ly.clear();
+            lz.clear();
         }
+
     }
 
     private float round(float value, int decimal_places) {

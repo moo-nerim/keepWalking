@@ -1,8 +1,11 @@
 package com.example.gait_health_prediction_androidphone;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
+
+import java.util.Arrays;
 
 public class ActivityClassifier {
 
@@ -12,6 +15,7 @@ public class ActivityClassifier {
     private static final String OUTPUT_NODE = "output/Sigmoid";
     private static final long[] INPUT_SIZE = {1, 100, 9};
     private static final int OUTPUT_SIZE = 2;
+    private static final String TAG = null;
 
     static {
         System.loadLibrary("tensorflow_inference");

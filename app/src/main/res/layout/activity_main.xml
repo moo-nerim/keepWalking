@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,75 +12,97 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="270dp"
         android:layout_height="270dp"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:background="@drawable/drawable_circle_dark_blue"
         android:indeterminate="false"
         android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/drawable_circle_yellow"
-        android:rotation="-90" />
+        android:rotation="-90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <EditText-->
-<!--        android:id="@+id/editTextMinute"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_above="@+id/textViewTime"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginBottom="10dp"-->
-<!--        android:gravity="center"-->
-<!--        android:hint="@string/hint_minute"-->
-<!--        android:inputType="number"-->
-<!--        android:maxLength="15"-->
-<!--        android:maxLines="1"-->
-<!--        android:minEms="5"-->
-<!--        android:text="1"-->
-<!--        android:textColor="@color/colorYellow"-->
-<!--        android:textColorHint="@color/colorYellow" />-->
+    <!--    <EditText-->
+    <!--        android:id="@+id/editTextMinute"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_above="@+id/textViewTime"-->
+    <!--        android:layout_centerHorizontal="true"-->
+    <!--        android:layout_marginBottom="10dp"-->
+    <!--        android:gravity="center"-->
+    <!--        android:hint="@string/hint_minute"-->
+    <!--        android:inputType="number"-->
+    <!--        android:maxLength="15"-->
+    <!--        android:maxLines="1"-->
+    <!--        android:minEms="5"-->
+    <!--        android:text="1"-->
+    <!--        android:textColor="@color/colorYellow"-->
+    <!--        android:textColorHint="@color/colorYellow" />-->
 
     <TextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:text="00:01:00"
         android:textColor="@color/colorYellow"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_output"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="427dp"
+        android:layout_height="87dp"
         android:layout_gravity="center"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="100dp"
+        android:text="hello"
         android:textColor="@color/colorYellow"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewReset"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_below="@+id/textViewTime"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_marginTop="30dp"
         android:src="@drawable/icon_reset"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewTime"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewStartStop"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/progressBarCircle"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:src="@drawable/icon_start" />
+        android:src="@drawable/icon_start"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progressBarCircle" />
 
     <ImageView
         android:id="@+id/imageViewShare"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@id/progressBarCircle"
         android:layout_marginLeft="350dp"
         android:layout_marginTop="-400dp"
-        android:src="@drawable/share_ico" />
+        android:src="@drawable/share_ico"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressBarCircle" />
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

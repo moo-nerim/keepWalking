@@ -4,6 +4,7 @@ import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -52,13 +53,15 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
+    public static Context cont;
+
     //Using the Accelometer & Gyroscoper
     private SensorManager mSensorManager;
 
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
-//    private Sensor mGgyroSensor = null;
-    private Sensor mGgyroSensor,mAccelometerSensor,mLinearAcceleration;
+    //    private Sensor mGgyroSensor = null;
+    private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration;
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
@@ -85,11 +88,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String TAG = "MainActivity";
     private static List<Float> accX, accY, accZ;
     private static List<Float> gyroX, gyroY, gyroZ;
-    private static List<Float> lx,ly,lz;
+    private static List<Float> lx, ly, lz;
 
     private TextView walkingTextView;
 
-    private LineGraphSeries<DataPoint> mSeriesAccelX,mSeriesAccelY,mSeriesAccelZ;
+    private LineGraphSeries<DataPoint> mSeriesAccelX, mSeriesAccelY, mSeriesAccelZ;
     private GraphView mGraphAccel;
     private double graphLastAccelXValue = 10d;
     private GraphView line_graph;
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
 
-    private long timeCountInMilliSeconds = 3000;
+    private long timeCountInMilliSeconds = 10000;
 
     private enum TimerStatus {
         STARTED,
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ly = new ArrayList<>();
         lz = new ArrayList<>();
 
-        Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
+        Log.e("getKeyHash", "" + getKeyHash(MainActivity.this));
 
         classifier = new ActivityClassifier(getApplicationContext());
 
@@ -222,6 +225,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        mGraphAccel.addSeries(mSeriesAccelX);
 //        mGraphAccel.addSeries(mSeriesAccelY);
 //        mGraphAccel.addSeries(mSeriesAccelZ);
+
+        cont = this;
     }
 
     //**********************
@@ -361,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
+            walkingTextView.setText(null);
             // call to initialize the progress bar values
             setProgressBarValues();
             // showing the reset icon
@@ -374,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this,mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
         } else {
             a = 0;
 
@@ -413,7 +419,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
 
+                predictActivity(); // 모델 학습
                 mSensorManager.unregisterListener(MainActivity.this);
+
+                // MainActivity2로 전환
+                Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+                startActivity(intent);
             }
 
         }.start();
@@ -464,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     + "           [Y]:" + String.format("%.4f", event.values[1])
                     + "           [Z]:" + String.format("%.4f", event.values[2]));
 
-        } else if(sensor.getType() == Sensor.TYPE_GYROSCOPE) {
+        } else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             gyroX.add(event.values[0]);
             gyroY.add(event.values[1]);
             gyroZ.add(event.values[2]);
@@ -476,13 +487,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                     + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                     + "           [dt]: " + String.format("%.4f", dt));
-        }
-        else{
+        } else {
             lx.add(event.values[0]);
             ly.add(event.values[1]);
             lz.add(event.values[2]);
         }
-        predictActivity();
+//        predictActivity();
 
 
         Log.e("Log", "acc크기: " + accX.size());
@@ -592,15 +602,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             data.addAll(gyroY.subList(0, TIME_STAMP));
             data.addAll(gyroZ.subList(0, TIME_STAMP));
 
-            data.addAll(lx.subList(0,TIME_STAMP));
-            data.addAll(ly.subList(0,TIME_STAMP));
-            data.addAll(lz.subList(0,TIME_STAMP));
+            data.addAll(lx.subList(0, TIME_STAMP));
+            data.addAll(ly.subList(0, TIME_STAMP));
+            data.addAll(lz.subList(0, TIME_STAMP));
 
             results = classifier.predictProbabilities(toFloatArray(data));
             Log.e("Log", "predictActivity: " + Arrays.toString(results));
 
-            // ??
-            walkingTextView.setText("정상, 비정상: \t" + results[0]+"  "+results[1]);
+            judgement(results[0], results[1]);
 
             data.clear();
             accX.clear();
@@ -618,6 +627,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
+    // Normal, abnormal judgment
+    private void judgement(float result1, float result2) {
+        if (result1 >= result2) {
+            walkingTextView.setText("정상입니다🤓 \t" + results[0]);
+        }
+        else{
+            walkingTextView.setText("비정상입니다😂 \t" + results[1]);
+        }
+    }
+
+
     private float round(float value, int decimal_places) {
         BigDecimal bigDecimal = new BigDecimal(Float.toString(value));
         bigDecimal = bigDecimal.setScale(decimal_places, BigDecimal.ROUND_HALF_UP);
@@ -632,5 +652,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return array;
     }
-
 }

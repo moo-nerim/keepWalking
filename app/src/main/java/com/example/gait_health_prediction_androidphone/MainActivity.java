@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
-//    private Sensor mAccelometerSensor = null;
+    private SensorEventListener mLinLis;
 
     //Roll and Pitch
     private double pitch;
@@ -386,8 +386,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             timerStatus = TimerStatus.STOPPED;
             stopCountDownTimer();
 
-            mSensorManager.unregisterListener(mGyroLis);
-            mSensorManager.unregisterListener(mAccLis);
+            mSensorManager.unregisterListener(this);
         }
     }
 
@@ -414,8 +413,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
 
-                mSensorManager.unregisterListener(mGyroLis);
-                mSensorManager.unregisterListener(mAccLis);
+                mSensorManager.unregisterListener(MainActivity.this);
             }
 
         }.start();
@@ -602,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.e("Log", "predictActivity: " + Arrays.toString(results));
 
             // ??
-            walkingTextView.setText("Walking: \t" + results[0]);
+            walkingTextView.setText("정상, 비정상: \t" + results[0]+"  "+results[1]);
 
             data.clear();
             accX.clear();

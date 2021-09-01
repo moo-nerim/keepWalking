@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class ActivityClassifier {
 
-    private static final String MODEL_FILE = "frozen_final2.pb";
+    private static final String MODEL_FILE = "frozen_har_model.pb";
     private static final String INPUT_NODE = "lstm_1_input";
     private static final String[] OUTPUT_NODES = {"output/Sigmoid"};
     private static final String OUTPUT_NODE = "output/Sigmoid";

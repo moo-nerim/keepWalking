@@ -3,14 +3,18 @@ package com.example.gait_health_prediction_androidphone;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.ArrayList;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -34,7 +38,7 @@ public class MainActivity2 extends AppCompatActivity {
         mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
         mSeriesAccelY = initSeries(Color.RED, "Y");
         mSeriesAccelZ = initSeries(Color.GREEN, "Z");
-//        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
+        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
 
         //그래프에 x,y,z 추가
         mGraphAccel.addSeries(mSeriesAccelX);
@@ -44,7 +48,26 @@ public class MainActivity2 extends AppCompatActivity {
         xValue = (TextView) findViewById(R.id.xValue);
         yValue = (TextView) findViewById(R.id.yValue);
         zValue = (TextView) findViewById(R.id.zValue);
-        // *******
+
+        // 데이터 수신
+        Intent intent = getIntent();
+        ArrayList<Float> data = (ArrayList<Float>) intent.getSerializableExtra("data");
+
+        float x, y, z;
+        x = data.get(120);
+        y = data.get(250);
+        z = data.get(140);
+
+        xValue.setText("xValue: " + x);
+        yValue.setText("yValue: " + y);
+        zValue.setText("zValue: " + z);
+
+        graphLastAccelXValue += 0.05d;
+
+        mSeriesAccelX.appendData(new DataPoint(graphLastAccelXValue,x),true,100);
+        mSeriesAccelY.appendData(new DataPoint(graphLastAccelXValue,y),true,100);
+        mSeriesAccelZ.appendData(new DataPoint(graphLastAccelXValue,z),true,100);
+        Log.e("Log", String.valueOf(data));
     }
 
     // Normal, abnormal judgment

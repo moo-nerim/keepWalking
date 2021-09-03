@@ -40,6 +40,7 @@ import com.kakao.network.ErrorResult;
 import com.kakao.network.callback.ResponseCallback;
 import com.kakao.util.helper.log.Logger;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -377,10 +378,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 predictActivity(); // 모델 학습
                 mSensorManager.unregisterListener(MainActivity.this);
-
-                // MainActivity2로 전환
-                Intent intent = new Intent(MainActivity.this,MainActivity2.class);
-                startActivity(intent);
             }
 
         }.start();
@@ -564,6 +561,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             results = classifier.predictProbabilities(toFloatArray(data));
             Log.e("Log", "predictActivity: " + Arrays.toString(results));
+
+            // MainActivity2로 전환
+            Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+
+            intent.putExtra("data", (Serializable) data);
+            startActivity(intent);
 
             Context hell = new MainActivity2();
             // MainActivity2 judgement() 호출

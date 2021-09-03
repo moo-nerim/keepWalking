@@ -53,6 +53,7 @@ public class MainActivity2 extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<Float> data = (ArrayList<Float>) intent.getSerializableExtra("data");
 
+        // here
         float x, y, z;
         x = data.get(120);
         y = data.get(250);

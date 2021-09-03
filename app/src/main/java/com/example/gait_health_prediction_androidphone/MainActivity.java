@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
-    public static Context cont;
+    public static Context context_main1;
 
     //Using the Accelometer & Gyroscoper
     private SensorManager mSensorManager;
@@ -90,12 +90,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static List<Float> gyroX, gyroY, gyroZ;
     private static List<Float> lx, ly, lz;
 
-    private TextView walkingTextView;
-
-    private LineGraphSeries<DataPoint> mSeriesAccelX, mSeriesAccelY, mSeriesAccelZ;
-    private GraphView mGraphAccel;
-    private double graphLastAccelXValue = 10d;
-    private GraphView line_graph;
+    public TextView walkingTextView;
     //*************************
 
     //    권한
@@ -216,47 +211,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             });
         });
-//        mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
-//        mSeriesAccelY = initSeries(Color.RED, "Y");
-//        mSeriesAccelZ = initSeries(Color.GREEN, "Z");
-////        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
-//
-//        //그래프에 x,y,z 추가
-//        mGraphAccel.addSeries(mSeriesAccelX);
-//        mGraphAccel.addSeries(mSeriesAccelY);
-//        mGraphAccel.addSeries(mSeriesAccelZ);
-
-        cont = this;
+        context_main1 = this;
     }
-
-    //**********************
-    //그래프 초기화
-//    public GraphView initGraph(int id, String title) {
-//        GraphView graph = findViewById(id);
-//        //데이터가 늘어날때 x축 scroll이 생기도록
-//        graph.getViewport().setXAxisBoundsManual(true);
-//        graph.getViewport().setMinX(0);
-//        graph.getViewport().setMaxX(5);
-//        graph.getGridLabelRenderer().setLabelVerticalWidth(100);
-//        graph.setTitle(title);
-//        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
-//        graph.getLegendRenderer().setVisible(true);
-//        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-//        return graph;
-//    }
-
-    //x,y,z 데이터 그래프 추가
-//    public LineGraphSeries<DataPoint> initSeries(int color, String title){
-//        LineGraphSeries<DataPoint> series;
-//        series = new LineGraphSeries<>();
-//        series.setDrawDataPoints(true);
-//        series.setDrawBackground(true);
-//        series.setColor(color);
-//        series.setTitle(title);
-//        return series;
-//    }
-
-    // *******************
 
     public static String getKeyHash(final Context context) {
         PackageManager pm = context.getPackageManager();
@@ -366,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
-            walkingTextView.setText(null);
+//            walkingTextView.setText(null);
             // call to initialize the progress bar values
             setProgressBarValues();
             // showing the reset icon
@@ -609,7 +565,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             results = classifier.predictProbabilities(toFloatArray(data));
             Log.e("Log", "predictActivity: " + Arrays.toString(results));
 
-            judgement(results[0], results[1]);
+            Context hell = new MainActivity2();
+            // MainActivity2 judgement() 호출
+            ((MainActivity2) hell).judgement(results[0], results[1]);
 
             data.clear();
             accX.clear();
@@ -627,15 +585,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-    // Normal, abnormal judgment
-    private void judgement(float result1, float result2) {
-        if (result1 >= result2) {
-            walkingTextView.setText("정상입니다🤓 \t" + results[0]);
-        }
-        else{
-            walkingTextView.setText("비정상입니다😂 \t" + results[1]);
-        }
-    }
+//    // Normal, abnormal judgment
+//    private void judgement(float result1, float result2) {
+//        if (result1 >= result2) {
+//            walkingTextView.setText("정상입니다🤓 \t" + results[0]);
+//        }
+//        else{
+//            walkingTextView.setText("비정상입니다😂 \t" + results[1]);
+//        }
+//    }
 
 
     private float round(float value, int decimal_places) {

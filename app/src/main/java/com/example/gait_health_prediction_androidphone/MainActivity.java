@@ -565,7 +565,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // MainActivity2로 전환
             Intent intent = new Intent(MainActivity.this,MainActivity2.class);
 
-            intent.putExtra("data", (Serializable) data);
+//            intent.putExtra("data", (Serializable) data);
+
+            intent.putExtra("accX", (Serializable) accX);
+            intent.putExtra("accY", (Serializable) accY);
+            intent.putExtra("accZ", (Serializable) accZ);
+
+            intent.putExtra("gyroX", (Serializable) gyroX);
+            intent.putExtra("gyroY", (Serializable) gyroY);
+            intent.putExtra("gyroZ", (Serializable) gyroZ);
+
+            intent.putExtra("lx", (Serializable) lx);
+            intent.putExtra("ly", (Serializable) ly);
+            intent.putExtra("lz", (Serializable) lz);
+
             startActivity(intent);
 
             Context hell = new MainActivity2();

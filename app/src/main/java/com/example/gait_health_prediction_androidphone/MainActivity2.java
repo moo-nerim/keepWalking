@@ -53,22 +53,39 @@ public class MainActivity2 extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<Float> data = (ArrayList<Float>) intent.getSerializableExtra("data");
 
+        ArrayList<Float> accX = (ArrayList<Float>) intent.getSerializableExtra("accX");
+        ArrayList<Float> accY = (ArrayList<Float>) intent.getSerializableExtra("accY");
+        ArrayList<Float> accZ = (ArrayList<Float>) intent.getSerializableExtra("accZ");
+
+        ArrayList<Float> gyroX = (ArrayList<Float>) intent.getSerializableExtra("gyroX");
+        ArrayList<Float> gyroY = (ArrayList<Float>) intent.getSerializableExtra("gyroY");
+        ArrayList<Float> gyroZ = (ArrayList<Float>) intent.getSerializableExtra("gyroZ");
+
+        ArrayList<Float> lx = (ArrayList<Float>) intent.getSerializableExtra("lx");
+        ArrayList<Float> ly = (ArrayList<Float>) intent.getSerializableExtra("ly");
+        ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
+
+        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
+
         // here
-        float x, y, z;
-        x = data.get(120);
-        y = data.get(250);
-        z = data.get(140);
+        for (int i = 0; i < accX.size(); i++) {
+            float x, y, z;
+            x = accX.get(i);
+            y = accY.get(i);
+            z = accZ.get(i);
 
-        xValue.setText("xValue: " + x);
-        yValue.setText("yValue: " + y);
-        zValue.setText("zValue: " + z);
+            xValue.setText("xValue: " + x);
+            yValue.setText("yValue: " + y);
+            zValue.setText("zValue: " + z);
 
-        graphLastAccelXValue += 0.05d;
+            graphLastAccelXValue += 0.05d;
 
-        mSeriesAccelX.appendData(new DataPoint(graphLastAccelXValue,x),true,100);
-        mSeriesAccelY.appendData(new DataPoint(graphLastAccelXValue,y),true,100);
-        mSeriesAccelZ.appendData(new DataPoint(graphLastAccelXValue,z),true,100);
-        Log.e("Log", String.valueOf(data));
+            mSeriesAccelX.appendData(new DataPoint(graphLastAccelXValue, x), true, 100);
+            mSeriesAccelY.appendData(new DataPoint(graphLastAccelXValue, y), true, 100);
+            mSeriesAccelZ.appendData(new DataPoint(graphLastAccelXValue, z), true, 100);
+        }
+
+//        Log.e("Log", String.valueOf(data));
     }
 
     // Normal, abnormal judgment

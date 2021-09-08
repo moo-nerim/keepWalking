@@ -59,6 +59,7 @@ dependencies {
 
     implementation group: 'com.kakao.sdk', name: 'kakaolink', version: project.KAKAO_SDK_VERSION
     implementation 'com.jjoe64:graphview:4.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation('com.amazonaws:aws-android-sdk-mobile-client:2.8.+@aar') { transitive = true }
     implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.8.+@aar') { transitive = true }

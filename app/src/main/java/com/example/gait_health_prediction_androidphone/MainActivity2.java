@@ -1,16 +1,20 @@
 package com.example.gait_health_prediction_androidphone;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -19,6 +23,7 @@ import java.util.ArrayList;
 public class MainActivity2 extends AppCompatActivity {
 
     public static Context context_main2;
+    private LineChart chart;
 
     // Graph 그리기
     private LineGraphSeries<DataPoint> mSeriesAccelX, mSeriesAccelY, mSeriesAccelZ;
@@ -34,24 +39,9 @@ public class MainActivity2 extends AppCompatActivity {
 
         context_main2 = this;
 
-        // ******
-        mSeriesAccelX = initSeries(Color.BLUE, "X"); //라인 그래프를 그림
-        mSeriesAccelY = initSeries(Color.RED, "Y");
-        mSeriesAccelZ = initSeries(Color.GREEN, "Z");
-        mGraphAccel = initGraph(R.id.graph, "X, Y, Z direction Acceleration");
-
-        //그래프에 x,y,z 추가
-        mGraphAccel.addSeries(mSeriesAccelX);
-        mGraphAccel.addSeries(mSeriesAccelY);
-        mGraphAccel.addSeries(mSeriesAccelZ);
-
-        xValue = (TextView) findViewById(R.id.xValue);
-        yValue = (TextView) findViewById(R.id.yValue);
-        zValue = (TextView) findViewById(R.id.zValue);
-
         // 데이터 수신
         Intent intent = getIntent();
-        ArrayList<Float> data = (ArrayList<Float>) intent.getSerializableExtra("data");
+//        ArrayList<Float> data = (ArrayList<Float>) intent.getSerializableExtra("data");
 
         ArrayList<Float> accX = (ArrayList<Float>) intent.getSerializableExtra("accX");
         ArrayList<Float> accY = (ArrayList<Float>) intent.getSerializableExtra("accY");
@@ -65,25 +55,60 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> ly = (ArrayList<Float>) intent.getSerializableExtra("ly");
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
 
-        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
+//        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
 
         // here
-        for (int i = 0; i < accX.size(); i++) {
-            float x, y, z;
+
+        chart = findViewById(R.id.chart);
+        ArrayList<Entry> entry1 = new ArrayList<>();
+        ArrayList<Entry> entry2 = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            float val = (float) (Math.random() * 10);
+            float x, y;
             x = accX.get(i);
             y = accY.get(i);
-            z = accZ.get(i);
-
-            xValue.setText("xValue: " + x);
-            yValue.setText("yValue: " + y);
-            zValue.setText("zValue: " + z);
-
-            graphLastAccelXValue += 0.05d;
-
-            mSeriesAccelX.appendData(new DataPoint(graphLastAccelXValue, x), true, 100);
-            mSeriesAccelY.appendData(new DataPoint(graphLastAccelXValue, y), true, 100);
-            mSeriesAccelZ.appendData(new DataPoint(graphLastAccelXValue, z), true, 100);
+            entry1.add(new Entry(i, val));
+            entry2.add(new Entry(i, val + 10));
         }
+
+        LineDataSet set1,set2;
+        set1 = new LineDataSet(entry1, "사용자");
+        set2 = new LineDataSet(entry2, "정상인");
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+        dataSets.add(set2);
+
+        LineData dat = new LineData(dataSets);
+
+        // ******그래프 디자인*********
+        // 사용자 측정 Graph
+        set1.setColor(Color.rgb(153, 204, 255));
+        set1.setCircleColor(Color.rgb(153, 204, 255));
+        set1.setCircleRadius(3f);
+        set1.setLineWidth(2);
+        set1.setDrawFilled(true); // 차트 아래 fill(채우기) 설정
+        set1.setFillColor(Color.rgb(212, 248, 253));
+        set1.setValueTextSize(10f);
+
+        // 정상 Graph
+        set2.setColor(Color.rgb(255, 51, 153));
+        set2.setCircleColor(Color.rgb(255, 51, 153));
+        set2.setCircleRadius(3f);
+        set2.setLineWidth(2);
+        set2.setValueTextSize(10f);
+
+        // y축 오른쪽 Label remove
+        YAxis yAxisRight = chart.getAxisRight(); //Y축의 오른쪽면 설정
+        yAxisRight.setDrawLabels(false);
+        yAxisRight.setDrawAxisLine(false);
+        yAxisRight.setDrawGridLines(false);
+        //*************************
+
+        chart.getDescription().setEnabled(false); // 하단 regend remove
+        chart.setData(dat);
+
 
 //        Log.e("Log", String.valueOf(data));
     }
@@ -96,33 +121,4 @@ public class MainActivity2 extends AppCompatActivity {
             ((MainActivity) MainActivity.context_main1).walkingTextView.setText("비정상입니다😂 \t" + result2);
         }
     }
-
-    //**********************
-    //그래프 초기화
-    public GraphView initGraph(int id, String title) {
-        GraphView graph = findViewById(id);
-        //데이터가 늘어날때 x축 scroll이 생기도록
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(5);
-        graph.getGridLabelRenderer().setLabelVerticalWidth(100);
-        graph.setTitle(title);
-        graph.getGridLabelRenderer().setHorizontalLabelsVisible(false);
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-        return graph;
-    }
-
-    // x,y,z 데이터 그래프 추가
-    public LineGraphSeries<DataPoint> initSeries(int color, String title) {
-        LineGraphSeries<DataPoint> series;
-        series = new LineGraphSeries<>();
-        series.setDrawDataPoints(true);
-        series.setDrawBackground(true);
-        series.setColor(color);
-        series.setTitle(title);
-        return series;
-    }
-
-    // *******************
 }

@@ -16,37 +16,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-<!--        android:theme="@style/Theme.AppCompat.NoActionBar"-->
-<!--        <activity android:name=".MainActivity2"></activity>-->
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        <activity android:name=".MainActivity2"></activity>
 
-<!--        <service-->
-<!--            android:name=".GaitService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true" />-->
+        <service
+            android:name=".GaitService"
+            android:enabled="true"
+            android:exported="true" />
 
-<!--        <activity android:name=".MainActivity">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-<!--                <data-->
-<!--                    android:host="@string/kakaolink_host"-->
-<!--                    android:scheme="@string/kakao_scheme" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-
-        <activity
-            android:name=".AuthenticationActivity"
-            android:noHistory="true">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -55,6 +39,22 @@
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
+
+<!--        <activity-->
+<!--            android:name=".AuthenticationActivity"-->
+<!--            android:noHistory="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <data-->
+<!--                    android:host="@string/kakaolink_host"-->
+<!--                    android:scheme="@string/kakao_scheme" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

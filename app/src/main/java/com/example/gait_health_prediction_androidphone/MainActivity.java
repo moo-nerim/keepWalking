@@ -5,9 +5,8 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -21,14 +20,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -41,9 +36,6 @@ import com.kakao.network.callback.ResponseCallback;
 import com.kakao.util.helper.log.Logger;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -117,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView imageViewReset;
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
-    private ImageView kakaoLinkBtn;
+    public ImageView kakaoLinkBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,9 +165,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         ly = new ArrayList<>();
         lz = new ArrayList<>();
 
-        Log.e("getKeyHash", "" + getKeyHash(MainActivity.this));
+//        Log.e("getKeyHash", "" + getKeyHash(MainActivity.this));
 
         classifier = new ActivityClassifier(getApplicationContext());
+//        ShareKakao sh = new ShareKakao();
+//        sh.click();
 
         kakaoLinkBtn.setOnClickListener(v -> {
             FeedTemplate params = FeedTemplate
@@ -215,27 +209,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         context_main1 = this;
     }
 
-    public static String getKeyHash(final Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-            if (packageInfo == null)
-                return null;
-
-            for (Signature signature : packageInfo.signatures) {
-                try {
-                    MessageDigest md = MessageDigest.getInstance("SHA");
-                    md.update(signature.toByteArray());
-                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//      HashKey 얻기
+//    public static String getKeyHash(final Context context) {
+//        PackageManager pm = context.getPackageManager();
+//        try {
+//            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+//            if (packageInfo == null)
+//                return null;
+//
+//            for (Signature signature : packageInfo.signatures) {
+//                try {
+//                    MessageDigest md = MessageDigest.getInstance("SHA");
+//                    md.update(signature.toByteArray());
+//                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
+//                } catch (NoSuchAlgorithmException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
     // 계정 권한 허용
     public void checkPermission() {
@@ -322,6 +317,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * method to start and stop count down timer
      */
     private void startStop() {
+        ImageView iv = findViewById(R.id.imageView1);
+        final AnimationDrawable drawable = (AnimationDrawable) iv.getBackground();
         if (timerStatus == TimerStatus.STOPPED) {
 //            walkingTextView.setText(null);
             // call to initialize the progress bar values
@@ -338,6 +335,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
+
+            drawable.start();
         } else {
             a = 0;
 
@@ -350,6 +349,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             stopCountDownTimer();
 
             mSensorManager.unregisterListener(this);
+
+            drawable.stop();
         }
     }
 
@@ -563,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.e("Log", "predictActivity: " + Arrays.toString(results));
 
             // MainActivity2로 전환
-            Intent intent = new Intent(MainActivity.this,MainActivity2.class);
+            Intent intent = new Intent(MainActivity.this, MainActivity2.class);
 
 //            intent.putExtra("data", (Serializable) data);
 
@@ -579,11 +580,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             intent.putExtra("ly", (Serializable) ly);
             intent.putExtra("lz", (Serializable) lz);
 
-            startActivity(intent);
+            String result = judgement(results[0], results[1]);
+            intent.putExtra("result", result);
 
-            Context hell = new MainActivity2();
+            startActivity(intent);
             // MainActivity2 judgement() 호출
-            ((MainActivity2) hell).judgement(results[0], results[1]);
 
             data.clear();
             accX.clear();
@@ -601,21 +602,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }
 
-//    // Normal, abnormal judgment
-//    private void judgement(float result1, float result2) {
-//        if (result1 >= result2) {
-//            walkingTextView.setText("정상입니다🤓 \t" + results[0]);
-//        }
-//        else{
-//            walkingTextView.setText("비정상입니다😂 \t" + results[1]);
-//        }
-//    }
-
-
-    private float round(float value, int decimal_places) {
-        BigDecimal bigDecimal = new BigDecimal(Float.toString(value));
-        bigDecimal = bigDecimal.setScale(decimal_places, BigDecimal.ROUND_HALF_UP);
-        return bigDecimal.floatValue();
+    // Normal, abnormal judgment
+    private String judgement(float result1, float result2) {
+        if (result1 >= result2) {
+            return "정상입니다🤓 \t" + results[0];
+        } else {
+            return "비정상입니다😂 \t" + results[1];
+        }
     }
 
     private float[] toFloatArray(List<Float> data) {

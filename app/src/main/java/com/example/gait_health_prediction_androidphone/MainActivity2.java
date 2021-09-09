@@ -31,11 +31,13 @@ public class MainActivity2 extends AppCompatActivity {
     private double graphLastAccelXValue = 10d;
     private GraphView line_graph;
     TextView xValue, yValue, zValue;
+    private TextView walkingTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        walkingTextView = findViewById(R.id.tv_output);
 
         context_main2 = this;
 
@@ -54,6 +56,9 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lx = (ArrayList<Float>) intent.getSerializableExtra("lx");
         ArrayList<Float> ly = (ArrayList<Float>) intent.getSerializableExtra("ly");
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
+
+        String result = intent.getStringExtra("result");
+        walkingTextView.setText(result);
 
 //        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
 
@@ -113,12 +118,13 @@ public class MainActivity2 extends AppCompatActivity {
 //        Log.e("Log", String.valueOf(data));
     }
 
-    // Normal, abnormal judgment
-    public void judgement(float result1, float result2) {
-        if (result1 >= result2) {
-            ((MainActivity) MainActivity.context_main1).walkingTextView.setText("정상입니다🤓 \t" + result1);
-        } else {
-            ((MainActivity) MainActivity.context_main1).walkingTextView.setText("비정상입니다😂 \t" + result2);
-        }
-    }
+//    // Normal, abnormal judgment
+//    public void judgement(float result1, float result2) {
+//        TextView walkingTextView = findViewById(R.id.tv_output);
+//        if (result1 >= result2) {
+//            walkingTextView.setText("정상입니다🤓 \t" + result1);
+//        } else {
+//            walkingTextView.setText("비정상입니다😂 \t" + result2);
+//        }
+//    }
 }

@@ -2,8 +2,12 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android"
     android:oneshot="false" >
 
-    <item android:drawable="@drawable/rightfoot"
-        android:duration="1000" />
-    <item android:drawable="@drawable/leftfoot"
-        android:duration="1000" />
+    <item android:drawable="@drawable/walk7"
+        android:duration="800" />
+    <item android:drawable="@drawable/walk8"
+        android:duration="800" />
+    <item android:drawable="@drawable/walk9"
+        android:duration="800" />
+    <item android:drawable="@drawable/walk10"
+        android:duration="800" />
 </animation-list>

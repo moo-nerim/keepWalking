@@ -49,7 +49,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="00:01:00"
-        android:textColor="@color/colorYellow"
+        android:textColor="#443433"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -76,7 +76,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/icon_start"
+        android:src="@drawable/ic_start"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBarCircle" />
@@ -86,20 +86,41 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="340dp"
-        android:layout_marginTop="168dp"
-        android:src="@drawable/share_ico"
+        android:layout_marginTop="44dp"
+        android:src="@drawable/share_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="199dp"
-        android:layout_height="184dp"
-        android:layout_marginStart="104dp"
-        android:layout_marginTop="288dp"
+        android:layout_width="92dp"
+        android:layout_height="146dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="276dp"
         android:background="@drawable/anim"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="442dp"
+        android:layout_height="703dp"
+        android:layout_marginTop="260dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/white" />
+
+    <ImageView
+        android:id="@+id/hamburger_menu"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="44dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_action_name" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

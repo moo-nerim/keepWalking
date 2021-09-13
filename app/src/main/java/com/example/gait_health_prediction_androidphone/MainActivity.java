@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static List<Float> lx, ly, lz;
 
     public TextView walkingTextView;
+    private ImageView run;
     //*************************
 
     //    권한
@@ -255,10 +257,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void initViews() {
         progressBarCircle = findViewById(R.id.progressBarCircle);
         textViewTime = findViewById(R.id.textViewTime);
+        textViewTime.setTypeface(null, Typeface.BOLD);
         imageViewReset = findViewById(R.id.imageViewReset);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
         walkingTextView = findViewById(R.id.tv_output);
+        run = findViewById(R.id.imageView3);
     }
 
     /**
@@ -337,6 +341,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
 
             drawable.start();
+//            int[] location = new int[2];
+//
+//            run.getLocationOnScreen(location);
+
+//            ArcAnimator.createArcAnimator(run,location[0], location[1], 360, Side.LEFT)
+//                    .setDuration(timeCountInMilliSeconds)
+//                    .start();
+
+//            Path path = new Path();
+//            run.setX(200);
+//            run.setY(200);
+//            path.addCircle(run.getX(), run.getY(), 200, Path.Direction.CW);
+//
+//            ViewPathAnimator.animate(run, path, 1000/ 30, 1);
+
         } else {
             a = 0;
 

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.bumptech.glide.Glide;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
     public ImageView kakaoLinkBtn;
+    private ImageView walkingman;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,7 +264,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
         walkingTextView = findViewById(R.id.tv_output);
-        run = findViewById(R.id.imageView3);
+//        run = findViewById(R.id.imageView3);
+        walkingman = findViewById(R.id.imageView4);
     }
 
     /**
@@ -341,6 +344,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
 
             drawable.start();
+
+            Glide.with(this).load(R.raw.walkingman).into(walkingman);
 //            int[] location = new int[2];
 //
 //            run.getLocationOnScreen(location);

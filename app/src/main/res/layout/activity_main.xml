@@ -95,8 +95,8 @@
         android:id="@+id/imageView1"
         android:layout_width="93dp"
         android:layout_height="149dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="304dp"
+        android:layout_marginStart="284dp"
+        android:layout_marginTop="568dp"
         android:background="@drawable/anim"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -120,23 +120,23 @@
         app:srcCompat="@drawable/back_star" />
 
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="51dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintStart_toStartOf="@+id/progressBarCircle"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:srcCompat="@drawable/run" />
-
-    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="411dp"
         android:layout_height="483dp"
-        android:layout_marginTop="408dp"
+        android:layout_marginTop="388dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/park" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="293dp"
+        android:layout_height="216dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="256dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@raw/walkingman" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

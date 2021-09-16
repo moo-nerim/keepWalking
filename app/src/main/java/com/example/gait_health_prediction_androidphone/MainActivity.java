@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView imageViewStartStop;
     private CountDownTimer countDownTimer;
     public ImageView kakaoLinkBtn;
-    private ImageView walkingman;
+    private ImageView frontwalking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             });
         });
         context_main1 = this;
+        Glide.with(this).load(R.drawable.frontwalking).into(frontwalking);
     }
 
 //      HashKey 얻기
@@ -265,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
         walkingTextView = findViewById(R.id.tv_output);
 //        run = findViewById(R.id.imageView3);
-        walkingman = findViewById(R.id.imageView4);
+        frontwalking = findViewById(R.id.imageView3);
     }
 
     /**
@@ -324,8 +325,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * method to start and stop count down timer
      */
     private void startStop() {
-        ImageView iv = findViewById(R.id.imageView1);
-        final AnimationDrawable drawable = (AnimationDrawable) iv.getBackground();
+//        ImageView iv = findViewById(R.id.imageView1);
+//        final AnimationDrawable drawable = (AnimationDrawable) iv.getBackground();
         if (timerStatus == TimerStatus.STOPPED) {
 //            walkingTextView.setText(null);
             // call to initialize the progress bar values
@@ -343,9 +344,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
 
-            drawable.start();
+//            drawable.start();
 
-            Glide.with(this).load(R.raw.walkingman).into(walkingman);
+//            Glide.with(this).load(R.drawable.frontwalking).into(frontwalking);
+            // gif stop
+            ((GifDrawable)frontwalking.getDrawable()).start();
+
 //            int[] location = new int[2];
 //
 //            run.getLocationOnScreen(location);
@@ -364,6 +368,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             a = 0;
 
+            // gif stop
+            ((GifDrawable)frontwalking.getDrawable()).stop();
+
             // hiding the reset icon
             imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
@@ -374,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             mSensorManager.unregisterListener(this);
 
-            drawable.stop();
+//            drawable.stop();
         }
     }
 

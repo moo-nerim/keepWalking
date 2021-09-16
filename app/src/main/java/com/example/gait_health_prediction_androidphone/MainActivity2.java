@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +59,7 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
 
         String result = intent.getStringExtra("result");
+        Log.e("정상/비정상 결과:",result);
         walkingTextView.setText(result);
 
 //        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());

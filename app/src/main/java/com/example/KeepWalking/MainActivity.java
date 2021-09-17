@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
     //    private Sensor mGgyroSensor = null;
-    private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration;
+    private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration, sensor_step_detector;
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static List<Float> lx, ly, lz;
 
     public TextView walkingTextView;
+    private TextView step_sensor;
+    int steps = 0;
     private ImageView run;
     //*************************
 
@@ -152,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
+        // Step count
+        sensor_step_detector = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
 
         // method call to initialize the views
         initViews();
@@ -269,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         walkingTextView = findViewById(R.id.tv_output);
 //        run = findViewById(R.id.imageView3);
         frontwalking = findViewById(R.id.imageView3);
+        step_sensor = findViewById(R.id.step_sensor);
     }
 
     /**
@@ -345,12 +350,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_NORMAL);
 
 //            drawable.start();
 
 //            Glide.with(this).load(R.drawable.frontwalking).into(frontwalking);
             // gif stop
-            ((GifDrawable)frontwalking.getDrawable()).start();
+            ((GifDrawable) frontwalking.getDrawable()).start();
 
 //            int[] location = new int[2];
 //
@@ -371,7 +377,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             a = 0;
 
             // gif stop
-            ((GifDrawable)frontwalking.getDrawable()).stop();
+            ((GifDrawable) frontwalking.getDrawable()).stop();
 
             // hiding the reset icon
             imageViewReset.setVisibility(View.GONE);
@@ -474,10 +480,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                     + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                     + "           [dt]: " + String.format("%.4f", dt));
-        } else {
+            
+        } else if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             lx.add(event.values[0]);
             ly.add(event.values[1]);
             lz.add(event.values[2]);
+            
+        } else { // 걸음수 측정
+            switch (event.sensor.getType()) {
+                case Sensor.TYPE_STEP_DETECTOR:
+                    step_sensor.setText("" + (++steps));
+                    break;
+            }
         }
 //        predictActivity();
 

@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:4.2.2"
+        classpath "com.android.tools.build:gradle:4.2.1"
         classpath 'com.google.gms:google-services:4.3.10'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -17,19 +17,15 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-         // Warning: this repository is going to shut down soon
+        jcenter() // Warning: this repository is going to shut down soon
+
         maven {
             url "https://maven.google.com"
         }
         maven {
             url "https://jitpack.io"
         }
-        maven { url "https://jitpack.io" }
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
 
 subprojects {
@@ -37,4 +33,8 @@ subprojects {
         mavenCentral()
         maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
     }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }

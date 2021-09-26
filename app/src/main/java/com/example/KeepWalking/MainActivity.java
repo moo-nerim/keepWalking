@@ -627,7 +627,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             intent.putExtra("ly", (Serializable) ly);
             intent.putExtra("lz", (Serializable) lz);
 
-            String result = judgement(results[0], results[1]);
+            String result = judgement(results[0]);
             intent.putExtra("result", result);
 
             startActivity(intent);
@@ -650,11 +650,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // Normal, abnormal judgment
-    private String judgement(float result1, float result2) {
-        if (result1 >= result2) {
+//    private String judgement(float result1, float result2) {
+//        if (result1 >= result2) {
+//            return "정상입니다🤓 \t" + results[0];
+//        } else {
+//            return "비정상입니다😂 \t" + results[1];
+//        }
+//    }
+
+    private String judgement(float result1) {
+        if (result1 > 0.5) {
             return "정상입니다🤓 \t" + results[0];
         } else {
-            return "비정상입니다😂 \t" + results[1];
+            return "비정상입니다😂 \t" + results[0];
         }
     }
 

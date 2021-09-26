@@ -11,7 +11,7 @@ public class ActivityClassifier {
     private static final String[] OUTPUT_NODES = {"output/Sigmoid"};
     private static final String OUTPUT_NODE = "output/Sigmoid";
     private static final long[] INPUT_SIZE = {1, 100, 9};
-    private static final int OUTPUT_SIZE = 2;
+    private static final int OUTPUT_SIZE = 1;
     private static final String TAG = null;
 
     static {

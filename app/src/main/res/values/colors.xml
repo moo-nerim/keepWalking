@@ -13,4 +13,6 @@
     <color name="colorAccent">#E55B08</color>
     <color name="colorBackground">#B6DBFF</color>
     <color name="colorYellow">#E55B08</color>
+
+    <color name="bg_logo">#575BD0</color>
 </resources>

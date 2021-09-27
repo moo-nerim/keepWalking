@@ -89,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public TextView walkingTextView;
     private TextView step_sensor;
-    int steps = 0;
+    private int mSteps = 0;
+    //리스너가 등록되고 난 후의 step count
+    private int mCounterSteps = 0;
     private ImageView run;
     //*************************
 
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
         // Step count
-        sensor_step_detector = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        sensor_step_detector = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
 
         // method call to initialize the views
         initViews();
@@ -350,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_GAME);
 
 //            drawable.start();
 
@@ -486,15 +488,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ly.add(event.values[1]);
             lz.add(event.values[2]);
             
-        } else { // 걸음수 측정
-            switch (event.sensor.getType()) {
-                case Sensor.TYPE_STEP_DETECTOR:
-                    step_sensor.setText("" + (++steps));
-                    break;
-            }
-        }
-//        predictActivity();
+        } if(event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){ // 걸음수 측정
 
+            //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
+            if (mCounterSteps < 1) {
+                // initial value
+                mCounterSteps = (int) event.values[0];
+            }
+            //리셋 안된 값 + 현재값 - 리셋 안된 값
+            mSteps = (int) event.values[0] - mCounterSteps;
+            step_sensor.setText(Integer.toString(mSteps));
+            Log.e("Log", "걸음수: " + mSteps);
+        }
+//        else { // 걸음수 측정
+//            switch (event.sensor.getType()) {
+//                case Sensor.TYPE_STEP_DETECTOR:
+//                    step_sensor.setText("" + (++steps));
+//                    break;
+//            }
+        predictActivity();
 
         Log.e("Log", "acc크기: " + accX.size());
         Log.e("Log", "gyro크기: " + gyroX.size());
@@ -627,7 +639,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             intent.putExtra("ly", (Serializable) ly);
             intent.putExtra("lz", (Serializable) lz);
 
-            String result = judgement(results[0]);
+            String result = judgement(results[0], results[1]);
             intent.putExtra("result", result);
 
             startActivity(intent);
@@ -650,19 +662,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // Normal, abnormal judgment
-//    private String judgement(float result1, float result2) {
-//        if (result1 >= result2) {
-//            return "정상입니다🤓 \t" + results[0];
-//        } else {
-//            return "비정상입니다😂 \t" + results[1];
-//        }
-//    }
-
-    private String judgement(float result1) {
-        if (result1 > 0.5) {
+    private String judgement(float result1, float result2) {
+        if (result1 >= result2) {
             return "정상입니다🤓 \t" + results[0];
         } else {
-            return "비정상입니다😂 \t" + results[0];
+            return "비정상입니다😂 \t" + results[1];
         }
     }
 

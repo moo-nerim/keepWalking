@@ -5,17 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_logo"
-    tools:context=".LoginActivity">
-
-
-    <ImageView
-        android:id="@+id/kakao_login_large_narrow"
-        android:layout_width="365dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="632dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/kakao_login_large_narrow"
-        tools:layout_editor_absoluteX="30dp"
-        tools:ignore="MissingConstraints" />
+    tools:context=".LogoActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

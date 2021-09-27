@@ -5,7 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2EAE7">
+    android:background="@color/bg_logo">
 
     <!--    <EditText-->
     <!--        android:id="@+id/editTextMinute"-->
@@ -125,5 +125,36 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.829" />
+
+    <shape
+        android:layout_width="352dp"
+        android:layout_height="650dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="44dp"
+        android:shape="rectangle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <stroke
+            android:width="3dp"
+            android:color="#FFFFFF" />
+
+        <corners
+            android:bottomLeftRadius="2dp"
+            android:bottomRightRadius="2dp"
+            android:topLeftRadius="2dp"
+            android:topRightRadius="2dp" />
+
+        <padding
+            android:bottom="2dp"
+            android:left="2dp"
+            android:right="2dp"
+            android:top="2dp" />
+
+    </shape>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

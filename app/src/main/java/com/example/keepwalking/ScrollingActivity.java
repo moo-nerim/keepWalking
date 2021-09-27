@@ -15,7 +15,7 @@ import android.view.MenuItem;
 
 import com.example.keepwalking.databinding.ActivityScrollingBinding;
 
-public class CalendarScroll extends AppCompatActivity {
+public class ScrollingActivity extends AppCompatActivity {
 
     private ActivityScrollingBinding binding;
 
@@ -25,11 +25,12 @@ public class CalendarScroll extends AppCompatActivity {
 
         binding = ActivityScrollingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
-        toolBarLayout.setTitle(getTitle());
+//        Toolbar toolbar = binding.toolbar;
+//        setSupportActionBar(toolbar);
+//        CollapsingToolbarLayout toolBarLayout = binding.toolbarLayout;
+//        toolBarLayout.setTitle(getTitle());
 
         FloatingActionButton fab = binding.fab;
         fab.setOnClickListener(new View.OnClickListener() {

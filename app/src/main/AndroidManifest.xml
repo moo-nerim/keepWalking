@@ -27,7 +27,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".LoginActivity">
+<!--        <activity android:name=".LoginActivity">-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
@@ -43,31 +43,27 @@
 <!--                    android:host="@string/kakaolink_host"-->
 <!--                    android:scheme="@string/kakao_scheme" />-->
 <!--            </intent-filter>-->
-        </activity>
+<!--        </activity>-->
 
-        <activity android:name=".CalendarActivity">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.VIEW" />-->
-
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--                <category android:name="android.intent.category.BROWSABLE" />-->
-
-<!--                <data-->
-<!--                    android:host="@string/kakaolink_host"-->
-<!--                    android:scheme="@string/kakao_scheme" />-->
-<!--            </intent-filter>-->
-        </activity>
-        <activity android:name=".CalendarScroll">
+        <activity android:name=".ScrollingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/kakaolink_host"
+                    android:scheme="@string/kakao_scheme" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".CalendarActivity">
         </activity>
 
         <meta-data

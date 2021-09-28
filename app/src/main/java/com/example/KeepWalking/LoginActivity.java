@@ -1,14 +1,10 @@
 package com.example.keepwalking;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.ImageView;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.kakao.auth.AuthType;
+import android.content.Intent;
+import android.os.Bundle;
+
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.KakaoSDK;
 import com.kakao.auth.Session;
@@ -17,71 +13,63 @@ import com.kakao.util.helper.log.Logger;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private ImageView loginV;
-    private SessionCallback sessionCallback = new SessionCallback();
-    Session session;
+    private SessionCallback callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        loginV = findViewById(R.id.kakao_login_large_narrow);
-//        logout = findViewById(R.id.logout);
+        //카카오톡 로그인 init
+        if (KakaoSDK.getAdapter() == null) {
+            KakaoSDK.init(new GlobalApplication.KakaoSDKAdapter());
+        }
 
-
-        session = Session.getCurrentSession();
-        session.addCallback(sessionCallback);
-
-        loginV.setOnClickListener(v -> {
-            if (Session.getCurrentSession().checkAndImplicitOpen()) {
-                Log.d("카카오 로그인", "onClick: 로그인 세션살아있음");
-                // 카카오 로그인 시도 (창이 안뜬다.)
-                sessionCallback.requestMe();
-            } else {
-                Log.d("카카오 로그인", "onClick: 로그인 세션끝남");
-                // 카카오 로그인 시도 (창이 뜬다.)
-                session.open(AuthType.KAKAO_LOGIN_ALL, this);
-            }
-        });
-
-//        logout.setOnClickListener(v -> {
-//            Log.d(TAG, "onCreate:click ");
-//            UserManagement.getInstance()
-//                    .requestLogout(new LogoutResponseCallback() {
-//                        @Override
-//                        public void onSessionClosed(ErrorResult errorResult) {
-//                            super.onSessionClosed(errorResult);
-//                            Log.d(TAG, "onSessionClosed: "+errorResult.getErrorMessage());
-//
-//                        }
-//                        @Override
-//                        public void onCompleteLogout() {
-//                            if (sessionCallback != null) {
-//                                Session.getCurrentSession().removeCallback(sessionCallback);
-//                            }
-//                            Log.d(TAG, "onCompleteLogout:logout ");
-//                        }
-//                    });
-//        });
+        /**
+         * 로그인 버튼을 클릭 했을시 access token을 요청하도록 설정한다.
+         *
+         * @param savedInstanceState 기존 session 정보가 저장된 객체
+         */
+        callback = new SessionCallback();
+        Session.getCurrentSession().addCallback(callback);
+        Session.getCurrentSession().checkAndImplicitOpen();
     }
 
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // 세션 콜백 삭제
-        Session.getCurrentSession().removeCallback(sessionCallback);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        // 카카오톡|스토리 간편로그인 실행 결과를 받아서 SDK로 전달
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data)) {
             return;
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Session.getCurrentSession().removeCallback(callback);
+    }
+
+//    private class SessionCallback implements ISessionCallback {
+//
+//        @Override
+//        public void onSessionOpened() {
+//            redirectSignupActivity();
+//        }
+//
+//        @Override
+//        public void onSessionOpenFailed(KakaoException exception) {
+//            if (exception != null) {
+//                Logger.e(exception);
+//            }
+//        }
+//    }
+
+    protected void redirectSignupActivity() {
+        //로그인이 완료된 후 이동하는 액티비티 지정
+        final Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

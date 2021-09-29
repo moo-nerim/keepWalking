@@ -70,4 +70,7 @@ dependencies {
     // calendar
     implementation 'com.github.applikeysolutions:cosmocalendar:1.0.4'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    // progressbar
+    implementation 'com.akexorcist:round-corner-progress-bar:2.1.2'
 }

@@ -1,11 +1,17 @@
 package com.example.keepwalking;
 
 import android.util.Log;
+import android.widget.Toast;
 
 //import com.google.firebase.database.DatabaseReference;
 //import com.google.firebase.database.FirebaseDatabase;
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
@@ -52,21 +58,42 @@ public class SessionCallback implements ISessionCallback {
                         Log.i("KAKAO_API", "사용자 아이디: " + result.getId());
                         String id = String.valueOf(result.getId());
                         UserAccount kakaoAccount = result.getKakaoAccount();
+
+                        // Firebase
+//                        databaseReference.child("KAKAOID").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                String value = snapshot.getValue(String.class);
+//
+//                                if (value != null) {
+//                                    // Toast.makeText(getApplicationContext(),"이미 존재하는 그룹명입니다.",Toast.LENGTH_SHORT).show();//토스메세지 출력
+//                                } else {
+//                                    //addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                // 디비를 가져오던중 에러 발생 시
+//                                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+//                            }
+//                        });
                         databaseReference.child("KAKAOID").push().setValue(id);
+
                         if (kakaoAccount != null) {
 
                             // 이메일
                             String email = kakaoAccount.getEmail();
                             Profile profile = kakaoAccount.getProfile();
-                            if (profile ==null){
+                            if (profile == null) {
                                 Log.d("KAKAO_API", "onSuccess:profile null ");
-                            }else{
-                                Log.d("KAKAO_API", "onSuccess:getProfileImageUrl "+profile.getProfileImageUrl());
-                                Log.d("KAKAO_API", "onSuccess:getNickname "+profile.getNickname());
+                            } else {
+                                Log.d("KAKAO_API", "onSuccess:getProfileImageUrl " + profile.getProfileImageUrl());
+                                Log.d("KAKAO_API", "onSuccess:getNickname " + profile.getNickname());
                             }
                             if (email != null) {
 
-                                Log.d("KAKAO_API", "onSuccess:email "+email);
+                                Log.d("KAKAO_API", "onSuccess:email " + email);
                             }
 
                             // 프로필
@@ -84,11 +111,12 @@ public class SessionCallback implements ISessionCallback {
                             } else {
                                 // 프로필 획득 불가
                             }
-                        }else{
+                        } else {
                             Log.i("KAKAO_API", "onSuccess: kakaoAccount null");
                         }
                     }
                 });
 
     }
+
 }

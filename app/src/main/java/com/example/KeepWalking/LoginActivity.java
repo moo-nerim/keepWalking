@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.KakaoSDK;
 import com.kakao.auth.Session;
@@ -32,7 +33,14 @@ public class LoginActivity extends AppCompatActivity {
          */
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
-        Session.getCurrentSession().checkAndImplicitOpen();
+        if (Session.getCurrentSession().checkAndImplicitOpen()) {
+            // 카카오 로그인 시도 (창이 안뜬다.)
+//            callback.requestMe();
+        } else {
+            Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, LoginActivity.this);
+        }
+//        redirectSignupActivity();
+//        Session.getCurrentSession().checkAndImplicitOpen();
     }
 
 
@@ -66,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 //        }
 //    }
 
-    protected void redirectSignupActivity() {
+    public void redirectSignupActivity() {
         //로그인이 완료된 후 이동하는 액티비티 지정
         final Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

@@ -5,7 +5,15 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_logo">
+    android:background="#51CB90">
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="381dp"
+        android:layout_height="689dp"
+        app:srcCompat="@drawable/white"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="24dp" />
 
     <!--    <EditText-->
     <!--        android:id="@+id/editTextMinute"-->
@@ -27,8 +35,8 @@
     <ProgressBar
         android:id="@+id/progressBarCircle"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="300px"
-        android:layout_height="500px"
+        android:layout_width="338dp"
+        android:layout_height="236dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:background="@drawable/drawable_circle_dark_blue"
@@ -36,29 +44,27 @@
         android:max="100"
         android:progress="100"
         android:progressDrawable="@drawable/drawable_circle_yellow"
-        android:rotation="-90"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.801"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.528" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="163dp"
+        android:layout_height="44dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="00:01:00"
         android:textColor="#2D416E"
-        android:textSize="60sp"
+        android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.105"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.163" />
+        app:layout_constraintVertical_bias="0.147" />
 
     <ImageView
         android:id="@+id/imageViewReset"
@@ -73,45 +79,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.752" />
 
+    <!--    <ImageView-->
+<!--        android:id="@+id/hamburger_menu"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginStart="352dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/ic_action_name" />-->
+
     <ImageView
         android:id="@+id/imageViewStartStop"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
         android:src="@drawable/ic_start"
+        app:layout_constraintHorizontal_bias="0.867"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBarCircle" />
+        tools:layout_editor_absoluteY="367dp" />
 
     <ImageView
         android:id="@+id/imageViewShare"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="352dp"
-        android:layout_marginTop="540dp"
+        android:layout_marginStart="364dp"
+        android:layout_marginTop="4dp"
         android:src="@drawable/share_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/hamburger_menu"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="352dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_action_name" />
-
-    <ImageView
         android:id="@+id/imageView3"
         android:layout_width="162dp"
         android:layout_height="374dp"
-        android:layout_marginStart="208dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="144dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/frontwalking" />
+        app:srcCompat="@drawable/walkingv2" />
 
     <TextView
         android:id="@+id/step_sensor"
@@ -120,13 +126,23 @@
         android:text="0"
         android:textSize="100sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.228"
+        app:layout_constraintHorizontal_bias="0.221"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.829" />
+        app:layout_constraintVertical_bias="0.638" />
 
-<!--    <shape-->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="98dp"
+        android:layout_height="34dp"
+        android:text="남은 시간"
+        android:textSize="20sp"
+        tools:layout_editor_absoluteX="153dp"
+        tools:layout_editor_absoluteY="77dp" />
+
+
+    <!--    <shape-->
 <!--        android:layout_width="352dp"-->
 <!--        android:layout_height="650dp"-->
 <!--        android:layout_marginStart="30dp"-->

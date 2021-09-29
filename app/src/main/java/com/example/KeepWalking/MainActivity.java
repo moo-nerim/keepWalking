@@ -47,7 +47,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.kakao.util.helper.Utility.getKeyHash;
 
-
 public class MainActivity extends AppCompatActivity implements SensorEventListener, View.OnClickListener {
 
     public static Context context_main1;
@@ -95,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView run;
     //*************************
 
+
     //    권한
     String[] permission_list = {
 //            Manifest.permission.INTERNET,
@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         checkPermission();
+
+        /************* 속력 *************/
+
+        /************* 속력 *************/
 
         // 계정확인
         ActivityCompat.requestPermissions(this, new String[]
@@ -352,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_FASTEST);
 
 //            drawable.start();
 
@@ -482,13 +486,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
                     + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
                     + "           [dt]: " + String.format("%.4f", dt));
-            
+
         } else if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             lx.add(event.values[0]);
             ly.add(event.values[1]);
             lz.add(event.values[2]);
-            
-        } if(event.sensor.getType() == Sensor.TYPE_STEP_COUNTER){ // 걸음수 측정
+
+        }
+        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
 
             //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
             if (mCounterSteps < 1) {
@@ -506,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //                    step_sensor.setText("" + (++steps));
 //                    break;
 //            }
-        predictActivity();
+//        predictActivity();
 
         Log.e("Log", "acc크기: " + accX.size());
         Log.e("Log", "gyro크기: " + gyroX.size());
@@ -639,10 +644,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             intent.putExtra("ly", (Serializable) ly);
             intent.putExtra("lz", (Serializable) lz);
 
-            String result = judgement(results[0], results[1]);
+            String result = judgement(results[0]);
             intent.putExtra("result", result);
 
-            startActivity(intent);
+             startActivity(intent);
             // MainActivity2 judgement() 호출
 
             data.clear();
@@ -662,11 +667,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     // Normal, abnormal judgment
-    private String judgement(float result1, float result2) {
-        if (result1 >= result2) {
+    private String judgement(float result1) {
+        if (result1 > 0.5) {
             return "정상입니다🤓 \t" + results[0];
         } else {
-            return "비정상입니다😂 \t" + results[1];
+            return "비정상입니다😂 \t" + results[0];
         }
     }
 
@@ -678,4 +683,5 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return array;
     }
+
 }

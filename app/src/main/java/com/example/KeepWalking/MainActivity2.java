@@ -70,13 +70,11 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Entry> entry1 = new ArrayList<>();
         ArrayList<Entry> entry2 = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            float val = (float) (Math.random() * 10);
-            float x, y;
-            x = accX.get(i);
-            y = accY.get(i);
-            entry1.add(new Entry(i, val));
-            entry2.add(new Entry(i, val + 10));
+        for (int i = 0; i < accX.size(); i++) {
+            float res = (float) Math.sqrt(Math.pow(accX.get(i),2) + Math.pow(accY.get(i),2) + Math.pow(accZ.get(i),2));
+
+            entry1.add(new Entry(i, res));
+            entry2.add(new Entry(i, res + 10));
         }
 
         LineDataSet set1,set2;
@@ -92,8 +90,9 @@ public class MainActivity2 extends AppCompatActivity {
         // ******그래프 디자인*********
         // 사용자 측정 Graph
         set1.setColor(Color.rgb(153, 204, 255));
-        set1.setCircleColor(Color.rgb(153, 204, 255));
-        set1.setCircleRadius(3f);
+        set1.setDrawCircles(false);
+//        set1.setCircleColor(Color.rgb(153, 204, 255));
+//        set1.setCircleRadius(3f);
         set1.setLineWidth(2);
         set1.setDrawFilled(true); // 차트 아래 fill(채우기) 설정
         set1.setFillColor(Color.rgb(212, 248, 253));

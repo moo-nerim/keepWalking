@@ -4,18 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_logo"
     tools:context=".LoginActivity">
 
+    <com.kakao.usermgmt.LoginButton
+        android:id="@+id/com_kakao_login"
+        android:layout_width="374dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="6dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/kakao_login_large_narrow"
-        android:layout_width="365dp"
-        android:layout_height="72dp"
-        android:layout_marginTop="632dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/kakao_login_large_narrow"
-        tools:layout_editor_absoluteX="30dp"
-        tools:ignore="MissingConstraints" />
+
+    <!--        <ImageView-->
+    <!--        android:id="@+id/imageView"-->
+    <!--        android:layout_width="365dp"-->
+    <!--        android:layout_height="72dp"-->
+    <!--        android:layout_marginTop="632dp"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:srcCompat="@drawable/kakao_login_large_narrow"-->
+    <!--        tools:layout_editor_absoluteX="30dp" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="line"
-    android:useLevel="false">
-    <stroke
-        android:width="25dp"
-        android:color="@color/colorPrimaryDark" />
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background"
+        android:background="#005850">
+        <shape>
+            <corners android:radius="15dip" />
+            <stroke android:width="3dp" android:color="#005850" />
+        </shape>
+    </item>
 
+    <item
+        android:id="@android:id/progress"
+        >
+        <scale android:scaleWidth="100%" android:useIntrinsicSizeAsMinimum="true">
+            <shape>
+                <corners
+                    android:radius="15dip" />
+                <gradient
+                    android:startColor="#005850"
+                    android:endColor="#005850"
+                    android:angle="270" />
+            </shape>
+        </scale>
+    </item>
+</layer-list>

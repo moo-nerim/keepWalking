@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -25,7 +26,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestOptions;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -91,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private int mSteps = 0;
     //리스너가 등록되고 난 후의 step count
     private int mCounterSteps = 0;
-    private ImageView run;
+    private ImageView iv;
+
+    private AnimationDrawable drawable;
+
     //*************************
 
 
@@ -112,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private TimerStatus timerStatus = TimerStatus.STOPPED;
 
-    private ProgressBar progressBarCircle;
+//    private ProgressBar progressBarCircle;
     private EditText editTextMinute;
     private TextView textViewTime;
     private ImageView imageViewReset;
@@ -223,7 +229,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             });
         });
         context_main1 = this;
-        Glide.with(this).load(R.drawable.frontwalking).into(frontwalking);
+//        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
+//        iv = findViewById(R.id.imageView3);
+//        drawable = (AnimationDrawable) iv.getBackground();
     }
 
 //      HashKey 얻기
@@ -270,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * method to initialize the views
      */
     private void initViews() {
-        progressBarCircle = findViewById(R.id.progressBarCircle);
+//        progressBarCircle = findViewById(R.id.progressBarCircle);
         textViewTime = findViewById(R.id.textViewTime);
         textViewTime.setTypeface(null, Typeface.BOLD);
         imageViewReset = findViewById(R.id.imageViewReset);
@@ -280,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        run = findViewById(R.id.imageView3);
         frontwalking = findViewById(R.id.imageView3);
         step_sensor = findViewById(R.id.step_sensor);
+        iv = findViewById(R.id.imageView3);
     }
 
     /**
@@ -338,12 +347,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * method to start and stop count down timer
      */
     private void startStop() {
-//        ImageView iv = findViewById(R.id.imageView1);
-//        final AnimationDrawable drawable = (AnimationDrawable) iv.getBackground();
         if (timerStatus == TimerStatus.STOPPED) {
 //            walkingTextView.setText(null);
             // call to initialize the progress bar values
-            setProgressBarValues();
+//            setProgressBarValues();
             // showing the reset icon
             imageViewReset.setVisibility(View.VISIBLE);
             // changing play icon to stop icon
@@ -358,11 +365,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
             mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_FASTEST);
 
-//            drawable.start();
 
-//            Glide.with(this).load(R.drawable.frontwalking).into(frontwalking);
-            // gif stop
-            ((GifDrawable) frontwalking.getDrawable()).start();
 
 //            int[] location = new int[2];
 //
@@ -407,14 +410,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onTick(long millisUntilFinished) {
                 textViewTime.setText(hmsTimeFormatter(millisUntilFinished));
-                progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
+//                progressBarCircle.setProgress((int) (millisUntilFinished / 1000));
             }
 
             @Override
             public void onFinish() {
                 textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
                 // call to initialize the progress bar values
-                setProgressBarValues();
+//                setProgressBarValues();
                 // hiding the reset icon
                 imageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
@@ -427,7 +430,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
         }.start();
-        countDownTimer.start();
+
+//        drawable = (AnimationDrawable) iv.getBackground();
+//        countDownTimer.start();
+//        drawable.start();
+//        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
+        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
+//        Glide.with(getApplicationContext()).asGif()
+//                .load(R.drawable.walkingv2)
+//                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
+//                .into(frontwalking);
+//        ImageView imageView = (ImageView) findViewById(R.id.imageView3);
+//        Glide.with(this).asGif().load(R.drawable.walkingv2).into(imageView);
+
+//        Glide.with(this).load(R.drawable.walkingv2).preload();
+//        ((GifDrawable) frontwalking.getDrawable()).start();
     }
 
     /**
@@ -440,10 +457,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     /**
      * method to set circular progress bar values
      */
-    private void setProgressBarValues() {
-        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
-        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
-    }
+//    private void setProgressBarValues() {
+//        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
+//        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
+//    }
 
 
     /**

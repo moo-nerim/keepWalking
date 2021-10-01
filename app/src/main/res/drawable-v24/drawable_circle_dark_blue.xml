@@ -1,11 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="line"
-    android:useLevel="false">
-    <stroke
-        android:width="25dp"
-        android:color="#005850" />
-    <corners
-        android:radius="8dp"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background"
+        android:background="#005850">
+        <shape>
+            <corners android:radius="15dip" />
+            <stroke android:width="3dp" android:color="#005850" />
+        </shape>
+        <corners
+            android:radius="15dip" />
+    </item>
 
+    <item android:id="@android:id/secondaryProgress">
+        <scale android:scaleWidth="100%" android:useIntrinsicSizeAsMinimum="true">
+            <shape>
+                <corners android:radius="15dip" />
+                <gradient
+                    android:startColor="#005850"
+                    android:centerColor="#005850"
+                    android:centerY="0.75"
+                    android:endColor="#005850"
+                    android:angle="270"
+
+                    />
+            </shape>
+        </scale>
+    </item>
+
+
+    <item
+        android:id="@android:id/progress"
+        >
+        <scale android:scaleWidth="100%" android:useIntrinsicSizeAsMinimum="true">
+            <shape>
+                <corners
+                    android:radius="15dip" />
+                <gradient
+                    android:startColor="#E7E0DC"
+                    android:endColor="#E7E0DC"
+                    android:angle="270" />
+            </shape>
+        </scale>
+    </item>
+</layer-list>

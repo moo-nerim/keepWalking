@@ -73,4 +73,8 @@ dependencies {
 
     // progressbar
     implementation 'com.akexorcist:round-corner-progress-bar:2.1.2'
+
+    // Firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 }

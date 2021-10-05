@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +23,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import static android.speech.tts.TextToSpeech.ERROR;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -34,13 +40,18 @@ public class MainActivity2 extends AppCompatActivity {
     TextView xValue, yValue, zValue;
     private TextView walkingTextView;
 
+    private TextToSpeech tts;
+    private Button btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         walkingTextView = findViewById(R.id.tv_output);
+        btn = findViewById(R.id.button3);
 
         context_main2 = this;
+
 
         // 데이터 수신
         Intent intent = getIntent();
@@ -59,9 +70,32 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
 
         String result = intent.getStringExtra("result");
-        Log.e("정상/비정상 결과:",result);
+        Log.e("정상/비정상 결과:", result);
         walkingTextView.setText(result);
 
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status == TextToSpeech.SUCCESS){
+                    tts.setLanguage(Locale.KOREA);
+                }
+            }
+        });
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tts.setPitch(0.5f);         // 음성 톤을 0.5배 내려준다.
+                tts.setSpeechRate(1.0f);    // 읽는 속도는 기본 설정
+                // editText에 있는 문장을 읽는다.
+                tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+
+
+
+        // 음성 텍스트
+//        tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 //        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
 
         // here
@@ -71,13 +105,13 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Entry> entry2 = new ArrayList<>();
 
         for (int i = 0; i < accX.size(); i++) {
-            float res = (float) Math.sqrt(Math.pow(accX.get(i),2) + Math.pow(accY.get(i),2) + Math.pow(accZ.get(i),2));
+            float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
 
             entry1.add(new Entry(i, res));
             entry2.add(new Entry(i, res + 10));
         }
 
-        LineDataSet set1,set2;
+        LineDataSet set1, set2;
         set1 = new LineDataSet(entry1, "사용자");
         set2 = new LineDataSet(entry2, "정상인");
 
@@ -118,6 +152,7 @@ public class MainActivity2 extends AppCompatActivity {
 
 //        Log.e("Log", String.valueOf(data));
     }
+
 
 //    // Normal, abnormal judgment
 //    public void judgement(float result1, float result2) {

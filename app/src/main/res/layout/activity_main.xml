@@ -41,6 +41,7 @@
 <!--        app:layout_constraintStart_toStartOf="parent" />-->
 
     <View
+        android:id="@+id/view2"
         android:layout_width="100dp"
         android:layout_height="3dp"
         android:layout_marginStart="16dp"
@@ -160,23 +161,27 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="25dp"
-        android:layout_height="26dp"
-        app:srcCompat="@drawable/statistics"
-        tools:layout_editor_absoluteX="131dp"
-        tools:layout_editor_absoluteY="518dp" />
+        android:layout_width="33dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="188dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.875"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:srcCompat="@drawable/statistics" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="188dp"
         android:fontFamily="@font/nanum"
         android:text="일간 통계"
         android:textSize="25sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        tools:layout_editor_absoluteY="518dp" />
+        app:layout_constraintHorizontal_bias="0.742"
+        app:layout_constraintStart_toEndOf="@+id/view2" />
 
     <TextView
         android:id="@+id/textView3"
@@ -197,12 +202,13 @@
         tools:layout_editor_absoluteY="609dp" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/wspeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        tools:layout_editor_absoluteX="253dp"
-        tools:layout_editor_absoluteY="609dp" />
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="108dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView5" />
 
     <TextView
         android:id="@+id/textView4"
@@ -212,6 +218,14 @@
         android:fontFamily="@font/nanum"
         tools:layout_editor_absoluteX="253dp"
         tools:layout_editor_absoluteY="562dp" />
+
+    <TextView
+        android:id="@+id/totald"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="326dp"
+        tools:layout_editor_absoluteY="556dp" />
 
 
     <!--    <shape-->

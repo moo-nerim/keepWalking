@@ -12,6 +12,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
     //    private Sensor mGgyroSensor = null;
-    private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration, sensor_step_detector;
+    private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration, sensor_step_counter;
 
     //Using the Accelometer
     private SensorEventListener mAccLis;
@@ -103,9 +106,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //    권한
     String[] permission_list = {
-//            Manifest.permission.INTERNET,
-            Manifest.permission.GET_ACCOUNTS
-//            Manifest.permission.READ_PHONE_STATE
+            Manifest.permission.INTERNET,
+//            Manifest.permission.GET_ACCOUNTS
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
 
@@ -127,6 +132,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public ImageView kakaoLinkBtn;
     private ImageView frontwalking;
 
+    // 속도
+   //****************
+    private LocationManager lm;
+    private LocationListener ll;
+    double mySpeed, maxSpeed;
+    private TextView wspeed;
+    //****************
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,9 +147,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         checkPermission();
 
-        /************* 속력 *************/
 
-        /************* 속력 *************/
 
         // 계정확인
         ActivityCompat.requestPermissions(this, new String[]
@@ -167,7 +178,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
         // Step count
-        sensor_step_detector = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        sensor_step_counter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        if(sensor_step_counter == null) {
+            Log.e("걸음수 센서","No Step Detect Sensor");
+        }
 
         // method call to initialize the views
         initViews();
@@ -232,7 +246,63 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
 //        iv = findViewById(R.id.imageView3);
 //        drawable = (AnimationDrawable) iv.getBackground();
+
+        // 누적 총거리
+        //***************
+//        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+////        lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        // GPS 사용 가능 여부 확인
+//        isGPSEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//        tvGpsEnable.setText("GPS Enable: " + isGPSEnable);  //GPS Enable
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+        //***************
+
+        /************* 속력 *************/
+        maxSpeed = mySpeed = 0;
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ll = new SpeedoActionListener();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
+        if (ll == null){
+            Log.e("속력센서 없음","없음");
+        }
+        wspeed = findViewById(R.id.wspeed);
+        /************* 속력 *************/
     }
+
+
+    private class SpeedoActionListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                mySpeed = location.getSpeed();
+                if (mySpeed > maxSpeed) {
+                    maxSpeed = mySpeed;
+                }
+                wspeed.setText("\nCurrent Speed : " + mySpeed + " km/h, Max Speed : "
+                        + maxSpeed + " km/h");
+            }
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // TODO Auto-generated method stub
+
+        }
+    }
+
 
 //      HashKey 얻기
 //    public static String getKeyHash(final Context context) {
@@ -273,6 +343,57 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
         }
     }
+
+    // 누적 총거리 계산
+//    public double getGPSLocation() {
+//        double deltaTime = 0.0;
+//        double deltaDist = 0.0;
+//        //GPS Start
+//        if(isGPSEnable) {
+//            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return 0.0;
+//            }
+////            lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            if(lastKnownLocation == null ) {
+//                lastKnownLocation = nowLastlocation;
+//            }
+//
+//            if (lastKnownLocation != null && nowLastlocation != null) {
+//                double lat1 = lastKnownLocation.getLatitude();
+//                double lng1 = lastKnownLocation.getLongitude();
+//                double lat2 = nowLastlocation.getLatitude();
+//                double lng2 = nowLastlocation.getLongitude();
+//
+//                deltaTime = (nowLastlocation.getTime() - lastKnownLocation.getTime()) / 1000.0;  //시간 간격
+//
+//
+//                //double distanceMeter = distance(37.52135327,  126.93035147,  37.52135057,  126.93036593);
+//                deltaDist = distance(lat1,  lng1,  lat2,  lng2);
+//                if(deltaDist > 0.05) {
+//                    tvGpsLatitude.setText("Start Latitude : " + lat1);
+//                    tvGpsLongitude.setText("Start Longitude : " + lng1);
+//                    tvEndLatitude.setText("End Latitude : " + lat2);
+//                    tvEndLongitude.setText("End Longitude : " + lng2);
+//                    tvDistDif.setText("거리 간격 : " +  Double.parseDouble(String.format("%.3f",deltaDist)) + " m");  // Dist Difference
+//                    lastKnownLocation = nowLastlocation;
+//                    return deltaDist;
+//                }
+////                lastKnownLocation = nowLastlocation;
+//            }
+//        }
+//        return 0.0;
+//    }
+
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        nowLastlocation = location;
+//        Toast.makeText(this, "Locatiuon Changed", Toast.LENGTH_SHORT).show();
+//        double lng = location.getLongitude();
+//        double lat = location.getLatitude();
+//        Log.d("Now Location ::::::", "longtitude=" + lng + ", latitude=" + lat);
+//        tvNowLatitude.setText("Now Latitude : " + lat);
+//        tvNowLongitude.setText("Now Longitude : " + lng);
+//    }
 
     /**
      * method to initialize the views
@@ -360,10 +481,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // call to start the count down timer
             startCountDownTimer();
 
-            mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_FASTEST);
-            mSensorManager.registerListener(this, sensor_step_detector, SensorManager.SENSOR_DELAY_FASTEST);
+            mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
 
 
 
@@ -510,18 +631,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             lz.add(event.values[2]);
 
         }
-        if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
-
-            //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
-            if (mCounterSteps < 1) {
-                // initial value
-                mCounterSteps = (int) event.values[0];
-            }
-            //리셋 안된 값 + 현재값 - 리셋 안된 값
-            mSteps = (int) event.values[0] - mCounterSteps;
-            step_sensor.setText(Integer.toString(mSteps));
-            Log.e("Log", "걸음수: " + mSteps);
+        else if(sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+            step_sensor.setText("Step Count : " + event.values[0]);
         }
+//        else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
+//            //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
+//            if (mCounterSteps < 1) {
+//                // initial value
+//                mCounterSteps = (int) event.values[0];
+//            }
+//            //리셋 안된 값 + 현재값 - 리셋 안된 값
+//            mSteps = (int) event.values[0] - mCounterSteps;
+//            step_sensor.setText(Integer.toString(mSteps));
+//            Log.e("Log", "걸음수: " + mSteps);
+//        }
 //        else { // 걸음수 측정
 //            switch (event.sensor.getType()) {
 //                case Sensor.TYPE_STEP_DETECTOR:
@@ -686,9 +809,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // Normal, abnormal judgment
     private String judgement(float result1) {
         if (result1 > 0.5) {
-            return "정상입니다🤓 \t" + results[0];
+            return "정상입니다\t" + results[0];
         } else {
-            return "비정상입니다😂 \t" + results[0];
+            return "비정상입니다\t" + results[0];
         }
     }
 

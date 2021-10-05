@@ -7,6 +7,14 @@
     android:layout_height="match_parent"
     android:background="#51CB90">
 
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        tools:layout_editor_absoluteX="84dp"
+        tools:layout_editor_absoluteY="35dp" />
+
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="392dp"

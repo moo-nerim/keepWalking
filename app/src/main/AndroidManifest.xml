@@ -8,8 +8,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <uses-feature android:name="android.hardware.sensor.stepcounter" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".GlobalApplication"
@@ -19,7 +23,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-<!--        <activity android:name=".MainActivity" />-->
+        <!-- <activity android:name=".MainActivity" /> -->
         <activity android:name=".MainActivity2" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
         <activity android:name=".ScrollingActivity" />
@@ -27,26 +31,20 @@
         <service
             android:name=".GaitService"
             android:enabled="true"
-            android:exported="true" />
-
-        <!--        <activity android:name=".LoginActivity">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
-
-        <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-        <!--            </intent-filter>-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.VIEW" />-->
-
-        <!--                <category android:name="android.intent.category.DEFAULT" />-->
-        <!--                <category android:name="android.intent.category.BROWSABLE" />-->
-
-        <!--                <data-->
-        <!--                    android:host="@string/kakaolink_host"-->
-        <!--                    android:scheme="@string/kakao_scheme" />-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
-
+            android:exported="true" /> <!-- <activity android:name=".LoginActivity"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.VIEW" /> -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- <category android:name="android.intent.category.BROWSABLE" /> -->
+        <!-- <data -->
+        <!-- android:host="@string/kakaolink_host" -->
+        <!-- android:scheme="@string/kakao_scheme" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -64,9 +62,8 @@
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".CalendarActivity"></activity>
-        <activity android:name=".MainActivity" ></activity>
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".MainActivity" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

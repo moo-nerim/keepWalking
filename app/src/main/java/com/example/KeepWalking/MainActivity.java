@@ -103,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //*************************
 
-
-    //    권한
+    // 권한
     String[] permission_list = {
             Manifest.permission.INTERNET,
 //            Manifest.permission.GET_ACCOUNTS
@@ -140,13 +139,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView wspeed;
     //****************
 
+    String kakaoid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         checkPermission();
-
 
         // 계정확인
         ActivityCompat.requestPermissions(this, new String[]
@@ -257,14 +257,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //***************
 
         /************* 속력 *************/
-        maxSpeed = mySpeed = 0;
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        ll = new SpeedoActionListener();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
-        if (ll == null) {
-            Log.e("속력센서 없음", "없음");
-        }
-        wspeed = findViewById(R.id.wspeed);
+
         /************* 속력 *************/
     }
 
@@ -286,13 +279,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -484,7 +475,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
-
         } else {
             // gif stop
             ((GifDrawable) frontwalking.getDrawable()).stop();
@@ -751,6 +741,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
+            intent.putExtra("KAKAOID", kakaoid);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
 //            intent.putExtra("data", (Serializable) data);
 
             intent.putExtra("accX", (Serializable) accX);
@@ -793,6 +786,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return "정상입니다\t" + results[0];
         } else {
             return "비정상입니다\t" + results[0];
+        }
+    }
+
+    private String judgement2(float result1) {
+        if (result1 > 0.5) {
+            return "정상";
+        } else {
+            return "비정상";
         }
     }
 

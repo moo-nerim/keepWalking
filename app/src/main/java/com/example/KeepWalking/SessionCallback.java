@@ -28,6 +28,7 @@ public class SessionCallback implements ISessionCallback {
 
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
+    public String kakaoid;
 
     // 로그인에 성공한 상태
     @Override
@@ -60,6 +61,7 @@ public class SessionCallback implements ISessionCallback {
                         Log.i("KAKAO_API", "사용자 아이디: " + result.getId());
                         String id = String.valueOf(result.getId());
                         UserAccount kakaoAccount = result.getKakaoAccount();
+                        kakaoid = id;
 
                         // Firebase
                         databaseReference.child("KAKAOID").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,7 +86,6 @@ public class SessionCallback implements ISessionCallback {
 
 
                         if (kakaoAccount != null) {
-
                             // 이메일
                             String email = kakaoAccount.getEmail();
                             Profile profile = kakaoAccount.getProfile();
@@ -95,7 +96,6 @@ public class SessionCallback implements ISessionCallback {
                                 Log.d("KAKAO_API", "onSuccess:getNickname " + profile.getNickname());
                             }
                             if (email != null) {
-
                                 Log.d("KAKAO_API", "onSuccess:email " + email);
                             }
 
@@ -103,14 +103,12 @@ public class SessionCallback implements ISessionCallback {
                             Profile _profile = kakaoAccount.getProfile();
 
                             if (_profile != null) {
-
                                 Log.d("KAKAO_API", "nickname: " + _profile.getNickname());
                                 Log.d("KAKAO_API", "profile image: " + _profile.getProfileImageUrl());
                                 Log.d("KAKAO_API", "thumbnail image: " + _profile.getThumbnailImageUrl());
 
                             } else if (kakaoAccount.profileNeedsAgreement() == OptionalBoolean.TRUE) {
                                 // 동의 요청 후 프로필 정보 획득 가능
-
                             } else {
                                 // 프로필 획득 불가
                             }
@@ -119,7 +117,5 @@ public class SessionCallback implements ISessionCallback {
                         }
                     }
                 });
-
     }
-
 }

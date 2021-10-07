@@ -1,29 +1,43 @@
 package com.example.keepwalking;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import static android.content.ContentValues.TAG;
 
 import static android.speech.tts.TextToSpeech.ERROR;
 
@@ -43,6 +57,14 @@ public class MainActivity2 extends AppCompatActivity {
     private TextToSpeech tts;
     private Button btn;
 
+    // 그래프 저장
+    private String[] permissionList = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private FirebaseStorage storage;
+    private LineChart chartView;
+    private Button btUpload, btDownload;
+
+    private String result2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +73,25 @@ public class MainActivity2 extends AppCompatActivity {
         btn = findViewById(R.id.button3);
 
         context_main2 = this;
+
+        /******** 그래프 업로드/다운로드 관련 *********/
+        storage = FirebaseStorage.getInstance();
+        chartView = (LineChart) findViewById(R.id.chart);
+        btUpload = (Button) findViewById(R.id.upload_btn);
+        btDownload = (Button) findViewById(R.id.download_btn);
+
+
+        btUpload.setOnClickListener(view -> {
+            //업로드
+            upLoadFromMemory();
+        });
+        btDownload.setOnClickListener(view -> {
+            //다운로드
+//            downLoadImageFromStorage();
+//            downLoadImageFromStorage2();
+        });
+        /******** 그래프 업로드/다운로드 관련 *********/
+
 
 
         // 데이터 수신
@@ -70,6 +111,7 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
 
         String result = intent.getStringExtra("result");
+        result2 = intent.getStringExtra("result2");
         Log.e("정상/비정상 결과:", result);
         walkingTextView.setText(result);
 
@@ -153,14 +195,137 @@ public class MainActivity2 extends AppCompatActivity {
 //        Log.e("Log", String.valueOf(data));
     }
 
+    /********* 그래프 업로드/다운로드 관련 **********/
+    //권한 체크 함수
+    public void checkPermission() {
+        //현재 버전 6.0 미만이면 종료 --> 6이후 부터 권한 허락
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
 
-//    // Normal, abnormal judgment
-//    public void judgement(float result1, float result2) {
-//        TextView walkingTextView = findViewById(R.id.tv_output);
-//        if (result1 >= result2) {
-//            walkingTextView.setText("정상입니다🤓 \t" + result1);
-//        } else {
-//            walkingTextView.setText("비정상입니다😂 \t" + result2);
-//        }
+        //각 권한 허용 여부를 확인
+        for (String permission : permissionList) {
+            int chk = checkCallingOrSelfPermission(permission);
+            //거부 상태라면
+            if (chk == PackageManager.PERMISSION_DENIED) {
+                //사용자에게 권한 허용여부를 확인하는 창을 띄운다.
+                requestPermissions(permissionList, 0); //권한 검사 필요한 것들만 남는다.
+                break;
+            }
+        }
+    }
+
+
+    // 메모리 데이터, 비트맵을 바이트코드로 compress 하여 추가하기
+    //  Get the data from an ImageView as bytes
+    private void upLoadFromMemory() {
+        String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
+        Log.e("메인카카오: ",( (GlobalApplication) getApplication() ).getKakaoID());
+
+        chartView.setDrawingCacheEnabled(true);
+
+        // Bitmap bitmap = getBitmapFromVectorDrawable(R.drawable.activity_main2);
+        Bitmap bitmap = chartView.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss"); // 년,월,일,시간 포멧 설정
+        Date time = new Date(); //파일명 중복 방지를 위해 사용될 현재시간
+        String current_time = sdf.format(time); //String 형 변수에 저장
+
+        String[] file_name = current_time.split("_");
+
+        StorageReference mountainsRef = storage.getReference().child(kakaoid + "/" + file_name[0] + "/" + file_name[1] + "_" + result2);
+        UploadTask uploadTask = mountainsRef.putBytes(data);
+
+        uploadTask.addOnProgressListener(taskSnapshot -> {
+            double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+            Log.d(TAG, "Upload is " + progress + "% done");
+        }).addOnPausedListener(taskSnapshot -> Log.d(TAG, "Upload is paused")).addOnFailureListener(exception -> {
+            // Handle unsuccessful uploads
+            Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "업로드 실패");
+        }).addOnSuccessListener(taskSnapshot -> {
+            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+            // ...
+            Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "업로드 성공");
+        });
+        // imageView.destroyDrawingCache(); 나중에 필요하면 추가
+    }
+
+//    private void downLoadImageFromStorage() {
+//
+//        ImageView imageView = findViewById(R.id.graph_view);
+//
+//        // 위의 저장소를 참조하는 파일명으로 지정
+//        StorageReference storageReference = storage.getReference().child("images/20211003");
+//
+//        //StorageReference에서 파일 다운로드 URL 가져옴
+//        storageReference.getDownloadUrl().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                // Glide 이용하여 이미지뷰에 로딩
+//                Glide.with(MainActivity2.this)
+//                        .load(task.getResult())
+//                        .override(1024, 980)
+//                        .into(imageView);
+//                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
+//            } else {
+//                // URL을 가져오지 못하면 토스트 메세지
+//                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되지 않았습니다.", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//
 //    }
+
+//    private void downLoadImageFromStorage2() {
+//        // 이미지 폴더 경로 참조
+//        StorageReference listRef = FirebaseStorage.getInstance().getReference().child("images/");
+//
+//        // listAll(): 폴더 내의 모든 이미지를 가져오는 함수
+//        listRef.listAll()
+//                .addOnSuccessListener(listResult -> {
+//                    int i = 0;
+//                    // 폴더 내의 item이 없어질 때까지 모두 가져온다.
+//                    for (StorageReference item : listResult.getItems()) {
+//
+//                        // imageview와 textview를 생성할 레이아웃 id 받아오기
+//                        LinearLayout layout = (LinearLayout) findViewById(R.id.add_graph);
+//                        // textview 동적생성
+////                        TextView tv = new TextView(MainActivity2.this);
+////                        tv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+////                        tv.setText(i +". new TextView");
+////                        tv.setTextSize(30);
+////                        tv.setTextColor(0xff004497);
+////                        layout.addView(tv);
+//
+//                        //imageview 동적생성
+//                        ImageView iv = new ImageView(MainActivity2.this);
+//                        iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+//                        layout.addView(iv);
+//                        i++;
+//                        Log.e(TAG, "몇개: "+i);
+//
+//                        // reference의 item(이미지) url 받아오기
+//                        item.getDownloadUrl().addOnCompleteListener(task -> {
+//                            if (task.isSuccessful()) {
+//                                // Glide 이용하여 이미지뷰에 로딩
+//                                Glide.with(MainActivity2.this)
+//                                        .load(task.getResult())
+//                                        .override(1024, 980)
+//                                        .into(iv);
+//                                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                // URL을 가져오지 못하면 토스트 메세지
+//                                Toast.makeText(MainActivity2.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        }).addOnFailureListener(e -> {
+//                            // Uh-oh, an error occurred!
+//                        });
+//                    }
+//                });
+//    }
+    /********* 그래프 업로드/다운로드 관련 **********/
+
+
+
 }

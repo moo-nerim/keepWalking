@@ -257,21 +257,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //***************
 
         /************* 속력 *************/
-//        maxSpeed = mySpeed = 0;
-//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        ll = new SpeedoActionListener();
-//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
-//        if (ll == null) {
-//            Log.e("속력센서 없음", "없음");
-//        }
-//        wspeed = findViewById(R.id.wspeed);        maxSpeed = mySpeed = 0;
-//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        ll = new SpeedoActionListener();
-//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
-//        if (ll == null) {
-//            Log.e("속력센서 없음", "없음");
-//        }
-//        wspeed = findViewById(R.id.wspeed);
+
         /************* 속력 *************/
     }
 
@@ -753,6 +739,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             // MainActivity2로 전환
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 
             intent.putExtra("KAKAOID", kakaoid);
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -773,9 +760,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             String result = judgement(results[0]);
             intent.putExtra("result", result);
-
-            String result2 = judgement2(results[0]);
-            intent.putExtra("result2", result2);
 
             startActivity(intent);
             // MainActivity2 judgement() 호출

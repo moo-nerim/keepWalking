@@ -32,9 +32,6 @@
             android:enabled="true"
             android:exported="true" />
         <activity android:name=".LogoActivity">
-
-        </activity>
-        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,7 +48,6 @@
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".CalendarActivity"/>
         <activity android:name=".MainActivity" />
 
         <meta-data

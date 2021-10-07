@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private SessionCallback callback;
     private String KakaoId;
+    String a = "test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

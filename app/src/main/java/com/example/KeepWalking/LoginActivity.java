@@ -26,11 +26,13 @@ import com.kakao.util.OptionalBoolean;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import java.io.Serializable;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
     private SessionCallback callback;
+    private String KakaoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,8 @@ public class LoginActivity extends AppCompatActivity {
                             String id = String.valueOf(result.getId());
                             UserAccount kakaoAccount = result.getKakaoAccount();
 
+                            KakaoId = ((GlobalApplication) getApplication()).setKakaoID(id);
+
                             // Firebase
                             databaseReference.child("KAKAOID").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -173,14 +177,13 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
-
         }
-
     }
 
     public void redirectSignupActivity() {
         //로그인이 완료된 후 이동하는 액티비티 지정
         final Intent intent = new Intent(this, MainActivity.class);
+//        intent.putExtra("KAKAOID",KakaoId);
         startActivity(intent);
         finish();
     }

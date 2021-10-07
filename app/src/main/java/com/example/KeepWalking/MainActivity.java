@@ -103,8 +103,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //*************************
 
-
-    //    권한
+    // 권한
     String[] permission_list = {
             Manifest.permission.INTERNET,
 //            Manifest.permission.GET_ACCOUNTS
@@ -123,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private TimerStatus timerStatus = TimerStatus.STOPPED;
 
-//    private ProgressBar progressBarCircle;
+    //    private ProgressBar progressBarCircle;
     private EditText editTextMinute;
     private TextView textViewTime;
     private ImageView imageViewReset;
@@ -133,12 +132,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView frontwalking;
 
     // 속도
-   //****************
+    //****************
     private LocationManager lm;
     private LocationListener ll;
     double mySpeed, maxSpeed;
     private TextView wspeed;
     //****************
+
+    String kakaoid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         checkPermission();
-
-
 
         // 계정확인
         ActivityCompat.requestPermissions(this, new String[]
@@ -179,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Step count
         sensor_step_counter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if(sensor_step_counter == null) {
-            Log.e("걸음수 센서","No Step Detect Sensor");
+        if (sensor_step_counter == null) {
+            Log.e("걸음수 센서", "No Step Detect Sensor");
         }
 
         // method call to initialize the views
@@ -258,14 +257,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //***************
 
         /************* 속력 *************/
-        maxSpeed = mySpeed = 0;
-        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        ll = new SpeedoActionListener();
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
-        if (ll == null){
-            Log.e("속력센서 없음","없음");
-        }
-        wspeed = findViewById(R.id.wspeed);
+//        maxSpeed = mySpeed = 0;
+//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        ll = new SpeedoActionListener();
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
+//        if (ll == null) {
+//            Log.e("속력센서 없음", "없음");
+//        }
+//        wspeed = findViewById(R.id.wspeed);        maxSpeed = mySpeed = 0;
+//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        ll = new SpeedoActionListener();
+//        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
+//        if (ll == null) {
+//            Log.e("속력센서 없음", "없음");
+//        }
+//        wspeed = findViewById(R.id.wspeed);
         /************* 속력 *************/
     }
 
@@ -287,13 +293,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onProviderDisabled(String provider) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onProviderEnabled(String provider) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -402,7 +406,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        progressBarCircle = findViewById(R.id.progressBarCircle);
         textViewTime = findViewById(R.id.textViewTime);
         textViewTime.setTypeface(null, Typeface.BOLD);
-        imageViewReset = findViewById(R.id.imageViewReset);
+        imageViewReset = findViewById(R.id.retryButton);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
         walkingTextView = findViewById(R.id.tv_output);
@@ -429,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.imageViewReset:
+            case R.id.retryButton:
                 reset();
                 break;
             case R.id.imageViewStartStop:
@@ -462,8 +466,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mSensorManager.unregisterListener(mAccLis);
     }
 
-    int a = 0;
-
     /**
      * method to start and stop count down timer
      */
@@ -474,8 +476,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            setProgressBarValues();
             // showing the reset icon
             imageViewReset.setVisibility(View.VISIBLE);
+//            app:layout_constraintHorizontal_bias="0.081"
+            imageViewStartStop.setX(10);
             // changing play icon to stop icon
-            imageViewStartStop.setImageResource(R.drawable.icon_stop);
+            imageViewStartStop.setImageResource(R.drawable.stop_btn);
             // changing the timer status to started
             timerStatus = TimerStatus.STARTED;
             // call to start the count down timer
@@ -485,41 +489,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
-
-
-
-//            int[] location = new int[2];
-//
-//            run.getLocationOnScreen(location);
-
-//            ArcAnimator.createArcAnimator(run,location[0], location[1], 360, Side.LEFT)
-//                    .setDuration(timeCountInMilliSeconds)
-//                    .start();
-
-//            Path path = new Path();
-//            run.setX(200);
-//            run.setY(200);
-//            path.addCircle(run.getX(), run.getY(), 200, Path.Direction.CW);
-//
-//            ViewPathAnimator.animate(run, path, 1000/ 30, 1);
-
         } else {
-            a = 0;
-
             // gif stop
             ((GifDrawable) frontwalking.getDrawable()).stop();
 
+            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+            // call to initialize the progress bar values
+//                setProgressBarValues();
             // hiding the reset icon
-            imageViewReset.setVisibility(View.GONE);
+//            imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
-            imageViewStartStop.setImageResource(R.drawable.icon_start);
+            imageViewStartStop.setImageResource(R.drawable.start_btn);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
-            stopCountDownTimer();
 
-            mSensorManager.unregisterListener(this);
-
-//            drawable.stop();
+            predictActivity(); // 모델 학습
+            mSensorManager.unregisterListener(MainActivity.this);
         }
     }
 
@@ -542,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // hiding the reset icon
                 imageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
-                imageViewStartStop.setImageResource(R.drawable.icon_start);
+                imageViewStartStop.setImageResource(R.drawable.start_btn);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
 
@@ -630,8 +615,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ly.add(event.values[1]);
             lz.add(event.values[2]);
 
-        }
-        else if(sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
+        } else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
             step_sensor.setText("Step Count : " + event.values[0]);
         }
 //        else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
@@ -770,6 +754,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // MainActivity2로 전환
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
 
+            intent.putExtra("KAKAOID", kakaoid);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
 //            intent.putExtra("data", (Serializable) data);
 
             intent.putExtra("accX", (Serializable) accX);
@@ -787,7 +774,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             String result = judgement(results[0]);
             intent.putExtra("result", result);
 
-             startActivity(intent);
+            String result2 = judgement2(results[0]);
+            intent.putExtra("result2", result2);
+
+            startActivity(intent);
             // MainActivity2 judgement() 호출
 
             data.clear();
@@ -812,6 +802,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             return "정상입니다\t" + results[0];
         } else {
             return "비정상입니다\t" + results[0];
+        }
+    }
+
+    private String judgement2(float result1) {
+        if (result1 > 0.5) {
+            return "정상";
+        } else {
+            return "비정상";
         }
     }
 

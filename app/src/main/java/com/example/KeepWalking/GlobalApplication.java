@@ -14,6 +14,16 @@ import com.kakao.auth.KakaoSDK;
 
 public class GlobalApplication extends Application {
     private static GlobalApplication instance;
+    private String KakaoID;
+
+    public String getKakaoID() {
+        return KakaoID;
+    }
+
+    public String setKakaoID(String KakaoID ) {
+        this.KakaoID = KakaoID;
+        return KakaoID;
+    }
 
     public static GlobalApplication getGlobalApplicationContext() {
         if (instance == null) {

@@ -181,6 +181,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (sensor_step_counter == null) {
             Log.e("걸음수 센서", "No Step Detect Sensor");
         }
+        else{
+            Log.e("걸음수 센서" ,"있음!!!!!!!!!");
+        }
 
         // method call to initialize the views
         initViews();
@@ -259,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         /************* 속력 *************/
 
         /************* 속력 *************/
+
     }
 
 
@@ -760,6 +764,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             String result = judgement(results[0]);
             intent.putExtra("result", result);
+
+            String result2 = judgement2(results[0]);
+            intent.putExtra("result2", result2);
 
             startActivity(intent);
             // MainActivity2 judgement() 호출

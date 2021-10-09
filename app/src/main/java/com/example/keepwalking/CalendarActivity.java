@@ -148,6 +148,7 @@ public class CalendarActivity extends AppCompatActivity {
     private void downLoadImageFromStorage2(Date dateClicked) {
 
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
+        Log.e("카카오아이디: ",kakaoid);
         StorageReference storageReference = storage.getReference().child(kakaoid + "/"+ DateFormat.format(dateClicked));
 
         List<RecyclerItem> items = new ArrayList<>();

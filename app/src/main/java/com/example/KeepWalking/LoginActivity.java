@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i("KAKAO_API", "사용자 아이디: " + result.getId());
                             String id = String.valueOf(result.getId());
                             UserAccount kakaoAccount = result.getKakaoAccount();
-
+                            ((GlobalApplication) getApplication()).setKakaoID(id);
                             // Firebase
                             databaseReference.child("KAKAOID").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override

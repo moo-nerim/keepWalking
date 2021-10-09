@@ -33,7 +33,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/text_name"
+                        android:id="@+id/text_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="측정날짜"
@@ -77,10 +77,10 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/text_mobile"
+                            android:id="@+id/text_time"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="mobile"
+                            android:text="12:00"
                             android:textColor="@android:color/black"
                             android:textSize="15dp"
                             android:textStyle="bold" />
@@ -124,7 +124,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/text_city"
+                            android:id="@+id/text_result"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"

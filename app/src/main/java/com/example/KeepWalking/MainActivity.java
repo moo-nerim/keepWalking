@@ -22,16 +22,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestOptions;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -489,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // hiding the reset icon
 //            imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
-            imageViewStartStop.setImageResource(R.drawable.start_btn);
+            imageViewStartStop.setImageResource(R.drawable.retry_btn);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
 
@@ -517,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // hiding the reset icon
                 imageViewReset.setVisibility(View.GONE);
                 // changing stop icon to start icon
-                imageViewStartStop.setImageResource(R.drawable.start_btn);
+                imageViewStartStop.setImageResource(R.drawable.retry_btn);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
 

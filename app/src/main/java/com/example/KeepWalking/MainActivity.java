@@ -92,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public TextView walkingTextView;
     private TextView step_sensor;
     private int mSteps = 0;
-    //리스너가 등록되고 난 후의 step count
     private int mCounterSteps = 0;
+    //리스너가 등록되고 난 후의 step count
     private ImageView iv;
 
     private AnimationDrawable drawable;
@@ -174,12 +174,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         mLinearAcceleration = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
         // Step count
-        sensor_step_counter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        sensor_step_counter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (sensor_step_counter == null) {
             Log.e("걸음수 센서", "No Step Detect Sensor");
-        }
-        else{
-            Log.e("걸음수 센서" ,"있음!!!!!!!!!");
+        } else {
+            Log.e("걸음수 센서", "있음!!!!!!!!!");
         }
 
         // method call to initialize the views
@@ -257,7 +256,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //***************
 
         /************* 속력 *************/
-
+        maxSpeed = mySpeed = 0;
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        ll = new SpeedoActionListener();
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
+        if (ll == null) {
+            Log.e("속력센서 없음", "없음");
+        } else {
+            Log.e("속력센서 ", "있음!!!!!!!!!");
+        }
+        wspeed = findViewById(R.id.wspeed);
         /************* 속력 *************/
 
     }
@@ -268,12 +276,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                mySpeed = location.getSpeed();
+                mySpeed = Double.parseDouble(String.format("%.2f",location.getSpeed()));
                 if (mySpeed > maxSpeed) {
                     maxSpeed = mySpeed;
                 }
-                wspeed.setText("\nCurrent Speed : " + mySpeed + " km/h, Max Speed : "
-                        + maxSpeed + " km/h");
+                wspeed.setText("속력 : " + maxSpeed + " km/h");
+                Log.e("속력:소수점변경",""+mySpeed);
             }
         }
 
@@ -401,6 +409,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         frontwalking = findViewById(R.id.imageView3);
         step_sensor = findViewById(R.id.step_sensor);
         iv = findViewById(R.id.imageView3);
+
     }
 
     /**
@@ -435,6 +444,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void reset() {
         stopCountDownTimer();
         startCountDownTimer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -475,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mGgyroSensor, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, mAccelometerSensor, SensorManager.SENSOR_DELAY_GAME);
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_GAME);
-            mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
+//            mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
         } else {
             // gif stop
             ((GifDrawable) frontwalking.getDrawable()).stop();
@@ -564,8 +579,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private String hmsTimeFormatter(long milliSeconds) {
 
-        String hms = String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(milliSeconds),
+        String hms = String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(milliSeconds) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(milliSeconds)),
                 TimeUnit.MILLISECONDS.toSeconds(milliSeconds) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliSeconds)));
 
@@ -580,31 +594,43 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accY.add(event.values[1]);
             accZ.add(event.values[2]);
 
-            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
-                    + "           [Y]:" + String.format("%.4f", event.values[1])
-                    + "           [Z]:" + String.format("%.4f", event.values[2]));
+//            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
+//                    + "           [Y]:" + String.format("%.4f", event.values[1])
+//                    + "           [Z]:" + String.format("%.4f", event.values[2]));
 
         } else if (sensor.getType() == Sensor.TYPE_GYROSCOPE) {
             gyroX.add(event.values[0]);
             gyroY.add(event.values[1]);
             gyroZ.add(event.values[2]);
 
-            Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
-                    + "           [Y]:" + String.format("%.4f", event.values[1])
-                    + "           [Z]:" + String.format("%.4f", event.values[2])
-                    + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
-                    + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
-                    + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
-                    + "           [dt]: " + String.format("%.4f", dt));
+//            Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
+//                    + "           [Y]:" + String.format("%.4f", event.values[1])
+//                    + "           [Z]:" + String.format("%.4f", event.values[2])
+//                    + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
+//                    + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
+//                    + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
+//                    + "           [dt]: " + String.format("%.4f", dt));
 
         } else if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             lx.add(event.values[0]);
             ly.add(event.values[1]);
             lz.add(event.values[2]);
 
-        } else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-            step_sensor.setText("Step Count : " + event.values[0]);
         }
+        if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+//            step_sensor.setText("걸음수: " + event.values[0]);
+            step_sensor.setText("" + (++mSteps));
+            Log.e("걸음수: ", "" + mSteps);
+//            if (mCounterSteps < 1) {
+//                // initial value
+//                mCounterSteps = (int) event.values[0];
+//            }
+//            //리셋 안된 값 + 현재값 - 리셋 안된 값
+//            mSteps = (int) event.values[0] - mCounterSteps;
+//            step_sensor.setText(Integer.toString(mSteps));
+//            Log.e("걸음수: ", "" + mSteps);
+        }
+
 //        else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
 //            //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
 //            if (mCounterSteps < 1) {
@@ -623,9 +649,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //                    break;
 //            }
 //        predictActivity();
-
-        Log.e("Log", "acc크기: " + accX.size());
-        Log.e("Log", "gyro크기: " + gyroX.size());
+//
+//        Log.e("Log", "acc크기: " + accX.size());
+//        Log.e("Log", "gyro크기: " + gyroX.size());
     }
 
     @Override

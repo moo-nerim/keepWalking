@@ -124,14 +124,11 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                tts.setPitch(0.5f);         // 음성 톤을 0.5배 내려준다.
-                tts.setSpeechRate(1.0f);    // 읽는 속도는 기본 설정
-                // editText에 있는 문장을 읽는다.
-                tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
-            }
+        btn.setOnClickListener(view -> {
+            tts.setPitch(0.5f);         // 음성 톤을 0.5배 내려준다.
+            tts.setSpeechRate(1.0f);    // 읽는 속도는 기본 설정
+            // editText에 있는 문장을 읽는다.
+            tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
         });
 
 
@@ -139,7 +136,6 @@ public class MainActivity2 extends AppCompatActivity {
         // 음성 텍스트
 //        tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
 //        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
-
         // here
 
         chart = findViewById(R.id.chart);
@@ -190,8 +186,6 @@ public class MainActivity2 extends AppCompatActivity {
 
         chart.getDescription().setEnabled(false); // 하단 regend remove
         chart.setData(dat);
-
-
 //        Log.e("Log", String.valueOf(data));
     }
 

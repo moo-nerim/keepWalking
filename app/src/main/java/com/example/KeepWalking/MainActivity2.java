@@ -80,6 +80,8 @@ public class MainActivity2 extends AppCompatActivity {
         btUpload = (Button) findViewById(R.id.upload_btn);
         btDownload = (Button) findViewById(R.id.download_btn);
 
+        // 테스트!!!!
+        redirectSignupActivity();
 
         btUpload.setOnClickListener(view -> {
             //업로드
@@ -222,7 +224,7 @@ public class MainActivity2 extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HHmmss"); // 년,월,일,시간 포멧 설정
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH시 mm분 ss초"); // 년,월,일,시간 포멧 설정
         Date time = new Date(); //파일명 중복 방지를 위해 사용될 현재시간
         String current_time = sdf.format(time); //String 형 변수에 저장
 
@@ -271,55 +273,13 @@ public class MainActivity2 extends AppCompatActivity {
 //
 //    }
 
-//    private void downLoadImageFromStorage2() {
-//        // 이미지 폴더 경로 참조
-//        StorageReference listRef = FirebaseStorage.getInstance().getReference().child("images/");
-//
-//        // listAll(): 폴더 내의 모든 이미지를 가져오는 함수
-//        listRef.listAll()
-//                .addOnSuccessListener(listResult -> {
-//                    int i = 0;
-//                    // 폴더 내의 item이 없어질 때까지 모두 가져온다.
-//                    for (StorageReference item : listResult.getItems()) {
-//
-//                        // imageview와 textview를 생성할 레이아웃 id 받아오기
-//                        LinearLayout layout = (LinearLayout) findViewById(R.id.add_graph);
-//                        // textview 동적생성
-////                        TextView tv = new TextView(MainActivity2.this);
-////                        tv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-////                        tv.setText(i +". new TextView");
-////                        tv.setTextSize(30);
-////                        tv.setTextColor(0xff004497);
-////                        layout.addView(tv);
-//
-//                        //imageview 동적생성
-//                        ImageView iv = new ImageView(MainActivity2.this);
-//                        iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-//                        layout.addView(iv);
-//                        i++;
-//                        Log.e(TAG, "몇개: "+i);
-//
-//                        // reference의 item(이미지) url 받아오기
-//                        item.getDownloadUrl().addOnCompleteListener(task -> {
-//                            if (task.isSuccessful()) {
-//                                // Glide 이용하여 이미지뷰에 로딩
-//                                Glide.with(MainActivity2.this)
-//                                        .load(task.getResult())
-//                                        .override(1024, 980)
-//                                        .into(iv);
-//                                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
-//                            } else {
-//                                // URL을 가져오지 못하면 토스트 메세지
-//                                Toast.makeText(MainActivity2.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }).addOnFailureListener(e -> {
-//                            // Uh-oh, an error occurred!
-//                        });
-//                    }
-//                });
-//    }
+
     /********* 그래프 업로드/다운로드 관련 **********/
-
-
-
+    /*** 테스트위함 ***/
+    public void redirectSignupActivity() {
+        //로그인이 완료된 후 이동하는 액티비티 지정
+        final Intent intent = new Intent(this, CalendarActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }

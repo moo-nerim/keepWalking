@@ -3,23 +3,31 @@ package com.example.keepwalking;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import static android.service.controls.ControlsProviderService.TAG;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -38,15 +46,10 @@ public class CalendarActivity extends AppCompatActivity {
     String[] dates = new String[0];
     RecyclerView recyclerView;
     TextView tx_item;
-//    CalendarAdapter adapter;
-
-    Intent secondIntent = getIntent();
-    String kakaoId = secondIntent.getStringExtra("KAKAOID");
 
     /*************************/
     TextView name, phone, city, date;
     private FirebaseStorage storage;
-
     /*************************/
 
     String[] day = {"10", "20", "21", "25", "27"};
@@ -58,15 +61,20 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
+        /****** 캘린더 결과 리스트 관련 ******/
+        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        /****** 캘린더 결과 리스트 관련 ******/
+
         init();
         calendarlistener();
         Setdate();
 
         storage = FirebaseStorage.getInstance();
 
-
         tx_date.setText("" + formattedDate);
-
 
         ly_right.setOnClickListener(v -> {
             compactCalendarView.showCalendarWithAnimation();
@@ -82,51 +90,30 @@ public class CalendarActivity extends AppCompatActivity {
             Intent intent = new Intent(CalendarActivity.this, CalendarActivity.class);
             startActivity(intent);
             finish();
-
         });
-
         im_back.setOnClickListener(v -> finish());
     }
 
     // variable initialization
     public void init() {
-        compactCalendarView = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
-        tx_date = (TextView) findViewById(R.id.text);
-        ly_left = (LinearLayout) findViewById(R.id.layout_left);
-        ly_right = (LinearLayout) findViewById(R.id.layout_right);
-        im_back = (ImageView) findViewById(R.id.image_back);
-        tx_today = (TextView) findViewById(R.id.text_today);
-        ly_detail = (LinearLayout) findViewById(R.id.layout_detail);
+        compactCalendarView = findViewById(R.id.compactcalendar_view);
+        tx_date = findViewById(R.id.text);
+        ly_left = findViewById(R.id.layout_left);
+        ly_right = findViewById(R.id.layout_right);
+        im_back = findViewById(R.id.image_back);
+        tx_today = findViewById(R.id.text_today);
+        ly_detail = findViewById(R.id.layout_detail);
+        tx_item = findViewById(R.id.text_item);
+        recyclerView = findViewById(R.id.recyclerview);
     }
 
     // calendar method
     public void calendarlistener() {
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
-            private Object NullPointerException;
-            String fileName = "";
 
             @Override
             public void onDayClick(Date dateClicked) {
-//                if (DateFormat.format(dateClicked).equals("2018-11-21")) {
-//                    Toast.makeText(getApplicationContext(), DateFormat.format(dateClicked) + " This day your brother birth day ", Toast.LENGTH_LONG).show();
-//                } else {
-//                    Toast.makeText(getApplicationContext(), DateFormat.format(dateClicked) + " In This day no Events Available", Toast.LENGTH_LONG).show();
-//                }
-
-//                DateFormat.format(dateClicked)
-
-
-                StorageReference storageReference = storage.getReference().child(kakaoId + "/"+ DateFormat.format(dateClicked));
-                // 이거 비슷하게 응용할 예정
-                if (storageReference == NullPointerException) {
-                    tx_item.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    tx_item.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
-
-
+                downLoadImageFromStorage2(dateClicked);
             }
 
             @Override
@@ -143,11 +130,8 @@ public class CalendarActivity extends AppCompatActivity {
         c = Calendar.getInstance().getTime();
         df = new SimpleDateFormat("yyyy-MM-dd");
         formattedDate = df.format(c);
-
         compactCalendarView.setUseThreeLetterAbbreviation(true);
-
         sdf = new SimpleDateFormat("MMMM yyyy");
-
         myCalendar = Calendar.getInstance();
 
         for (int j = 0; j < month.length; j++) {
@@ -161,67 +145,32 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, phone, city, date;
+    private void downLoadImageFromStorage2(Date dateClicked) {
 
-        public MyViewHolder(View view) {
-            super(view);
-            name = (TextView) view.findViewById(R.id.text_name);
-            phone = (TextView) view.findViewById(R.id.text_mobile);
-            city = (TextView) view.findViewById(R.id.text_city);
-//            date = (TextView) view.findViewById(R.id.text_date);
-        }
+        String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
+        StorageReference storageReference = storage.getReference().child(kakaoid + "/"+ DateFormat.format(dateClicked));
+
+        List<RecyclerItem> items = new ArrayList<>();
+            storageReference.listAll()
+                    .addOnSuccessListener(listResult -> {
+                        if(listResult.getItems().isEmpty()){
+                            tx_item.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        }else{
+                            tx_item.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+
+                            for (StorageReference item : listResult.getItems()) {
+//                                Log.e("파일이름",item.getName());
+                                String time = item.getName().split("_")[0];
+                                String result = item.getName().split("_")[1];
+
+                                RecyclerItem result_item = new RecyclerItem(DateFormat.format(dateClicked), time, result);
+                                items.add(result_item);
+
+                                recyclerView.setAdapter(new CalendarAdapter(getApplicationContext(), items, R.layout.activity_calendar));
+                            }
+                        }
+                    });
     }
-
-//    private void downLoadImageFromStorage2() {
-//        // 이미지 폴더 경로 참조
-//        StorageReference listRef = FirebaseStorage.getInstance().getReference().child("images/");
-//
-//        if(listRef != NullPointerException){
-//            // listAll(): 폴더 내의 모든 이미지를 가져오는 함수
-//            Log.e(TAG,"[TEST] NULL 아님");
-//            listRef.listAll()
-//                    .addOnSuccessListener(listResult -> {
-//                        int i = 0;
-//                        // 폴더 내의 item이 없어질 때까지 모두 가져온다.
-//                        for (StorageReference item : listResult.getItems()) {
-//                            // imageview와 textview를 생성할 레이아웃 id 받아오기
-//                            LinearLayout layout = (LinearLayout) findViewById(R.id.layout_detail);
-//                            // textview 동적생성
-////                        TextView tv = new TextView(MainActivity2.this);
-////                        tv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-////                        tv.setText(i +". new TextView");
-////                        tv.setTextSize(30);
-////                        tv.setTextColor(0xff004497);
-////                        layout.addView(tv);
-//
-//                            //imageview 동적생성
-////                            ImageView iv = new ImageView(CalendarActivity.this);
-////                            iv.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-////                            layout.addView(iv);
-//
-////                            CardView cv = new CardView(findViewById(R.id.record_view));
-////                        i++;
-////                        Log.e(TAG, "몇개: " + i);
-//
-//                            // reference의 item(이미지) url 받아오기
-//                            item.getDownloadUrl().addOnCompleteListener(task -> {
-//                                if (task.isSuccessful()) {
-//                                    // Glide 이용하여 이미지뷰에 로딩
-//                                    Glide.with(CalendarActivity.this)
-//                                            .load(task.getResult())
-//                                            .override(1024, 980)
-//                                            .into(iv);
-//                                    Toast.makeText(CalendarActivity.this, "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
-//                                } else {
-//                                    // URL을 가져오지 못하면 토스트 메세지
-//                                    Toast.makeText(CalendarActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            }).addOnFailureListener(e -> {
-//                                // Uh-oh, an error occurred!
-//                            });
-//                        }
-//                    });
-//        }
-//    }
 }

@@ -184,7 +184,6 @@ public class LoginActivity extends AppCompatActivity {
     public void redirectSignupActivity() {
         //로그인이 완료된 후 이동하는 액티비티 지정
         final Intent intent = new Intent(this, MainActivity.class);
-//        intent.putExtra("KAKAOID",KakaoId);
         startActivity(intent);
         finish();
     }

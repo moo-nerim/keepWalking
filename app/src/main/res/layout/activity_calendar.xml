@@ -60,6 +60,7 @@
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:gravity="center">
+
                 <ImageView
                     android:layout_width="15dp"
                     android:layout_height="20dp"
@@ -102,6 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.2">
+
             <com.github.sundeepk.compactcalendarview.CompactCalendarView
                 android:id="@+id/compactcalendar_view"
                 android:layout_width="match_parent"
@@ -122,24 +124,42 @@
         android:id="@+id/layout_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
         android:layout_margin="10dp"
-        android:gravity="center">
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:scrollbarSize="8dp"
+            android:scrollbarThumbVertical="@drawable/scrollbar"
+            android:scrollbars="vertical">
+
         </androidx.recyclerview.widget.RecyclerView>
+
         <TextView
             android:id="@+id/text_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="측정 기록이 없습니다."
+            android:textColor="@android:color/black"
             android:textSize="15dp"
             android:textStyle="bold"
-            android:visibility="gone"
-            android:textColor="@android:color/black"/>
+            android:visibility="gone" />
     </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorBackground"
+        app:itemIconTint="#ffffff"
+        app:itemTextColor="#ffffff"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/menu_bottom" />
+
 </LinearLayout>

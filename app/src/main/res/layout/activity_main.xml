@@ -297,7 +297,7 @@
         app:itemIconTint="#ffffff"
         app:itemTextColor="#ffffff"
         app:labelVisibilityMode="labeled"
-        />
+    />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

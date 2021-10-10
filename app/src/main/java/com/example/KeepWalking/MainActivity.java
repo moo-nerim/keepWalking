@@ -19,16 +19,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
+//import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -39,6 +44,8 @@ import com.kakao.message.template.SocialObject;
 import com.kakao.network.ErrorResult;
 import com.kakao.network.callback.ResponseCallback;
 import com.kakao.util.helper.log.Logger;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -137,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     //****************
 
     String kakaoid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,9 +273,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else {
             Log.e("속력센서 ", "있음!!!!!!!!!");
         }
-        wspeed = findViewById(R.id.wspeed);
+        wspeed = findViewById(R.id.speed_t);
         /************* 속력 *************/
 
+        /************* 하단바 *************/
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu);
+
+        // item selection part
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        final Intent intent1 = new Intent(MainActivity.this, MainActivity.class);
+                        startActivity(intent1);
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                        finish();
+                        return true;
+
+                    case R.id.calendar:
+                        final Intent intent2 = new Intent(MainActivity.this, CalendarActivity.class);
+                        startActivity(intent2);
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+//                        overridePendingTransition(0,0);
+                        finish();
+                        return true;
+
+                }
+                return false;
+            }
+
+        });
+        /************* 하단바 *************/
     }
 
 
@@ -276,12 +313,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                mySpeed = Double.parseDouble(String.format("%.2f",location.getSpeed()));
+                mySpeed = Double.parseDouble(String.format("%.2f", location.getSpeed()));
                 if (mySpeed > maxSpeed) {
                     maxSpeed = mySpeed;
                 }
-                wspeed.setText("속력 : " + maxSpeed + " km/h");
-                Log.e("속력:소수점변경",""+mySpeed);
+                wspeed.setText(maxSpeed + " km/h");
+                Log.e("속력:소수점변경", "" + mySpeed);
             }
         }
 
@@ -443,12 +480,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void reset() {
         stopCountDownTimer();
-        startCountDownTimer();
+        final Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // 걸음수 센서
         mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -473,10 +514,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      */
     private void startStop() {
         if (timerStatus == TimerStatus.STOPPED) {
-//            walkingTextView.setText(null);
-            // call to initialize the progress bar values
-//            setProgressBarValues();
-            // showing the reset icon
+            // 다시측정 버튼 보이기
             imageViewReset.setVisibility(View.VISIBLE);
 //            app:layout_constraintHorizontal_bias="0.081"
             imageViewStartStop.setX(10);
@@ -501,12 +539,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // hiding the reset icon
 //            imageViewReset.setVisibility(View.GONE);
             // changing stop icon to start icon
-            imageViewStartStop.setImageResource(R.drawable.retry_btn);
+//            imageViewStartStop.setImageResource(R.drawable.retry_btn);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
-
+            final Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
             predictActivity(); // 모델 학습
             mSensorManager.unregisterListener(MainActivity.this);
+            stopCountDownTimer();
+
         }
     }
 

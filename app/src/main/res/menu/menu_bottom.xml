@@ -5,21 +5,11 @@
         android:id="@+id/home"
         android:icon="@drawable/ic_home"
         android:title="Home"
-        android:fontFamily="@font/bold"
-        android:textColor="#ffffff"
-        app:cnb_backgroundColor="#ff785b"
-        app:cnb_iconColor="#ffffff"
-        app:cnb_iconTintMode="src_in"/>
-
-    <item
-        android:id="@+id/run"
-        android:icon="@drawable/ic_run"
-        android:title="Run"
-        android:fontFamily="@font/bold"
-        app:cnb_backgroundColor="#ff785b"
-        app:cnb_iconColor="#ffffff"
-        app:cnb_textColor="#ffffff"
-        app:cnb_iconTintMode="src_in"
         />
 
+    <item
+        android:id="@+id/calendar"
+        android:icon="@drawable/ic_run"
+        android:title="Calendar"
+        />
 </menu>

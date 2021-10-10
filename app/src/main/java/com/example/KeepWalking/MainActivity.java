@@ -532,7 +532,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // gif stop
             ((GifDrawable) frontwalking.getDrawable()).stop();
 
-            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
+//            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
             // call to initialize the progress bar values
 //                setProgressBarValues();
             // hiding the reset icon

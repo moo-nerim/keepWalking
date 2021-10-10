@@ -16,5 +16,7 @@
     <color name="colorMain">#51CB90</color>
     <color name="colorDialog">#A6333333</color>
 
+    <color name="scrollbar">#E2E2E2</color>
+
     <color name="bg_logo">#575BD0</color>
 </resources>

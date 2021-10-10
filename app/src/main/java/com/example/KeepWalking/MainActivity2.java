@@ -78,7 +78,7 @@ public class MainActivity2 extends AppCompatActivity {
         btUpload = findViewById(R.id.upload_btn);
 
         // 테스트!!!!
-        redirectSignupActivity();
+//        redirectSignupActivity();
 
         btUpload.setOnClickListener(view -> {
             upLoadFromMemory();

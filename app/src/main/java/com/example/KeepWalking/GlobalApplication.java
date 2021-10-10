@@ -11,16 +11,16 @@ import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 
 
-
 public class GlobalApplication extends Application {
     private static GlobalApplication instance;
-    private String KakaoID;
+    public String KakaoID;
+    public static Context mContext;
 
     public String getKakaoID() {
         return KakaoID;
     }
 
-    public String setKakaoID(String KakaoID ) {
+    public String setKakaoID(String KakaoID) {
         this.KakaoID = KakaoID;
         return KakaoID;
     }
@@ -55,7 +55,7 @@ public class GlobalApplication extends Application {
             return new ISessionConfig() {
                 @Override
                 public AuthType[] getAuthTypes() {
-                    return new AuthType[] {AuthType.KAKAO_LOGIN_ALL};
+                    return new AuthType[]{AuthType.KAKAO_LOGIN_ALL};
                 }
 
                 @Override

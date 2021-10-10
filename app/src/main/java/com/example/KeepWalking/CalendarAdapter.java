@@ -1,28 +1,56 @@
 package com.example.keepwalking;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.kakao.kakaolink.v2.KakaoLinkResponse;
+import com.kakao.kakaolink.v2.KakaoLinkService;
+import com.kakao.message.template.ButtonObject;
+import com.kakao.message.template.ContentObject;
+import com.kakao.message.template.FeedTemplate;
+import com.kakao.message.template.LinkObject;
+import com.kakao.message.template.SocialObject;
+import com.kakao.network.ErrorResult;
+import com.kakao.network.callback.ResponseCallback;
+import com.kakao.util.helper.log.Logger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
 
-    Context context;
+    Context mContext;
     List<RecyclerItem> resultsList;
     int itemLayout;
 
+    String kakaoid;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView date, time, result;
@@ -37,10 +65,11 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         }
     }
 
-    public CalendarAdapter(Context context, List<RecyclerItem> resultsList, int itemLayout) {
-        this.context = context;
+    public CalendarAdapter(Context mcontext, List<RecyclerItem> resultsList, int itemLayout, String kakaoid) {
+        this.mContext = mcontext;
         this.resultsList = resultsList;
         this.itemLayout = itemLayout;
+        this.kakaoid = kakaoid;
     }
 
     @Override
@@ -51,21 +80,96 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final RecyclerItem item = resultsList.get(position);
-//        Drawable drawable = context.getResources().getDrawable(item.getImage());
-//        holder.image.setBackground(drawable);
-//        holder.title.setText(item.getTitle());
-//        holder.cardview.setOnClickListener(v -> Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show());
-
         holder.date.setText(resultsList.get(position).getDate());
         holder.time.setText(resultsList.get(position).getTime());
         holder.result.setText(resultsList.get(position).getResult());
-        // 새 창으로 넘어가기 할 때 사용하기
-//         holder.cardview.setOnClickListener(v ->);
+
+        String date = resultsList.get(position).getDate();
+        String time = resultsList.get(position).getTime();
+        String result = resultsList.get(position).getResult();
+
+        holder.cardview.setOnClickListener(v -> showPopup(v,date, time, result));
     }
+
 
     @Override
     public int getItemCount() {
         return this.resultsList.size();
+    }
+
+    public void showPopup(View view, String date, String time, String result) {
+        final View popupView = LayoutInflater.from(view.getContext()).inflate(R.layout.activity_dialog, null);
+        final PopupWindow mPopupWindow = new PopupWindow(popupView, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+
+        ImageView imageView = popupView.findViewById(R.id.DialogImage);
+
+        downLoadImageFromStorage(imageView, mContext, date, time, result); // 파이어베이스에서 그래프 불러오기
+
+        mPopupWindow.setFocusable(true); // 외부 영역 선택시 PopUp 종료
+        mPopupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+        Button cancel = popupView.findViewById(R.id.Cancel);
+        cancel.setOnClickListener(v -> mPopupWindow.dismiss());
+
+        Button ok = popupView.findViewById(R.id.Ok);
+        ok.setOnClickListener(v ->
+//                Toast.makeText(mContext.getApplicationContext(), "Ok", Toast.LENGTH_SHORT).show()
+                shareResult()
+
+        );
+    }
+
+    private void downLoadImageFromStorage(ImageView imageView, Context mContext, String date, String time, String result) {
+        String fileName = kakaoid + "/" + date + "/" + time + "_" + result;
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child(fileName);
+
+        storageReference.getDownloadUrl().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Glide.with(mContext.getApplicationContext())
+                        .load(task.getResult())
+                        .override(1024, 980)
+                        .into(imageView);
+                Toast.makeText(mContext.getApplicationContext(), "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext.getApplicationContext(), "그래프가 정상적으로 로드되지 않았습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void shareResult(){
+        FeedTemplate params = FeedTemplate
+                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
+                        "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
+                        LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                                .setMobileWebUrl("https://developers.kakao.com").build())
+                        .setDescrption("측정 결과 확인하기")
+                        .build())
+                .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
+                        .setSharedCount(30).setViewCount(40).build())
+                .addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("'https://developers.kakao.com").setMobileWebUrl("'https://developers.kakao.com").build()))
+                .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder()
+                        .setWebUrl("'https://developers.kakao.com")
+                        .setMobileWebUrl("'https://developers.kakao.com")
+                        .setAndroidExecutionParams("key1=value1")
+                        .setIosExecutionParams("key1=value1")
+                        .build()))
+                .build();
+
+        Map<String, String> serverCallbackArgs = new HashMap<String, String>();
+        serverCallbackArgs.put("user_id", "${current_user_id}");
+        serverCallbackArgs.put("product_id", "${shared_product_id}");
+
+        KakaoLinkService.getInstance().sendDefault(mContext, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
+            @Override
+            public void onFailure(ErrorResult errorResult) {
+                Logger.e(errorResult.toString());
+            }
+
+            @Override
+            public void onSuccess(KakaoLinkResponse result) {
+                // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+            }
+        });
     }
 }

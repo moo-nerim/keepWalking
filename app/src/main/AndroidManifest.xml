@@ -24,7 +24,7 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <!-- <activity android:name=".MainActivity" /> -->
+         <activity android:name=".MainActivity" />
         <activity android:name=".MainActivity2" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
 
@@ -33,9 +33,6 @@
             android:enabled="true"
             android:exported="true" />
         <activity android:name=".LogoActivity">
-        </activity>
-
-        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,9 +49,13 @@
                     android:scheme="@string/kakao_scheme" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".LoginActivity"/>
         <activity android:name=".CalendarActivity">
         </activity>
-        <activity android:name=".MainActivity" />
+
+        <activity android:name=".DialogActivity"
+            android:theme="@style/DialogTheme"/>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ImageView iv;
 
     private AnimationDrawable drawable;
-
     //*************************
 
     // 권한

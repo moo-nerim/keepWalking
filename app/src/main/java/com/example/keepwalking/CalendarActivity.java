@@ -3,17 +3,20 @@ package com.example.keepwalking;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -81,6 +84,27 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         im_back.setOnClickListener(v -> finish());
+
+        /************* 하단바 *************/
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu);
+
+        // item selection part
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        final Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                        finish();
+                        return true;
+                }
+                return false;
+            }
+
+        });
+        /************* 하단바 *************/
     }
 
     // variable initialization

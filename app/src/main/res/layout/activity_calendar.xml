@@ -136,7 +136,6 @@
             android:scrollbarSize="8dp"
             android:scrollbarThumbVertical="@drawable/scrollbar"
             android:scrollbars="vertical">
-
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView

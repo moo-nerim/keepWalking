@@ -283,18 +283,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.home:
-                        final Intent intent1 = new Intent(MainActivity.this, MainActivity.class);
-                        startActivity(intent1);
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                        finish();
-                        return true;
-
                     case R.id.calendar:
                         final Intent intent2 = new Intent(MainActivity.this, CalendarActivity.class);
                         startActivity(intent2);
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-//                        overridePendingTransition(0,0);
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
                         finish();
                         return true;
 

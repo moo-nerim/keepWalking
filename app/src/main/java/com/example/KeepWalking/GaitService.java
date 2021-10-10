@@ -15,7 +15,7 @@ public class GaitService extends Service {
 
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
         // 서비스는 한번 실행되면 계속 실행된 상태로 있는다.
         // 따라서 서비스 특성상 intent를 받아서 처리하기에 적합하지않다.
@@ -24,19 +24,19 @@ public class GaitService extends Service {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
 
         Log.d(TAG, "onDestroy() called");
     }
 
     @Override
-    public IBinder onBind(Intent intent){
+    public IBinder onBind(Intent intent) {
         throw new UnsupportedOperationException("Not yet Implemented"); //자동으로 작성되는 코드
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() called");
 
         if (intent == null) {
@@ -47,9 +47,10 @@ public class GaitService extends Service {
 
             //Log.d(TAG, "전달받은 데이터: " + command+ ", " +name);
 
-            try{
+            try {
                 Thread.sleep(5000); //5초동안 정지
-            } catch(Exception e) {}
+            } catch (Exception e) {
+            }
 
             Intent showIntent = new Intent(getApplicationContext(), MainActivity.class);
 

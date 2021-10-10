@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.example.keepwalking"
         minSdkVersion 27
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -60,6 +60,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
     implementation 'com.jjoe64:graphview:4.2.2'
+//    implementation 'com.jjoe64:graphview:4.2.2'
 
     // animate
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
@@ -69,7 +70,6 @@ dependencies {
     // calendar
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.github.sundeepk:compact-calendar-view:1.9.1'
-//    implementation 'com.github.sundeepk:compact-calendar-view:1.9.1'
 
     // progressbar
     implementation 'com.akexorcist:round-corner-progress-bar:2.1.2'

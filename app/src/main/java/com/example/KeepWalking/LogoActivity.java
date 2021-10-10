@@ -16,16 +16,12 @@ public class LogoActivity extends AppCompatActivity {
         // LogoActivity -> LoginActivity 화면 전환
         Handler hand = new Handler();
 
-        hand.postDelayed(new Runnable() {
+        hand.postDelayed(() -> {
+            Intent i = new Intent(LogoActivity.this, LoginActivity.class);
+            startActivity(i);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            finish();
 
-            @Override
-            public void run() {
-                Intent i = new Intent(LogoActivity.this, LoginActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                finish();
-
-            }
         }, 2000);
     }
 }

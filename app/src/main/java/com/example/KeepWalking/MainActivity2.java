@@ -73,28 +73,16 @@ public class MainActivity2 extends AppCompatActivity {
         btn = findViewById(R.id.button3);
 
         context_main2 = this;
-
-        /******** 그래프 업로드/다운로드 관련 *********/
         storage = FirebaseStorage.getInstance();
-        chartView = (LineChart) findViewById(R.id.chart);
-        btUpload = (Button) findViewById(R.id.upload_btn);
-        btDownload = (Button) findViewById(R.id.download_btn);
+        chartView = findViewById(R.id.chart);
+        btUpload = findViewById(R.id.upload_btn);
 
         // 테스트!!!!
         redirectSignupActivity();
 
         btUpload.setOnClickListener(view -> {
-            //업로드
             upLoadFromMemory();
         });
-        btDownload.setOnClickListener(view -> {
-            //다운로드
-//            downLoadImageFromStorage();
-//            downLoadImageFromStorage2();
-        });
-        /******** 그래프 업로드/다운로드 관련 *********/
-
-
 
         // 데이터 수신
         Intent intent = getIntent();
@@ -132,8 +120,6 @@ public class MainActivity2 extends AppCompatActivity {
             // editText에 있는 문장을 읽는다.
             tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
         });
-
-
 
         // 음성 텍스트
 //        tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
@@ -191,42 +177,22 @@ public class MainActivity2 extends AppCompatActivity {
 //        Log.e("Log", String.valueOf(data));
     }
 
-    /********* 그래프 업로드/다운로드 관련 **********/
-    //권한 체크 함수
-    public void checkPermission() {
-        //현재 버전 6.0 미만이면 종료 --> 6이후 부터 권한 허락
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
-
-        //각 권한 허용 여부를 확인
-        for (String permission : permissionList) {
-            int chk = checkCallingOrSelfPermission(permission);
-            //거부 상태라면
-            if (chk == PackageManager.PERMISSION_DENIED) {
-                //사용자에게 권한 허용여부를 확인하는 창을 띄운다.
-                requestPermissions(permissionList, 0); //권한 검사 필요한 것들만 남는다.
-                break;
-            }
-        }
-    }
-
-
     // 메모리 데이터, 비트맵을 바이트코드로 compress 하여 추가하기
     //  Get the data from an ImageView as bytes
     private void upLoadFromMemory() {
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
-        Log.e("메인카카오: ",( (GlobalApplication) getApplication() ).getKakaoID());
+//        Log.e("메인카카오: ",( (GlobalApplication) getApplication() ).getKakaoID());
 
         chartView.setDrawingCacheEnabled(true);
 
-        // Bitmap bitmap = getBitmapFromVectorDrawable(R.drawable.activity_main2);
         Bitmap bitmap = chartView.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH시 mm분 ss초"); // 년,월,일,시간 포멧 설정
-        Date time = new Date(); //파일명 중복 방지를 위해 사용될 현재시간
-        String current_time = sdf.format(time); //String 형 변수에 저장
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH시 mm분");
+        Date time = new Date();
+        String current_time = sdf.format(time);
 
         String[] file_name = current_time.split("_");
 
@@ -236,45 +202,17 @@ public class MainActivity2 extends AppCompatActivity {
         uploadTask.addOnProgressListener(taskSnapshot -> {
             double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
             Log.d(TAG, "Upload is " + progress + "% done");
+
         }).addOnPausedListener(taskSnapshot -> Log.d(TAG, "Upload is paused")).addOnFailureListener(exception -> {
-            // Handle unsuccessful uploads
             Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 실패");
+
         }).addOnSuccessListener(taskSnapshot -> {
-            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-            // ...
             Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 성공");
         });
-        // imageView.destroyDrawingCache(); 나중에 필요하면 추가
     }
 
-//    private void downLoadImageFromStorage() {
-//
-//        ImageView imageView = findViewById(R.id.graph_view);
-//
-//        // 위의 저장소를 참조하는 파일명으로 지정
-//        StorageReference storageReference = storage.getReference().child("images/20211003");
-//
-//        //StorageReference에서 파일 다운로드 URL 가져옴
-//        storageReference.getDownloadUrl().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                // Glide 이용하여 이미지뷰에 로딩
-//                Glide.with(MainActivity2.this)
-//                        .load(task.getResult())
-//                        .override(1024, 980)
-//                        .into(imageView);
-//                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되었습니다.", Toast.LENGTH_SHORT).show();
-//            } else {
-//                // URL을 가져오지 못하면 토스트 메세지
-//                Toast.makeText(MainActivity2.this, "그래프가 정상적으로 로드되지 않았습니다.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//    }
-
-
-    /********* 그래프 업로드/다운로드 관련 **********/
     /*** 테스트위함 ***/
     public void redirectSignupActivity() {
         //로그인이 완료된 후 이동하는 액티비티 지정

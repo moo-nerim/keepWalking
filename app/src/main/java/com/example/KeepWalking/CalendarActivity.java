@@ -61,9 +61,9 @@ public class CalendarActivity extends AppCompatActivity {
 
         storage = FirebaseStorage.getInstance();
 
+        setDate();
         init();
         calendarlistener();
-        Setdate();
 
         tx_date.setText("" + formattedDate);
 
@@ -133,14 +133,14 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
                 compactCalendarView.removeAllEvents();
-                Setdate();
+                setDate();
                 tx_date.setText(simpleDateFormat.format(firstDayOfNewMonth));
             }
         });
     }
 
     // get current date
-    public void Setdate() {
+    public void setDate() {
         c = Calendar.getInstance().getTime();
         df = new SimpleDateFormat("yyyy-MM-dd");
         formattedDate = df.format(c);
@@ -179,13 +179,20 @@ public class CalendarActivity extends AppCompatActivity {
                             String time = item.getName().split("_")[0];
                             String result = item.getName().split("_")[1];
 
-                            RecyclerItem result_item = new RecyclerItem(DateFormat.format(dateClicked), time, result);
+                            int count = 0; // 여기서 걸음수 가져오는 함수 불러서 저장
+
+                            RecyclerItem result_item = new RecyclerItem(DateFormat.format(dateClicked), time, result, count);
                             items.add(result_item);
 
                             recyclerView.setAdapter(new CalendarAdapter(getApplicationContext(), items, R.layout.activity_calendar, kakaoid));
                         }
+                        // 걸음 수 setText
                     }
                 });
+    }
+
+    private void getGaitCount(Date dateClicked){
+        // void 고쳐서 걸음수 return
     }
 
     private void getEventDateFromStorage() {

@@ -4,6 +4,7 @@ public class RecyclerItem {
     String date;
     String time;
     String result;
+    int count;
 
     String getDate() {
         return this.date;
@@ -15,9 +16,12 @@ public class RecyclerItem {
 
     String getResult() { return this.result;}
 
-    RecyclerItem(String date, String time, String result) {
+    int getCount() { return this.count;}
+
+    RecyclerItem(String date, String time, String result, int count) {
         this.date = date;
         this.time = time;
         this.result = result;
+        this.count = count;
     }
 }

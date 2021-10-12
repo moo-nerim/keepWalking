@@ -51,9 +51,10 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     int itemLayout;
 
     String kakaoid;
+    String url;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView date, time, result;
+        public TextView date, time, result, count;
         public CardView cardview;
 
         public ViewHolder(View itemView) {
@@ -61,6 +62,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             date = itemView.findViewById(R.id.text_date);
             time = itemView.findViewById(R.id.text_time);
             result = itemView.findViewById(R.id.text_result);
+            count = itemView.findViewById(R.id.text_count);
             cardview = itemView.findViewById(R.id.record_view);
         }
     }
@@ -83,12 +85,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         holder.date.setText(resultsList.get(position).getDate());
         holder.time.setText(resultsList.get(position).getTime());
         holder.result.setText(resultsList.get(position).getResult());
+        holder.count.setText(resultsList.get(position).getCount());
 
         String date = resultsList.get(position).getDate();
         String time = resultsList.get(position).getTime();
         String result = resultsList.get(position).getResult();
 
-        holder.cardview.setOnClickListener(v -> showPopup(v,date, time, result));
+        holder.cardview.setOnClickListener(v -> showPopup(v, date, time, result));
     }
 
 
@@ -112,17 +115,17 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         cancel.setOnClickListener(v -> mPopupWindow.dismiss());
 
         Button ok = popupView.findViewById(R.id.Ok);
-        ok.setOnClickListener(v ->
-//                Toast.makeText(mContext.getApplicationContext(), "Ok", Toast.LENGTH_SHORT).show()
-                shareResult()
-
-        );
+        ok.setOnClickListener(v -> shareResult());
     }
 
     private void downLoadImageFromStorage(ImageView imageView, Context mContext, String date, String time, String result) {
         String fileName = kakaoid + "/" + date + "/" + time + "_" + result;
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference().child(fileName);
+        // https://firebasestorage.googleapis.com/v0/b/[projectID].appspot.com/o/[folderName]%2F[파일 이름]
+        String s1 = "https://firebasestorage.googleapis.com/v0/b/keepwalking-5a03f.appspot.com/o/";
+        String s2 = kakaoid + "%2F" + date + "%2F" + time + "_" + result + "?alt=media";
+        url = s1 + s2;
 
         storageReference.getDownloadUrl().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -137,23 +140,16 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         });
     }
 
-    private void shareResult(){
+    private void shareResult() {
         FeedTemplate params = FeedTemplate
-                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
-                        "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
+                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리", url,
                         LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                                 .setMobileWebUrl("https://developers.kakao.com").build())
                         .setDescrption("측정 결과 확인하기")
                         .build())
                 .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
                         .setSharedCount(30).setViewCount(40).build())
-                .addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("'https://developers.kakao.com").setMobileWebUrl("'https://developers.kakao.com").build()))
-                .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder()
-                        .setWebUrl("'https://developers.kakao.com")
-                        .setMobileWebUrl("'https://developers.kakao.com")
-                        .setAndroidExecutionParams("key1=value1")
-                        .setIosExecutionParams("key1=value1")
-                        .build()))
+                .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com").setMobileWebUrl("https://developers.kakao.com").build()))
                 .build();
 
         Map<String, String> serverCallbackArgs = new HashMap<String, String>();
@@ -168,8 +164,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
 
             @Override
             public void onSuccess(KakaoLinkResponse result) {
-                // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
             }
         });
     }
+
+
 }

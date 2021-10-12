@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.e("누구야: ", "" + item.getItemId());
             switch (item.getItemId()) {
                 case R.id.calendar:
-                    final Intent intent2 = new Intent(MainActivity.this, StepCountChart.class);
+                    final Intent intent2 = new Intent(MainActivity.this, CalendarActivity.class);
                     startActivity(intent2);
 //
                     finish();

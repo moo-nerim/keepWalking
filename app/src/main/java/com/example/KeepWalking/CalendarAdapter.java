@@ -85,7 +85,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         holder.date.setText(resultsList.get(position).getDate());
         holder.time.setText(resultsList.get(position).getTime());
         holder.result.setText(resultsList.get(position).getResult());
-        holder.count.setText(resultsList.get(position).getCount());
+        holder.count.setText(""+resultsList.get(position).getCount());
 
         String date = resultsList.get(position).getDate();
         String time = resultsList.get(position).getTime();
@@ -115,7 +115,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         cancel.setOnClickListener(v -> mPopupWindow.dismiss());
 
         Button ok = popupView.findViewById(R.id.Ok);
-        ok.setOnClickListener(v -> shareResult());
+        ok.setOnClickListener(v -> shareResult(result));
     }
 
     private void downLoadImageFromStorage(ImageView imageView, Context mContext, String date, String time, String result) {
@@ -140,12 +140,12 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         });
     }
 
-    private void shareResult() {
+    private void shareResult(String result) {
         FeedTemplate params = FeedTemplate
-                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리", url,
+                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리, 킵워킹", url,
                         LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
                                 .setMobileWebUrl("https://developers.kakao.com").build())
-                        .setDescrption("측정 결과 확인하기")
+                        .setDescrption("나의 측정결과: " + result)
                         .build())
                 .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
                         .setSharedCount(30).setViewCount(40).build())

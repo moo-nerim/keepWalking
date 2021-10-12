@@ -50,6 +50,8 @@ public class CalendarActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TextView tx_item;
 
+    int who;
+
     private FirebaseStorage storage;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference databaseReference = firebaseDatabase.getReference();
@@ -171,6 +173,7 @@ public class CalendarActivity extends AppCompatActivity {
     private void downLoadImageFromStorage(Date dateClicked) {
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
         StorageReference storageReference = storage.getReference().child(kakaoid + "/" + DateFormat.format(dateClicked));
+        getGaitCount(dateClicked);
 
         List<RecyclerItem> items = new ArrayList<>();
         storageReference.listAll()
@@ -187,7 +190,7 @@ public class CalendarActivity extends AppCompatActivity {
                             String time = item.getName().split("_")[0];
                             String result = item.getName().split("_")[1];
 
-                            int count = 0; // 여기서 걸음수 가져오는 함수 불러서 저장
+                            int count = who; // 여기서 걸음수 가져오는 함수 불러서 저장
 
                             RecyclerItem result_item = new RecyclerItem(DateFormat.format(dateClicked), time, result, count);
                             items.add(result_item);
@@ -199,23 +202,22 @@ public class CalendarActivity extends AppCompatActivity {
                 });
     }
 
-    private int getGaitCount(Date dateClicked) {
-        final int[] value = new int[1];
-        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(String.valueOf(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void getGaitCount(Date dateClicked) {
+
+        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(DateFormat.format(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    value[0] = snapshot.getValue(Integer.class);
+                    who =  (int)snapshot.getValue(Integer.class);
                 }
-            }
 
+            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // 디비를 가져오던중 에러 발생 시
                 //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
             }
         });
-        return value[0];
     }
 
 

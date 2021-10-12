@@ -167,11 +167,8 @@ public class MainActivity2 extends AppCompatActivity {
         for (int i = 0; i < accX.size(); i++) {
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);
-            Log.e("XXXXX", String.valueOf(dataX.size()));
             double b = dataY.get(i);
-            Log.e("YYYYY", String.valueOf(dataY.size()));
             double c = dataZ.get(i);
-            Log.e("ZZZZZ", String.valueOf(dataZ.size()));
             double res2 = (float) Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2) + Math.pow(c, 2));
 //            float res2 = (double)Math
             entry1.add(new Entry(i, res));
@@ -273,7 +270,6 @@ public class MainActivity2 extends AppCompatActivity {
             Log.e("catch catch", "망햇음");
             e.printStackTrace();
         }
-        Log.e("길이길이기리이기리기리기리보이", String.valueOf(arr.size()));
     }
 
 

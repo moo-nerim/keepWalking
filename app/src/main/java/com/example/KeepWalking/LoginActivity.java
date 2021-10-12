@@ -26,11 +26,21 @@ import com.kakao.util.OptionalBoolean;
 import com.kakao.util.exception.KakaoException;
 import com.kakao.util.helper.log.Logger;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
+
+import static java.lang.Thread.sleep;
 
 public class LoginActivity extends AppCompatActivity {
 
     private SessionCallback callback;
+
+    // 날짜
+    Date c;
+    SimpleDateFormat df;
+    String formattedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +95,14 @@ public class LoginActivity extends AppCompatActivity {
         // 로그인에 성공한 상태
         @Override
         public void onSessionOpened() {
-            requestMe();
+            try
+            {
+                requestMe();
+                sleep(5000);
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
             redirectSignupActivity();
         }
 
@@ -127,6 +144,29 @@ public class LoginActivity extends AppCompatActivity {
                                         // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
                                         databaseReference.child("KAKAOID").child(id).push().setValue(id);
                                     }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    // 디비를 가져오던중 에러 발생 시
+                                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                                }
+                            });
+
+                            c = Calendar.getInstance().getTime();
+                            df = new SimpleDateFormat("yyyy-MM-dd");
+                            formattedDate = df.format(c);
+
+                            // 걸음수 Firebase 저장
+                            databaseReference.child("KAKAOID").child(id).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        ((GlobalApplication)getApplication()).setSteps(snapshot.getValue(Integer.class));
+                                    } else {
+                                        ((GlobalApplication)getApplication()).setSteps(0);
+                                    }
+                                    Log.e("오늘의 걸음수:", "" + ((GlobalApplication)getApplication()).getSteps());
                                 }
 
                                 @Override

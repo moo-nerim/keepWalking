@@ -86,7 +86,7 @@ public class CalendarActivity extends AppCompatActivity {
         im_back.setOnClickListener(v -> finish());
 
         /************* 하단바 *************/
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu3);
 
         // item selection part
         bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -96,8 +96,9 @@ public class CalendarActivity extends AppCompatActivity {
                     case R.id.home:
                         final Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
                         startActivity(intent);
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+
                         finish();
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                         return true;
                 }
                 return false;

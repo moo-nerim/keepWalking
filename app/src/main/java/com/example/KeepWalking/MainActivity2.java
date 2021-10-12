@@ -10,12 +10,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -25,6 +27,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -37,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+
 import static android.content.ContentValues.TAG;
 
 import static android.speech.tts.TextToSpeech.ERROR;
@@ -108,7 +112,7 @@ public class MainActivity2 extends AppCompatActivity {
         tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status == TextToSpeech.SUCCESS){
+                if (status == TextToSpeech.SUCCESS) {
                     tts.setLanguage(Locale.KOREA);
                 }
             }
@@ -116,7 +120,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         btn.setOnClickListener(view -> {
             tts.setPitch(0.5f);         // 음성 톤을 0.5배 내려준다.
-            tts.setSpeechRate(1.0f);    // 읽는 속도는 기본 설정
+            tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
             // editText에 있는 문장을 읽는다.
             tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
         });
@@ -175,6 +179,37 @@ public class MainActivity2 extends AppCompatActivity {
         chart.getDescription().setEnabled(false); // 하단 regend remove
         chart.setData(dat);
 //        Log.e("Log", String.valueOf(data));
+
+        /************* 하단바 *************/
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu2);
+
+        // item selection part
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        final Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+                        startActivity(intent);
+
+                        finish();
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                        return true;
+
+                    case R.id.calendar:
+                        final Intent intent2 = new Intent(MainActivity2.this, CalendarActivity.class);
+                        startActivity(intent2);
+
+                        finish();
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                        return true;
+
+                }
+                return false;
+            }
+
+        });
+        /************* 하단바 *************/
     }
 
     // 메모리 데이터, 비트맵을 바이트코드로 compress 하여 추가하기

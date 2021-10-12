@@ -2,7 +2,16 @@ package com.example.keepwalking;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kakao.auth.ApprovalType;
 import com.kakao.auth.AuthType;
 import com.kakao.auth.IApplicationConfig;
@@ -10,11 +19,25 @@ import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
 
+import java.util.Map;
+
 
 public class GlobalApplication extends Application {
     private static GlobalApplication instance;
     public String KakaoID;
-    public static Context mContext;
+    public int steps;
+
+     // Firebase
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+
+    public int getSteps() {
+        return steps;
+    }
+
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
 
     public String getKakaoID() {
         return KakaoID;

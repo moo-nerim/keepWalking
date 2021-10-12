@@ -3,6 +3,7 @@ package com.example.keepwalking;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +36,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 //import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kakao.kakaolink.v2.KakaoLinkResponse;
 import com.kakao.kakaolink.v2.KakaoLinkService;
 import com.kakao.message.template.ButtonObject;
@@ -48,10 +55,14 @@ import com.kakao.util.helper.log.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -98,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     public TextView walkingTextView;
     private TextView step_sensor;
-    private int mSteps = 0;
+    private int mSteps;
     private int mCounterSteps = 0;
     //리스너가 등록되고 난 후의 step count
     private ImageView iv;
@@ -144,6 +155,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     String kakaoid;
 
+    // Firebase
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
+
+    // 날짜
+    Date c;
+    SimpleDateFormat df;
+    String formattedDate;
+
+    // 음성
+    private TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -279,23 +301,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         BottomNavigationView bottomNav = findViewById(R.id.bottom_menu);
 
         // item selection part
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.calendar:
-                        final Intent intent2 = new Intent(MainActivity.this, CalendarActivity.class);
-                        startActivity(intent2);
-                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
-                        finish();
-                        return true;
+        bottomNav.setOnItemSelectedListener(item -> {
+            Log.e("누구야: ", "" + item.getItemId());
+            switch (item.getItemId()) {
+                case R.id.calendar:
+                    final Intent intent2 = new Intent(MainActivity.this, StepCountChart.class);
+                    startActivity(intent2);
+//
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                    return true;
 
-                }
-                return false;
             }
-
+            return false;
         });
         /************* 하단바 *************/
+
+        // 걸음수 불러오기 & 저장
+        Log.e("메인 걸음수:", "" + ((GlobalApplication) getApplication()).getSteps());
+        mSteps = ((GlobalApplication) getApplication()).getSteps();
+        Log.e("헤이요: ", "" + mSteps);
+        step_sensor.setText("" + mSteps);
+
+        // 음성
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.KOREA);
+                }
+            }
+        });
     }
 
 
@@ -482,6 +518,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onResume();
         // 걸음수 센서
         mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_NORMAL);
+        mSteps = ((GlobalApplication) getApplication()).getSteps();
+        Log.e("메인 걸음수:", "" + mSteps);
     }
 
     @Override
@@ -498,6 +536,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.e("LOG", "onDestroy()");
         mSensorManager.unregisterListener(mGyroLis);
         mSensorManager.unregisterListener(mAccLis);
+
+        c = Calendar.getInstance().getTime();
+        df = new SimpleDateFormat("yyyy-MM-dd");
+        formattedDate = df.format(c);
+
+        // 걸음수 Firebase 저장
+        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).setValue(mSteps);
+
+                Log.e("걸음수DB: ", "" + ((GlobalApplication) getApplication()).getSteps());
+                // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // 디비를 가져오던중 에러 발생 시
+                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+            }
+        });
     }
 
     /**
@@ -533,10 +593,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            imageViewStartStop.setImageResource(R.drawable.retry_btn);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
-            final Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-            finish();
+//            final Intent intent = new Intent(this, MainActivity.class);
+//            startActivity(intent);
+//            overridePendingTransition(0, 0);
+//            finish();
             predictActivity(); // 모델 학습
             mSensorManager.unregisterListener(MainActivity.this);
             stopCountDownTimer();
@@ -561,9 +621,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 // call to initialize the progress bar values
 //                setProgressBarValues();
                 // hiding the reset icon
-                imageViewReset.setVisibility(View.GONE);
-                // changing stop icon to start icon
-                imageViewStartStop.setImageResource(R.drawable.retry_btn);
+//                imageViewReset.setVisibility(View.GONE);
+//                // changing stop icon to start icon
+//                imageViewStartStop.setImageResource(R.drawable.start_btn);
                 // changing the timer status to stopped
                 timerStatus = TimerStatus.STOPPED;
 
@@ -655,6 +715,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            step_sensor.setText("걸음수: " + event.values[0]);
             step_sensor.setText("" + (++mSteps));
             Log.e("걸음수: ", "" + mSteps);
+            ((GlobalApplication) getApplication()).setSteps(mSteps);
 //            if (mCounterSteps < 1) {
 //                // initial value
 //                mCounterSteps = (int) event.values[0];
@@ -777,12 +838,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //    }
 
     private void predictActivity() {
+        tts.setPitch(1f);
+        tts.setSpeechRate(0.8f);
+        tts.speak("측정이 완료되었습니다", TextToSpeech.QUEUE_FLUSH, null);
+
         List<Float> data = new ArrayList<>();
         if (accX.size() >= TIME_STAMP && accY.size() >= TIME_STAMP && accZ.size() >= TIME_STAMP
                 && gyroX.size() >= TIME_STAMP && gyroY.size() >= TIME_STAMP && gyroZ.size() >= TIME_STAMP
                 && lx.size() >= TIME_STAMP && ly.size() >= TIME_STAMP && lz.size() >= TIME_STAMP
         ) {
-
+            Log.e("들어왔니", "어");
             data.addAll(accX.subList(0, TIME_STAMP));
             data.addAll(accY.subList(0, TIME_STAMP));
             data.addAll(accZ.subList(0, TIME_STAMP));
@@ -800,11 +865,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             // MainActivity2로 전환
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
 
             intent.putExtra("KAKAOID", kakaoid);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
 //            intent.putExtra("data", (Serializable) data);
 
             intent.putExtra("accX", (Serializable) accX);
@@ -826,6 +889,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             intent.putExtra("result2", result2);
 
             startActivity(intent);
+            finish();
+            overridePendingTransition(0, 0);
             // MainActivity2 judgement() 호출
 
             data.clear();

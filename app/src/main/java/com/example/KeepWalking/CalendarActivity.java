@@ -3,6 +3,7 @@ package com.example.keepwalking;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -45,6 +51,8 @@ public class CalendarActivity extends AppCompatActivity {
     TextView tx_item;
 
     private FirebaseStorage storage;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     ArrayList<String> day = new ArrayList<>();
     ArrayList<String> month = new ArrayList<>();
@@ -191,9 +199,25 @@ public class CalendarActivity extends AppCompatActivity {
                 });
     }
 
-    private void getGaitCount(Date dateClicked){
-        // void 고쳐서 걸음수 return
+    private int getGaitCount(Date dateClicked) {
+        final int[] value = new int[1];
+        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(String.valueOf(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    value[0] = snapshot.getValue(Integer.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // 디비를 가져오던중 에러 발생 시
+                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+            }
+        });
+        return value[0];
     }
+
 
     private void getEventDateFromStorage() {
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();

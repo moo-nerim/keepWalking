@@ -58,7 +58,7 @@ dependencies {
     implementation "com.kakao.sdk:v2-talk:2.4.2" // 친구, 메시지(카카오톡)
 
     // graph
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
     implementation 'com.jjoe64:graphview:4.2.2'
 //    implementation 'com.jjoe64:graphview:4.2.2'

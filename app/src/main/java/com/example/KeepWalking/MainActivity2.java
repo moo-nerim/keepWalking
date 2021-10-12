@@ -3,24 +3,19 @@ package com.example.keepwalking;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -35,15 +30,21 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
-
-import static android.speech.tts.TextToSpeech.ERROR;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -69,6 +70,19 @@ public class MainActivity2 extends AppCompatActivity {
 
     private String result2;
 
+    InputStream filePath1;
+    InputStream filePath2;
+    InputStream filePath3;
+
+    ArrayList<Double> dataX;
+    ArrayList<Double> dataY;
+    ArrayList<Double> dataZ;
+
+//    public void mOnFileRead(View v){
+//        String read = ReadTextFile(filePath1);
+//        // txtRead.setText(read);
+//    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +94,18 @@ public class MainActivity2 extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         chartView = findViewById(R.id.chart);
         btUpload = findViewById(R.id.upload_btn);
+
+        filePath1 = getResources().openRawResource(R.raw.datax);
+        filePath2 = getResources().openRawResource(R.raw.datay);
+        filePath3 = getResources().openRawResource(R.raw.dataz);
+
+        dataX = new ArrayList<>();
+        dataY = new ArrayList<>();
+        dataZ = new ArrayList<>();
+
+        ReadTextFile(filePath1, dataX);
+        ReadTextFile(filePath2, dataY);
+        ReadTextFile(filePath3, dataZ);
 
         // 테스트!!!!
 //        redirectSignupActivity();
@@ -103,6 +129,9 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lx = (ArrayList<Float>) intent.getSerializableExtra("lx");
         ArrayList<Float> ly = (ArrayList<Float>) intent.getSerializableExtra("ly");
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
+
+        ArrayList<Float> n_accX = new ArrayList<>();
+
 
         String result = intent.getStringExtra("result");
         result2 = intent.getStringExtra("result2");
@@ -134,11 +163,19 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Entry> entry1 = new ArrayList<>();
         ArrayList<Entry> entry2 = new ArrayList<>();
 
+
         for (int i = 0; i < accX.size(); i++) {
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
-
+            double a = dataX.get(i);
+            Log.e("XXXXX", String.valueOf(dataX.size()));
+            double b = dataY.get(i);
+            Log.e("YYYYY", String.valueOf(dataY.size()));
+            double c = dataZ.get(i);
+            Log.e("ZZZZZ", String.valueOf(dataZ.size()));
+            double res2 = (float) Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2) + Math.pow(c, 2));
+//            float res2 = (double)Math
             entry1.add(new Entry(i, res));
-            entry2.add(new Entry(i, res + 10));
+            entry2.add(new Entry(i, (float) res2));
         }
 
         LineDataSet set1, set2;
@@ -161,6 +198,7 @@ public class MainActivity2 extends AppCompatActivity {
         set1.setDrawFilled(true); // 차트 아래 fill(채우기) 설정
         set1.setFillColor(Color.rgb(212, 248, 253));
         set1.setValueTextSize(10f);
+        set1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
         // 정상 Graph
         set2.setColor(Color.rgb(255, 51, 153));
@@ -168,6 +206,8 @@ public class MainActivity2 extends AppCompatActivity {
         set2.setCircleRadius(3f);
         set2.setLineWidth(2);
         set2.setValueTextSize(10f);
+        set2.setDrawCircles(false);
+        set2.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
         // y축 오른쪽 Label remove
         YAxis yAxisRight = chart.getAxisRight(); //Y축의 오른쪽면 설정
@@ -212,6 +252,31 @@ public class MainActivity2 extends AppCompatActivity {
         /************* 하단바 *************/
     }
 
+    //경로의 텍스트 파일읽기
+    public void ReadTextFile(InputStream filePath, ArrayList<Double> arr) {
+//        ArrayList<Double> arr = new ArrayList<>();
+
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(filePath, "EUC_KR"));
+            while (true) {
+                String str = bufferedReader.readLine();
+                if (str != null) {
+                    arr.add(Double.valueOf(str));
+//                    Log.e("들어온다", str);
+                } else {
+                    Log.e("아무것도 없음", "없다고!!!");
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Log.e("catch catch", "망햇음");
+            e.printStackTrace();
+        }
+        Log.e("길이길이기리이기리기리기리보이", String.valueOf(arr.size()));
+    }
+
+
     // 메모리 데이터, 비트맵을 바이트코드로 compress 하여 추가하기
     //  Get the data from an ImageView as bytes
     private void upLoadFromMemory() {
@@ -225,7 +290,7 @@ public class MainActivity2 extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH시 mm분");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH시mm분");
         Date time = new Date();
         String current_time = sdf.format(time);
 
@@ -246,13 +311,5 @@ public class MainActivity2 extends AppCompatActivity {
             Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 성공");
         });
-    }
-
-    /*** 테스트위함 ***/
-    public void redirectSignupActivity() {
-        //로그인이 완료된 후 이동하는 액티비티 지정
-        final Intent intent = new Intent(this, CalendarActivity.class);
-        startActivity(intent);
-        finish();
     }
 }

@@ -20,15 +20,15 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barchart"
-        android:layout_width="331dp"
-        android:layout_height="388dp"
-        android:layout_marginBottom="180dp"
+        android:layout_width="332dp"
+        android:layout_height="457dp"
         android:fontFamily="@font/nanum"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="0.74">
 
 
     </com.github.mikephil.charting.charts.BarChart>

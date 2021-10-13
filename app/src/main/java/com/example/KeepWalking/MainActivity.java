@@ -762,9 +762,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private String judgement2(float result1) {
         if (result1 > 0.5) {
-            return "정상";
+            return "양호";
         } else {
-            return "비정상";
+            return "개선필요";
         }
     }
 

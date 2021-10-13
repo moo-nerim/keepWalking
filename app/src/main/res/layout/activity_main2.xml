@@ -5,40 +5,27 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#51CB90">
+    android:background="@drawable/bg_main2">
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="33dp" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="392dp"
-        android:layout_height="598dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.473"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/white" />
+    <!--    <Button-->
+    <!--        android:id="@+id/button3"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="Button"-->
+    <!--        tools:layout_editor_absoluteX="16dp"-->
+    <!--        tools:layout_editor_absoluteY="33dp" />-->
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
-        android:fontFamily="@font/nanum"
-        android:layout_width="331dp"
-        android:layout_height="388dp"
+        android:layout_width="333dp"
+        android:layout_height="349dp"
         android:layout_marginBottom="180dp"
+        android:fontFamily="@font/nanum"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-
-
     </com.github.mikephil.charting.charts.LineChart>
 
     <TextView
@@ -46,23 +33,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="204dp"
-        android:layout_marginTop="588dp"
-        android:fontFamily="@font/nanum"
-        android:textSize="20sp"
+        android:layout_marginStart="118dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/jalnan"
+        android:textSize="28sp"
+        android:text="문혜림"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/upload_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="204dp"
-        android:text="Save"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        android:layout_width="75dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/btn_share"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.053" />
+
+    <TextView
+        android:id="@+id/kakao_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="204dp"
+        android:layout_marginTop="604dp"
+        android:fontFamily="@font/jalnan"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_menu2"
@@ -70,12 +70,11 @@
         android:layout_height="0sp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        app:menu="@menu/menu_bottom"
         app:itemIconTint="#ffffff"
+
         app:itemTextColor="#ffffff"
         app:labelVisibilityMode="labeled"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/menu_bottom" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

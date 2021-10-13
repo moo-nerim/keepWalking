@@ -46,7 +46,7 @@ public class StepCountChart extends AppCompatActivity {
 
     BarChart barChart;
     ArrayList<BarEntry> barEntries = new ArrayList<>();
-    TextView date;
+    TextView date,KakaoName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +55,14 @@ public class StepCountChart extends AppCompatActivity {
 
         barChart = findViewById(R.id.barchart);
         date = findViewById(R.id.date);
+        KakaoName = findViewById(R.id.KakaoName);
 
         SimpleDateFormat dfDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dfDate2 = new SimpleDateFormat("MM월 dd일");
         String monday, sunday;
+
+        // ***** 카카오 닉네임 *****
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName()+" 님의");
 
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);

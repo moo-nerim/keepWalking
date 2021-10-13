@@ -136,18 +136,20 @@ public class MainActivity2 extends AppCompatActivity {
 
 
         for (int i = 200; i < 400; i++) {
-            tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS) {
-                        tts.setLanguage(Locale.KOREA);
-                        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
-                        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
-                        // editText에 있는 문장을 읽는다.
-                        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+            if(i == 200){
+                tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status == TextToSpeech.SUCCESS) {
+                            tts.setLanguage(Locale.KOREA);
+                            tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
+                            tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
+                            // editText에 있는 문장을 읽는다.
+                            tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+                        }
                     }
-                }
-            });
+                });
+            }
 
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);

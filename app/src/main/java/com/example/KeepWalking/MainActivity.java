@@ -754,9 +754,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // Normal, abnormal judgment
     private String judgement(float result1) {
         if (result1 > 0.5) {
-            return "정상입니다\t" + results[0];
+            return "양호합니다\t";
         } else {
-            return "비정상입니다\t" + results[0];
+            return "개선이 필요합니다\t";
         }
     }
 

@@ -29,11 +29,6 @@
         <activity android:name=".MainActivity2" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
 
-        <service
-            android:name=".GaitService"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity android:name=".LogoActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

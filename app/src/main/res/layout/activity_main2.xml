@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="108dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/jalnan"
         android:text=""
@@ -54,11 +54,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="620dp"
+        android:layout_marginStart="128dp"
+        android:layout_marginTop="616dp"
         android:fontFamily="@font/jalnan"
-        android:textSize="15sp"
         android:textColor="#000000"
+        android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

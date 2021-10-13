@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="116dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="28dp"
         android:fontFamily="@font/jalnan"
         android:text=""
@@ -20,7 +20,6 @@
         android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.022"
         app:outlineColor="#FFFFFF"
         app:outlineWidth="1.2" />
 

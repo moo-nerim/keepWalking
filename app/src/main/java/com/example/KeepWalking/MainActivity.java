@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
 
-    private long timeCountInMilliSeconds = 180000;
+    private long timeCountInMilliSeconds = 60000;
 
     private enum TimerStatus {
         STARTED,
@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             textViewTime.setTextColor(Color.parseColor("#FFFF99"));
         } else if (1 <= getHour && getHour <= 4) {
             backImage.setBackgroundResource(R.drawable.bg_006);
+            textViewTime.setTextColor(Color.parseColor("#FFFF99"));
         }
     }
 

@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     //Using the Gyroscope
     private SensorEventListener mGyroLis;
+
     //    private Sensor mGgyroSensor = null;
     private Sensor mGgyroSensor, mAccelometerSensor, mLinearAcceleration, sensor_step_counter;
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
 
-    private long timeCountInMilliSeconds = 10000;
+    private long timeCountInMilliSeconds = 180000;
 
     private enum TimerStatus {
         STARTED,
@@ -241,44 +242,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.e("getKeyHash", "" + getKeyHash(this));
 
         classifier = new ActivityClassifier(getApplicationContext());
-//        ShareKakao sh = new ShareKakao();
-//        sh.click();
-
-//        kakaoLinkBtn.setOnClickListener(v -> {
-//            FeedTemplate params = FeedTemplate
-//                    .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
-//                            "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
-//                            LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-//                                    .setMobileWebUrl("https://developers.kakao.com").build())
-//                            .setDescrption("측정 결과 확인하기")
-//                            .build())
-//                    .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
-//                            .setSharedCount(30).setViewCount(40).build())
-//                    .addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("'https://developers.kakao.com").setMobileWebUrl("'https://developers.kakao.com").build()))
-//                    .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder()
-//                            .setWebUrl("'https://developers.kakao.com")
-//                            .setMobileWebUrl("'https://developers.kakao.com")
-//                            .setAndroidExecutionParams("key1=value1")
-//                            .setIosExecutionParams("key1=value1")
-//                            .build()))
-//                    .build();
-//
-//            Map<String, String> serverCallbackArgs = new HashMap<String, String>();
-//            serverCallbackArgs.put("user_id", "${current_user_id}");
-//            serverCallbackArgs.put("product_id", "${shared_product_id}");
-//
-//            KakaoLinkService.getInstance().sendDefault(this, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
-//                @Override
-//                public void onFailure(ErrorResult errorResult) {
-//                    Logger.e(errorResult.toString());
-//                }
-//
-//                @Override
-//                public void onSuccess(KakaoLinkResponse result) {
-//                    // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
-//                }
-//            });
-//        });
         context_main1 = this;
 
         // 누적 총거리
@@ -299,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (ll == null) {
             Log.e("속력센서 없음", "없음");
         } else {
-            Log.e("속력센서 ", "있음!!!!!!!!!");
+            Log.e("속력센서 ", "있음");
         }
         wspeed = findViewById(R.id.speed_t);
         /************* 속력 *************/
@@ -309,7 +272,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // item selection part
         bottomNav.setOnItemSelectedListener(item -> {
-            Log.e("누구야: ", "" + item.getItemId());
             switch (item.getItemId()) {
                 case R.id.calendar:
                     final Intent intent1 = new Intent(MainActivity.this, CalendarActivity.class);
@@ -333,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // 걸음수 불러오기 & 저장
         Log.e("메인 걸음수:", "" + ((GlobalApplication) getApplication()).getSteps());
         mSteps = ((GlobalApplication) getApplication()).getSteps();
-        Log.e("헤이요: ", "" + mSteps);
         step_sensor.setText("" + mSteps);
 
         // 음성
@@ -708,9 +669,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // MainActivity2로 전환
             Intent intent = new Intent(MainActivity.this, MainActivity2.class);
 
-
             intent.putExtra("KAKAOID", kakaoid);
-//            intent.putExtra("data", (Serializable) data);
 
             intent.putExtra("accX", (Serializable) accX);
             intent.putExtra("accY", (Serializable) accY);

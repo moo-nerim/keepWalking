@@ -47,7 +47,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+
         <activity android:name=".CalendarActivity" >
         </activity> <!-- <activity android:name=".DialogActivity" -->
         <!-- android:theme="@style/DialogTheme"/> -->

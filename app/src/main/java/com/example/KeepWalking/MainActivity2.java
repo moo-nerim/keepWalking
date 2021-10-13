@@ -86,7 +86,7 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         walkingTextView = findViewById(R.id.tv_output);
-        KakaoName = findViewById(R.id.KakaoName);
+        KakaoName = findViewById(R.id.kakao_name);
 
         context_main2 = this;
         storage = FirebaseStorage.getInstance();

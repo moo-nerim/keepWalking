@@ -9,8 +9,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
@@ -87,8 +85,6 @@ public class MainActivity2 extends AppCompatActivity {
     ArrayList<Double> dataY;
     ArrayList<Double> dataZ;
 
-    String result;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +95,6 @@ public class MainActivity2 extends AppCompatActivity {
         context_main2 = this;
         storage = FirebaseStorage.getInstance();
         chartView = findViewById(R.id.chart);
-        btUpload = findViewById(R.id.upload_btn);
 
         filePath1 = getResources().openRawResource(R.raw.datax);
         filePath2 = getResources().openRawResource(R.raw.datay);
@@ -112,13 +107,6 @@ public class MainActivity2 extends AppCompatActivity {
         ReadTextFile(filePath1, dataX);
         ReadTextFile(filePath2, dataY);
         ReadTextFile(filePath3, dataZ);
-
-        // 테스트!!!!
-//        redirectSignupActivity();
-
-        btUpload.setOnClickListener(view -> {
-            upLoadFromMemory();
-        });
 
         // 데이터 수신
         Intent intent = getIntent();
@@ -137,13 +125,24 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Float> lz = (ArrayList<Float>) intent.getSerializableExtra("lz");
 
         ArrayList<Float> n_accX = new ArrayList<>();
-
-//        upLoadFromMemory(); // 사진 자동저장
-
-        result = intent.getStringExtra("result");
+        String result = intent.getStringExtra("result");
         result2 = intent.getStringExtra("result2");
         Log.e("정상/비정상 결과:", result);
         walkingTextView.setText(result);
+
+        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    tts.setLanguage(Locale.KOREA);
+                }
+            }
+        });
+
+        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
+        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
+        // editText에 있는 문장을 읽는다.
+        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
 
         chart = findViewById(R.id.chart);
         ArrayList<Entry> entry1 = new ArrayList<>();
@@ -151,19 +150,6 @@ public class MainActivity2 extends AppCompatActivity {
 
 
         for (int i = 200; i < 400; i++) {
-            tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS) {
-                        tts.setLanguage(Locale.KOREA);
-                        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
-                        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
-                        // editText에 있는 문장을 읽는다.
-                        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                }
-            });
-
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);
             double b = dataY.get(i);
@@ -174,14 +160,7 @@ public class MainActivity2 extends AppCompatActivity {
             entry2.add(new Entry(i, (float) res2));
         }
         // ***** 카카오 닉네임 *****
-        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName() + " 님의");
-
-//        TextViewOutline tv = new TextViewOutline(this, 0xffffff, 0.04f);
-//        tv.setText("Simple TEST");
-//        tv.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
-//        tv.setTextColor(0xff000000);
-//        tv.setTextSize(128);
-//        setContentView(tv);
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName()+" 님의");
 
         // ******그래프*********
         LineDataSet set1, set2;
@@ -201,8 +180,6 @@ public class MainActivity2 extends AppCompatActivity {
         // 사용자 측정 Graph
         set1.setColor(Color.rgb(153, 204, 255));
         set1.setDrawCircles(false);
-//        set1.setCircleColor(Color.rgb(153, 204, 255));
-//        set1.setCircleRadius(3f);
         set1.setLineWidth(2);
         set1.setDrawFilled(true); // 차트 아래 fill(채우기) 설정
         set1.setFillColor(Color.rgb(212, 248, 253));
@@ -238,7 +215,6 @@ public class MainActivity2 extends AppCompatActivity {
 
         chart.getDescription().setEnabled(false); // 하단 regend remove
         chart.setData(dat);
-//        Log.e("Log", String.valueOf(data));
 
         /************* 하단바 *************/
         BottomNavigationView bottomNav = findViewById(R.id.bottom_menu2);
@@ -275,6 +251,11 @@ public class MainActivity2 extends AppCompatActivity {
         /************* 하단바 *************/
     }
 
+    public void onPause(){
+        super.onPause();
+        upLoadFromMemory();
+    }
+
     //경로의 텍스트 파일읽기
     public void ReadTextFile(InputStream filePath, ArrayList<Double> arr) {
         try {
@@ -283,15 +264,12 @@ public class MainActivity2 extends AppCompatActivity {
                 String str = bufferedReader.readLine();
                 if (str != null) {
                     arr.add(Double.valueOf(str));
-//                    Log.e("들어온다", str);
                 } else {
-                    Log.e("아무것도 없음", "없다고!!!");
                     break;
                 }
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            Log.e("catch catch", "망햇음");
             e.printStackTrace();
         }
     }

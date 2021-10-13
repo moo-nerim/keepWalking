@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             textViewTime.setTextColor(Color.parseColor("#FFFF99"));
         } else if (1 <= getHour && getHour <= 4) {
             backImage.setBackgroundResource(R.drawable.bg_006);
+            textViewTime.setTextColor(Color.parseColor("#FFFF99"));
         }
     }
 

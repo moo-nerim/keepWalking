@@ -167,6 +167,4 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
             }
         });
     }
-
-
 }

@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -219,6 +221,17 @@ public class MainActivity2 extends AppCompatActivity {
         yAxisRight.setDrawAxisLine(false);
         yAxisRight.setDrawGridLines(false);
         //*************************
+
+        // label font
+        Typeface tf = Typeface.createFromAsset(this.getAssets(), "font/jalnan.ttf");
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setTypeface(tf);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setTypeface(tf);
+
+        Legend l = chart.getLegend();
+        l.setTypeface(tf);
 
         chart.getDescription().setEnabled(false); // 하단 regend remove
         chart.setData(dat);

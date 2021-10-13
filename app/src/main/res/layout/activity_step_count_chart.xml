@@ -29,11 +29,11 @@
         android:layout_width="340dp"
         android:layout_height="416dp"
         android:layout_marginTop="188dp"
-        android:fontFamily="@font/nanum"
+        android:fontFamily="@font/jalnan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></com.github.mikephil.charting.charts.BarChart>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_menu2"
@@ -41,13 +41,12 @@
         android:layout_height="0sp"
         android:layout_alignParentBottom="true"
         android:background="@color/colorBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-
-        app:menu="@menu/menu_bottom"
         app:itemIconTint="#ffffff"
+
         app:itemTextColor="#ffffff"
         app:labelVisibilityMode="labeled"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/menu_bottom" />
 
     <TextView
         android:id="@+id/date"

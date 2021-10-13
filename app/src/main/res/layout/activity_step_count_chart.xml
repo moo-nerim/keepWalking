@@ -12,8 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="132dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="118dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="@font/jalnan"
         android:text=""
         android:textColor="#FED666"
@@ -25,12 +25,11 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barchart"
-        android:layout_width="340dp"
-        android:layout_height="416dp"
-        android:layout_marginTop="188dp"
+        android:layout_width="335dp"
+        android:layout_height="396dp"
+        android:layout_marginTop="216dp"
         android:fontFamily="@font/jalnan"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

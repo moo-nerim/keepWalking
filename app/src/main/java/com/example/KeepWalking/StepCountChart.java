@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -109,6 +112,22 @@ public class StepCountChart extends AppCompatActivity {
                 barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(theDates));
                 BarData theData = new BarData(barDataSet);//----Line of error
                 barChart.setData(theData);
+
+                // label font
+                Typeface tf = Typeface.createFromAsset(getAssets(), "font/jalnan.ttf");
+                YAxis leftAxis = barChart.getAxisLeft();
+                YAxis yRAxis = barChart.getAxisRight();
+                yRAxis.setDrawLabels(false);
+                barDataSet.setValueTypeface(tf);
+
+                barChart.getAxisRight();
+                leftAxis.setTypeface(tf);
+
+                XAxis xAxist = barChart.getXAxis();
+                xAxist.setTypeface(tf);
+
+                Legend l = barChart.getLegend();
+                l.setTypeface(tf);
 
                 // 라벨 제거
                 barChart.getLegend().setEnabled(false);

@@ -9,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
@@ -85,6 +87,8 @@ public class MainActivity2 extends AppCompatActivity {
     ArrayList<Double> dataY;
     ArrayList<Double> dataZ;
 
+    String result;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,24 +140,10 @@ public class MainActivity2 extends AppCompatActivity {
 
 //        upLoadFromMemory(); // 사진 자동저장
 
-        String result = intent.getStringExtra("result");
+        result = intent.getStringExtra("result");
         result2 = intent.getStringExtra("result2");
         Log.e("정상/비정상 결과:", result);
         walkingTextView.setText(result);
-
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    tts.setLanguage(Locale.KOREA);
-                }
-            }
-        });
-
-        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
-        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
-        // editText에 있는 문장을 읽는다.
-        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
 
         chart = findViewById(R.id.chart);
         ArrayList<Entry> entry1 = new ArrayList<>();
@@ -161,6 +151,19 @@ public class MainActivity2 extends AppCompatActivity {
 
 
         for (int i = 200; i < 400; i++) {
+            tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        tts.setLanguage(Locale.KOREA);
+                        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
+                        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
+                        // editText에 있는 문장을 읽는다.
+                        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                }
+            });
+
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);
             double b = dataY.get(i);
@@ -171,7 +174,7 @@ public class MainActivity2 extends AppCompatActivity {
             entry2.add(new Entry(i, (float) res2));
         }
         // ***** 카카오 닉네임 *****
-        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName()+" 님의");
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName() + " 님의");
 
 //        TextViewOutline tv = new TextViewOutline(this, 0xffffff, 0.04f);
 //        tv.setText("Simple TEST");

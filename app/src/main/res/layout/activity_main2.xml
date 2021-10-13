@@ -20,19 +20,24 @@
         app:layout_constraintVertical_bias="1.0">
     </com.github.mikephil.charting.charts.LineChart>
 
-    <TextView
-        android:id="@+id/kakao_name"
+
+    <com.iambedant.text.OutlineTextView
+        android:id="@+id/KakaoName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="118dp"
-        android:layout_marginTop="33dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/jalnan"
-        android:textSize="25sp"
-        android:text="문혜림"
+        android:text=""
+        android:textColor="#FED666"
+        android:textSize="28sp"
+        app:layout_constraintBottom_toTopOf="@+id/chart"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.022"
+        app:outlineColor="#FFFFFF"
+        app:outlineWidth="1.2" />
 
     <Button
         android:id="@+id/upload_btn"
@@ -50,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="660dp"
+        android:layout_marginTop="608dp"
         android:fontFamily="@font/jalnan"
         android:textSize="15sp"
         app:layout_constraintStart_toStartOf="parent"

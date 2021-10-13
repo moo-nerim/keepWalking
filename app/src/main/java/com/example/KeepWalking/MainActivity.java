@@ -7,6 +7,7 @@ import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
@@ -348,17 +349,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Log.e("오늘의 시간:",""+getHour);
         // 배경화면 바꾸기
         if (5 <= getHour && getHour <= 8) {
-            backImage.setBackgroundResource(R.drawable.bg_004);
+            backImage.setBackgroundResource(R.drawable.bg_001);
         } else if (9 <= getHour && getHour <= 12) {
-            backImage.setBackgroundResource(R.drawable.bg_005);
+            backImage.setBackgroundResource(R.drawable.bg_002);
         } else if (13 <= getHour && getHour <= 15) {
-            backImage.setBackgroundResource(R.drawable.bg_006);
+            backImage.setBackgroundResource(R.drawable.bg_003);
         } else if (16 <= getHour && getHour <= 18) {
-            backImage.setBackgroundResource(R.drawable.bg_007);
-        } else if (19 <= getHour && getHour <= 0) {
-            backImage.setBackgroundResource(R.drawable.bg_008);
+            backImage.setBackgroundResource(R.drawable.bg_004);
+        } else if (19 <= getHour && getHour <= 24) {
+            backImage.setBackgroundResource(R.drawable.bg_005);
+            textViewTime.setTextColor(Color.parseColor("#FFFF99"));
         } else if (1 <= getHour && getHour <= 4) {
-            backImage.setBackgroundResource(R.drawable.bg_009);
+            backImage.setBackgroundResource(R.drawable.bg_006);
         }
     }
 

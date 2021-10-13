@@ -4,8 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -86,7 +88,7 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         walkingTextView = findViewById(R.id.tv_output);
-        KakaoName = findViewById(R.id.kakao_name);
+        KakaoName = findViewById(R.id.KakaoName);
 
         context_main2 = this;
         storage = FirebaseStorage.getInstance();
@@ -167,8 +169,14 @@ public class MainActivity2 extends AppCompatActivity {
             entry2.add(new Entry(i, (float) res2));
         }
         // ***** 카카오 닉네임 *****
-        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName());
-        KakaoName.setTextAppearance(getApplicationContext(), R.style.AudioFileInfoOverlayText);
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName()+" 님의");
+
+//        TextViewOutline tv = new TextViewOutline(this, 0xffffff, 0.04f);
+//        tv.setText("Simple TEST");
+//        tv.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+//        tv.setTextColor(0xff000000);
+//        tv.setTextSize(128);
+//        setContentView(tv);
 
         // ******그래프*********
         LineDataSet set1, set2;
@@ -220,37 +228,33 @@ public class MainActivity2 extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_menu2);
 
         // item selection part
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        final Intent intent = new Intent(MainActivity2.this, MainActivity.class);
-                        startActivity(intent);
+        bottomNav.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.home:
+                    final Intent intent1 = new Intent(MainActivity2.this, MainActivity.class);
+                    startActivity(intent1);
 
-                        finish();
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                        return true;
+                    finish();
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    return true;
 
-                    case R.id.calendar:
-                        final Intent intent2 = new Intent(MainActivity2.this, CalendarActivity.class);
-                        startActivity(intent2);
+                case R.id.calendar:
+                    final Intent intent2 = new Intent(MainActivity2.this, CalendarActivity.class);
+                    startActivity(intent2);
 
-                        finish();
-                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
-                        return true;
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                    return true;
 
-                    case R.id.step:
-                        final Intent intent3 = new Intent(MainActivity2.this, StepCountChart.class);
-                        startActivity(intent3);
-                        finish();
-                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
-                        return true;
+                case R.id.step:
+                    final Intent intent3 = new Intent(MainActivity2.this, StepCountChart.class);
+                    startActivity(intent3);
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                    return true;
 
-                }
-                return false;
             }
-
+            return false;
         });
         /************* 하단바 *************/
     }

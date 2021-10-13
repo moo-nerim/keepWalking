@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     };
 
 
-    private long timeCountInMilliSeconds = 180000;
+    private long timeCountInMilliSeconds = 60000;
 
     private enum TimerStatus {
         STARTED,

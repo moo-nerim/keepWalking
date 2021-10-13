@@ -7,14 +7,6 @@
     android:layout_height="match_parent"
     android:background="#51CB90">
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="33dp" />
-
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="392dp"
@@ -57,12 +49,12 @@
         android:id="@+id/upload_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="204dp"
+        android:layout_marginEnd="8dp"
         android:text="Save"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.053" />
+        app:layout_constraintVertical_bias="0.145" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_menu2"
@@ -77,5 +69,15 @@
         app:itemTextColor="#ffffff"
         app:labelVisibilityMode="labeled"
         />
+
+    <TextView
+        android:id="@+id/KakaoName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/jalnan"
+        android:text=""
+        style="@style/AudioFileInfoOverlayText"
+        tools:layout_editor_absoluteX="53dp"
+        tools:layout_editor_absoluteY="34dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

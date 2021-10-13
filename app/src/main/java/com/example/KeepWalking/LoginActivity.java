@@ -194,6 +194,10 @@ public class LoginActivity extends AppCompatActivity {
                                 if (_profile != null) {
 
                                     Log.d("KAKAO_API", "nickname: " + _profile.getNickname());
+
+                                    // 카카오 닉네임 저장
+                                    ((GlobalApplication) getApplication()).setKakaoName(_profile.getNickname());
+
                                     Log.d("KAKAO_API", "profile image: " + _profile.getProfileImageUrl());
                                     Log.d("KAKAO_API", "thumbnail image: " + _profile.getThumbnailImageUrl());
 

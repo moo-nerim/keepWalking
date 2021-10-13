@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -56,11 +57,13 @@ public class MainActivity2 extends AppCompatActivity {
     private GraphView mGraphAccel;
     private double graphLastAccelXValue = 10d;
     private GraphView line_graph;
-    TextView xValue, yValue, zValue;
-    private TextView walkingTextView;
 
+    // TextView
+    private TextView walkingTextView;
+    private TextView KakaoName;
+
+    // 음성
     private TextToSpeech tts;
-    private Button btn;
 
     // 그래프 저장
     private String[] permissionList = {Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -83,7 +86,7 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         walkingTextView = findViewById(R.id.tv_output);
-        btn = findViewById(R.id.button3);
+        KakaoName = findViewById(R.id.KakaoName);
 
         context_main2 = this;
         storage = FirebaseStorage.getInstance();
@@ -143,17 +146,10 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
 
-        btn.setOnClickListener(view -> {
-            tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
-            tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
-            // editText에 있는 문장을 읽는다.
-            tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
-        });
-
-        // 음성 텍스트
-//        tts.speak(result,TextToSpeech.QUEUE_FLUSH, null);
-//        Log.e("LOG", accX.size() + "," + accY.size() + "," + accZ.size());
-        // here
+        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
+        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
+        // editText에 있는 문장을 읽는다.
+        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
 
         chart = findViewById(R.id.chart);
         ArrayList<Entry> entry1 = new ArrayList<>();
@@ -170,7 +166,11 @@ public class MainActivity2 extends AppCompatActivity {
             entry1.add(new Entry(i, res));
             entry2.add(new Entry(i, (float) res2));
         }
+        // ***** 카카오 닉네임 *****
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName());
+        KakaoName.setTextAppearance(getApplicationContext(), R.style.AudioFileInfoOverlayText);
 
+        // ******그래프*********
         LineDataSet set1, set2;
         set1 = new LineDataSet(entry1, "사용자");
         set2 = new LineDataSet(entry2, "정상인");
@@ -180,8 +180,6 @@ public class MainActivity2 extends AppCompatActivity {
         dataSets.add(set2);
 
         LineData dat = new LineData(dataSets);
-
-        // ******그래프 디자인*********
 
         // 격자 없애기
         chart.getAxisLeft().setDrawGridLines(false);

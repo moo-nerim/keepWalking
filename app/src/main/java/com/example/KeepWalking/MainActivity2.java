@@ -78,11 +78,6 @@ public class MainActivity2 extends AppCompatActivity {
     ArrayList<Double> dataY;
     ArrayList<Double> dataZ;
 
-//    public void mOnFileRead(View v){
-//        String read = ReadTextFile(filePath1);
-//        // txtRead.setText(read);
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +127,7 @@ public class MainActivity2 extends AppCompatActivity {
 
         ArrayList<Float> n_accX = new ArrayList<>();
 
+//        upLoadFromMemory(); // 사진 자동저장
 
         String result = intent.getStringExtra("result");
         result2 = intent.getStringExtra("result2");
@@ -251,8 +247,6 @@ public class MainActivity2 extends AppCompatActivity {
 
     //경로의 텍스트 파일읽기
     public void ReadTextFile(InputStream filePath, ArrayList<Double> arr) {
-//        ArrayList<Double> arr = new ArrayList<>();
-
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(filePath, "EUC_KR"));
             while (true) {
@@ -277,10 +271,8 @@ public class MainActivity2 extends AppCompatActivity {
     //  Get the data from an ImageView as bytes
     private void upLoadFromMemory() {
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
-//        Log.e("메인카카오: ",( (GlobalApplication) getApplication() ).getKakaoID());
 
         chartView.setDrawingCacheEnabled(true);
-
         Bitmap bitmap = chartView.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);

@@ -209,8 +209,9 @@ public class CalendarActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
                     who =  (int)snapshot.getValue(Integer.class);
+                }else{
+                    who = 0;
                 }
-
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

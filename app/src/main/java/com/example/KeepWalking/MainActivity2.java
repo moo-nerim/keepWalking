@@ -130,26 +130,25 @@ public class MainActivity2 extends AppCompatActivity {
         Log.e("정상/비정상 결과:", result);
         walkingTextView.setText(result);
 
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    tts.setLanguage(Locale.KOREA);
-                }
-            }
-        });
-
-        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
-        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
-        // editText에 있는 문장을 읽는다.
-        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
-
         chart = findViewById(R.id.chart);
         ArrayList<Entry> entry1 = new ArrayList<>();
         ArrayList<Entry> entry2 = new ArrayList<>();
 
 
         for (int i = 200; i < 400; i++) {
+            tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        tts.setLanguage(Locale.KOREA);
+                        tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
+                        tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
+                        // editText에 있는 문장을 읽는다.
+                        tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                }
+            });
+
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);
             double b = dataY.get(i);
@@ -300,11 +299,11 @@ public class MainActivity2 extends AppCompatActivity {
             Log.d(TAG, "Upload is " + progress + "% done");
 
         }).addOnPausedListener(taskSnapshot -> Log.d(TAG, "Upload is paused")).addOnFailureListener(exception -> {
-            Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 실패");
 
         }).addOnSuccessListener(taskSnapshot -> {
-            Toast.makeText(this.getApplicationContext(), "그래프가 정상적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getApplicationContext(), "측정 기록이 자동 저장되었습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 성공");
         });
     }

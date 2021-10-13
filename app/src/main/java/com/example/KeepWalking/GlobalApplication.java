@@ -25,9 +25,10 @@ import java.util.Map;
 public class GlobalApplication extends Application {
     private static GlobalApplication instance;
     public String KakaoID;
+    public String KakaoName;
     public int steps;
 
-     // Firebase
+    // Firebase
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
 
@@ -46,6 +47,15 @@ public class GlobalApplication extends Application {
     public String setKakaoID(String KakaoID) {
         this.KakaoID = KakaoID;
         return KakaoID;
+    }
+
+    public String getKakaoName() {
+        return KakaoName;
+    }
+
+    public String setKakaoName(String KakaoName) {
+        this.KakaoName = KakaoName;
+        return KakaoName;
     }
 
     public static GlobalApplication getGlobalApplicationContext() {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -39,7 +40,8 @@ public class CalendarActivity extends AppCompatActivity {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM-YYYY", Locale.getDefault());
     private SimpleDateFormat DateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     SimpleDateFormat sdf;
-    TextView tx_date, tx_today;
+    TextView tx_date;
+    Button btn_today;
     LinearLayout ly_detail;
     LinearLayout ly_left, ly_right;
     Calendar myCalendar;
@@ -87,7 +89,7 @@ public class CalendarActivity extends AppCompatActivity {
             compactCalendarView.showPreviousMonth();
         });
 
-        tx_today.setOnClickListener(v -> {
+        btn_today.setOnClickListener(v -> {
             Intent intent = new Intent(CalendarActivity.this, CalendarActivity.class);
             startActivity(intent);
             finish();
@@ -132,7 +134,7 @@ public class CalendarActivity extends AppCompatActivity {
         ly_left = findViewById(R.id.layout_left);
         ly_right = findViewById(R.id.layout_right);
         im_back = findViewById(R.id.image_back);
-        tx_today = findViewById(R.id.text_today);
+        btn_today = findViewById(R.id.btn_today);
         ly_detail = findViewById(R.id.layout_detail);
         tx_item = findViewById(R.id.text_item);
         recyclerView = findViewById(R.id.recyclerview);

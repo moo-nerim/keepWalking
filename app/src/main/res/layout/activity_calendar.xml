@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/bg_calendar">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorMain"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <ImageView
@@ -20,24 +20,24 @@
             android:layout_marginLeft="20dp"
             android:src="@drawable/ic_back" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Calendar"
-            android:textColor="@android:color/white"
-            android:textSize="17dp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/text_today"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/btn_today"
+            android:layout_width="65dp"
+            android:layout_height="30dp"
+            android:background="@drawable/btn_today"
+            android:layout_marginRight="20dp"
             android:layout_gravity="center|right"
-            android:padding="10dp"
-            android:text="Today"
-            android:textColor="@android:color/white"
-            android:textSize="15dp" />
+            app:layout_constraintVertical_bias="0.053" />
+
+        <!--        <TextView-->
+        <!--            android:id="@+id/text_today"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="center|right"-->
+        <!--            android:padding="10dp"-->
+        <!--            android:text="Today"-->
+        <!--            android:textColor="@android:color/white"-->
+        <!--            android:textSize="15dp" />-->
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -47,7 +47,6 @@
         android:background="@drawable/layout_calendar"
         android:gravity="center"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -142,8 +141,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="측정 기록이 없습니다."
-            android:textColor="@android:color/black"
-            android:textSize="15dp"
+            android:fontFamily="@font/jalnan"
+            android:textColor="@android:color/white"
+            android:textSize="20dp"
             android:textStyle="bold"
             android:visibility="gone" />
     </LinearLayout>

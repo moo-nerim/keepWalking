@@ -25,10 +25,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private CountDownTimer countDownTimer;
     public ImageView kakaoLinkBtn;
     private ImageView frontwalking;
+    private ConstraintLayout backImage;
 
     // 속도
     //****************
@@ -173,6 +176,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         checkPermission();
+
+        // 시간별 배경이미지 선택
+        long now = System.currentTimeMillis();
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH");
+        int getHour = Integer.parseInt(dateFormat2.format(now));
+
 
         // 계정확인
         ActivityCompat.requestPermissions(this, new String[]
@@ -234,45 +243,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        ShareKakao sh = new ShareKakao();
 //        sh.click();
 
-        kakaoLinkBtn.setOnClickListener(v -> {
-            FeedTemplate params = FeedTemplate
-                    .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
-                            "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
-                            LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-                                    .setMobileWebUrl("https://developers.kakao.com").build())
-                            .setDescrption("측정 결과 확인하기")
-                            .build())
-                    .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
-                            .setSharedCount(30).setViewCount(40).build())
-                    .addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("'https://developers.kakao.com").setMobileWebUrl("'https://developers.kakao.com").build()))
-                    .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder()
-                            .setWebUrl("'https://developers.kakao.com")
-                            .setMobileWebUrl("'https://developers.kakao.com")
-                            .setAndroidExecutionParams("key1=value1")
-                            .setIosExecutionParams("key1=value1")
-                            .build()))
-                    .build();
-
-            Map<String, String> serverCallbackArgs = new HashMap<String, String>();
-            serverCallbackArgs.put("user_id", "${current_user_id}");
-            serverCallbackArgs.put("product_id", "${shared_product_id}");
-
-            KakaoLinkService.getInstance().sendDefault(this, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
-                @Override
-                public void onFailure(ErrorResult errorResult) {
-                    Logger.e(errorResult.toString());
-                }
-
-                @Override
-                public void onSuccess(KakaoLinkResponse result) {
-                    // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
-                }
-            });
-        });
+//        kakaoLinkBtn.setOnClickListener(v -> {
+//            FeedTemplate params = FeedTemplate
+//                    .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 예측",
+//                            "https://res.cloudinary.com/im2015/image/upload/w_1200,h_1200,c_fill,g_center//blog/running_cover_1.jpg",
+//                            LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+//                                    .setMobileWebUrl("https://developers.kakao.com").build())
+//                            .setDescrption("측정 결과 확인하기")
+//                            .build())
+//                    .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
+//                            .setSharedCount(30).setViewCount(40).build())
+//                    .addButton(new ButtonObject("웹에서 보기", LinkObject.newBuilder().setWebUrl("'https://developers.kakao.com").setMobileWebUrl("'https://developers.kakao.com").build()))
+//                    .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder()
+//                            .setWebUrl("'https://developers.kakao.com")
+//                            .setMobileWebUrl("'https://developers.kakao.com")
+//                            .setAndroidExecutionParams("key1=value1")
+//                            .setIosExecutionParams("key1=value1")
+//                            .build()))
+//                    .build();
+//
+//            Map<String, String> serverCallbackArgs = new HashMap<String, String>();
+//            serverCallbackArgs.put("user_id", "${current_user_id}");
+//            serverCallbackArgs.put("product_id", "${shared_product_id}");
+//
+//            KakaoLinkService.getInstance().sendDefault(this, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
+//                @Override
+//                public void onFailure(ErrorResult errorResult) {
+//                    Logger.e(errorResult.toString());
+//                }
+//
+//                @Override
+//                public void onSuccess(KakaoLinkResponse result) {
+//                    // 템플릿 밸리데이션과 쿼터 체크가 성공적으로 끝남. 톡에서 정상적으로 보내졌는지 보장은 할 수 없다. 전송 성공 유무는 서버콜백 기능을 이용하여야 한다.
+//                }
+//            });
+//        });
         context_main1 = this;
-//        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
-//        iv = findViewById(R.id.imageView3);
-//        drawable = (AnimationDrawable) iv.getBackground();
 
         // 누적 총거리
         //***************
@@ -305,9 +311,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Log.e("누구야: ", "" + item.getItemId());
             switch (item.getItemId()) {
                 case R.id.calendar:
-                    final Intent intent2 = new Intent(MainActivity.this, CalendarActivity.class);
+                    final Intent intent1 = new Intent(MainActivity.this, CalendarActivity.class);
+                    startActivity(intent1);
+                    finish();
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    return true;
+
+                case R.id.step:
+                    final Intent intent2 = new Intent(MainActivity.this, StepCountChart.class);
                     startActivity(intent2);
-//
                     finish();
                     overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
                     return true;
@@ -332,8 +344,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         });
-    }
 
+        Log.e("오늘의 시간:",""+getHour);
+        // 배경화면 바꾸기
+        if (5 <= getHour && getHour <= 8) {
+            backImage.setBackgroundResource(R.drawable.bg_004);
+        } else if (9 <= getHour && getHour <= 12) {
+            backImage.setBackgroundResource(R.drawable.bg_005);
+        } else if (13 <= getHour && getHour <= 15) {
+            backImage.setBackgroundResource(R.drawable.bg_006);
+        } else if (16 <= getHour && getHour <= 18) {
+            backImage.setBackgroundResource(R.drawable.bg_007);
+        } else if (19 <= getHour && getHour <= 0) {
+            backImage.setBackgroundResource(R.drawable.bg_008);
+        } else if (1 <= getHour && getHour <= 4) {
+            backImage.setBackgroundResource(R.drawable.bg_009);
+        }
+    }
 
     private class SpeedoActionListener implements LocationListener {
 
@@ -365,30 +392,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
     }
-
-
-//      HashKey 얻기
-//    public static String getKeyHash(final Context context) {
-//        PackageManager pm = context.getPackageManager();
-//        try {
-//            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-//            if (packageInfo == null)
-//                return null;
-//
-//            for (Signature signature : packageInfo.signatures) {
-//                try {
-//                    MessageDigest md = MessageDigest.getInstance("SHA");
-//                    md.update(signature.toByteArray());
-//                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
-//                } catch (NoSuchAlgorithmException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
 
     // 계정 권한 허용
     public void checkPermission() {
@@ -447,33 +450,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //        return 0.0;
 //    }
 
-//    @Override
-//    public void onLocationChanged(Location location) {
-//        nowLastlocation = location;
-//        Toast.makeText(this, "Locatiuon Changed", Toast.LENGTH_SHORT).show();
-//        double lng = location.getLongitude();
-//        double lat = location.getLatitude();
-//        Log.d("Now Location ::::::", "longtitude=" + lng + ", latitude=" + lat);
-//        tvNowLatitude.setText("Now Latitude : " + lat);
-//        tvNowLongitude.setText("Now Longitude : " + lng);
-//    }
-
-    /**
-     * method to initialize the views
-     */
     private void initViews() {
-//        progressBarCircle = findViewById(R.id.progressBarCircle);
         textViewTime = findViewById(R.id.textViewTime);
         textViewTime.setTypeface(null, Typeface.BOLD);
         imageViewReset = findViewById(R.id.retryButton);
         imageViewStartStop = findViewById(R.id.imageViewStartStop);
         kakaoLinkBtn = findViewById(R.id.imageViewShare);
         walkingTextView = findViewById(R.id.tv_output);
-//        run = findViewById(R.id.imageView3);
         frontwalking = findViewById(R.id.imageView3);
         step_sensor = findViewById(R.id.step_sensor);
         iv = findViewById(R.id.imageView3);
-
+        backImage = (ConstraintLayout)findViewById(R.id.activity_main);
     }
 
     /**
@@ -483,12 +470,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imageViewReset.setOnClickListener(this);
         imageViewStartStop.setOnClickListener(this);
     }
-
-    /**
-     * implemented method to listen clicks
-     *
-     * @param view
-     */
 
     @Override
     public void onClick(View view) {
@@ -581,9 +562,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             mSensorManager.registerListener(this, mLinearAcceleration, SensorManager.SENSOR_DELAY_GAME);
 //            mSensorManager.registerListener(this, sensor_step_counter, SensorManager.SENSOR_DELAY_GAME);
         } else {
-            // gif stop
-            ((GifDrawable) frontwalking.getDrawable()).stop();
-
 //            textViewTime.setText(hmsTimeFormatter(timeCountInMilliSeconds));
             // call to initialize the progress bar values
 //                setProgressBarValues();
@@ -593,10 +571,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 //            imageViewStartStop.setImageResource(R.drawable.retry_btn);
             // changing the timer status to stopped
             timerStatus = TimerStatus.STOPPED;
-//            final Intent intent = new Intent(this, MainActivity.class);
-//            startActivity(intent);
-//            overridePendingTransition(0, 0);
-//            finish();
             predictActivity(); // 모델 학습
             mSensorManager.unregisterListener(MainActivity.this);
             stopCountDownTimer();
@@ -632,21 +606,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             }
 
         }.start();
-
-//        drawable = (AnimationDrawable) iv.getBackground();
-//        countDownTimer.start();
-//        drawable.start();
-//        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
-        Glide.with(this).load(R.drawable.walkingv2).into(frontwalking);
-//        Glide.with(getApplicationContext()).asGif()
-//                .load(R.drawable.walkingv2)
-//                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))
-//                .into(frontwalking);
-//        ImageView imageView = (ImageView) findViewById(R.id.imageView3);
-//        Glide.with(this).asGif().load(R.drawable.walkingv2).into(imageView);
-
-//        Glide.with(this).load(R.drawable.walkingv2).preload();
-//        ((GifDrawable) frontwalking.getDrawable()).start();
     }
 
     /**
@@ -655,15 +614,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void stopCountDownTimer() {
         countDownTimer.cancel();
     }
-
-    /**
-     * method to set circular progress bar values
-     */
-//    private void setProgressBarValues() {
-//        progressBarCircle.setMax((int) timeCountInMilliSeconds / 1000);
-//        progressBarCircle.setProgress((int) timeCountInMilliSeconds / 1000);
-//    }
-
 
     /**
      * method to convert millisecond to time format
@@ -716,126 +666,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             step_sensor.setText("" + (++mSteps));
             Log.e("걸음수: ", "" + mSteps);
             ((GlobalApplication) getApplication()).setSteps(mSteps);
-//            if (mCounterSteps < 1) {
-//                // initial value
-//                mCounterSteps = (int) event.values[0];
-//            }
-//            //리셋 안된 값 + 현재값 - 리셋 안된 값
-//            mSteps = (int) event.values[0] - mCounterSteps;
-//            step_sensor.setText(Integer.toString(mSteps));
-//            Log.e("걸음수: ", "" + mSteps);
-        }
 
-//        else if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) { // 걸음수 측정
-//            //stepcountsenersor는 앱이 꺼지더라도 초기화 되지않는다. 그러므로 우리는 초기값을 가지고 있어야한다.
-//            if (mCounterSteps < 1) {
-//                // initial value
-//                mCounterSteps = (int) event.values[0];
-//            }
-//            //리셋 안된 값 + 현재값 - 리셋 안된 값
-//            mSteps = (int) event.values[0] - mCounterSteps;
-//            step_sensor.setText(Integer.toString(mSteps));
-//            Log.e("Log", "걸음수: " + mSteps);
-//        }
-//        else { // 걸음수 측정
-//            switch (event.sensor.getType()) {
-//                case Sensor.TYPE_STEP_DETECTOR:
-//                    step_sensor.setText("" + (++steps));
-//                    break;
-//            }
-//        predictActivity();
-//
-//        Log.e("Log", "acc크기: " + accX.size());
-//        Log.e("Log", "gyro크기: " + gyroX.size());
+            Log.e("Log", "acc크기: " + accX.size());
+            Log.e("Log", "gyro크기: " + gyroX.size());
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
-//    private class GyroscopeListener implements SensorEventListener {
-//
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//
-//            /* 각 축의 각속도 성분을 받는다. */
-//            float gyroXX = event.values[0];
-//            float gyroYY = event.values[1];
-//            float gyroZZ = event.values[2];
-//
-//            gyroX.add(gyroXX);
-//            gyroY.add(gyroYY);
-//            gyroZ.add(gyroZZ);
-//
-//
-//            /* 각속도를 적분하여 회전각을 추출하기 위해 적분 간격(dt)을 구한다.
-//             * dt : 센서가 현재 상태를 감지하는 시간 간격
-//             * NS2S : nano second -> second */
-//            dt = (event.timestamp - timestamp) * NS2S;
-//            timestamp = event.timestamp;
-//
-//            /* 맨 센서 인식을 활성화 하여 처음 timestamp가 0일때는 dt값이 올바르지 않으므로 넘어간다. */
-//            if (dt - timestamp * NS2S != 0) {
-//
-//                /* 각속도 성분을 적분 -> 회전각(pitch, roll)으로 변환.
-//                 * 여기까지의 pitch, roll의 단위는 '라디안'이다.
-//                 * SO 아래 로그 출력부분에서 멤버변수 'RAD2DGR'를 곱해주어 degree로 변환해줌.  */
-//                pitch = pitch + gyroYY * dt;
-//                roll = roll + gyroXX * dt;
-//                yaw = yaw + gyroZZ * dt;
-//
-//                a += 1;
-//                Log.e("CNT", String.valueOf(a));
-//
-//                Log.e("LOG", "GYROSCOPE           [X]:" + String.format("%.4f", event.values[0])
-//                        + "           [Y]:" + String.format("%.4f", event.values[1])
-//                        + "           [Z]:" + String.format("%.4f", event.values[2])
-//                        + "           [Pitch]: " + String.format("%.1f", pitch * RAD2DGR)
-//                        + "           [Roll]: " + String.format("%.1f", roll * RAD2DGR)
-//                        + "           [Yaw]: " + String.format("%.1f", yaw * RAD2DGR)
-//                        + "           [dt]: " + String.format("%.4f", dt));
-//                predictActivity();
-//            }
-//        }
-//
-//        @Override
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//
-//        }
-//    }
-//
-//    private class AccelometerListener implements SensorEventListener {
-//
-//        @Override
-//        public void onSensorChanged(SensorEvent event) {
-//
-//            double accXX = event.values[0];
-//            double accYY = event.values[1];
-//            double accZZ = event.values[2];
-//
-//            accX.add(event.values[0]);
-//            accY.add(event.values[1]);
-//            accZ.add(event.values[2]);
-//
-//            double angleXZ = Math.atan2(accXX, accZZ) * 180 / Math.PI;
-//            double angleYZ = Math.atan2(accYY, accZZ) * 180 / Math.PI;
-//
-//            Log.e("LOG", "ACCELOMETER           [X]:" + String.format("%.4f", event.values[0])
-//                    + "           [Y]:" + String.format("%.4f", event.values[1])
-//                    + "           [Z]:" + String.format("%.4f", event.values[2])
-//                    + "           [angleXZ]: " + String.format("%.4f", angleXZ)
-//                    + "           [angleYZ]: " + String.format("%.4f", angleYZ));
-//            predictActivity();
-//            Log.e("Log", "Acc 크기: " + accX.size());
-//            Log.e("Log", "Gyro 크기: " + gyroX.size());
-//        }
-//
-//        @Override
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//
-//        }
-//    }
 
     private void predictActivity() {
         tts.setPitch(1f);

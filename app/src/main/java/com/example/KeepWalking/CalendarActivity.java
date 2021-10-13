@@ -110,6 +110,13 @@ public class CalendarActivity extends AppCompatActivity {
                         finish();
                         overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
                         return true;
+
+                    case R.id.step:
+                        final Intent intent2 = new Intent(CalendarActivity.this, StepCountChart.class);
+                        startActivity(intent2);
+                        finish();
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                        return true;
                 }
                 return false;
             }

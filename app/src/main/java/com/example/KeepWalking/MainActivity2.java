@@ -144,7 +144,7 @@ public class MainActivity2 extends AppCompatActivity {
         });
 
         btn.setOnClickListener(view -> {
-            tts.setPitch(0.5f);         // 음성 톤을 0.5배 내려준다.
+            tts.setPitch(1f);         // 음성 톤을 0.5배 내려준다.
             tts.setSpeechRate(0.8f);    // 읽는 속도는 기본 설정
             // editText에 있는 문장을 읽는다.
             tts.speak(result, TextToSpeech.QUEUE_FLUSH, null);
@@ -160,7 +160,7 @@ public class MainActivity2 extends AppCompatActivity {
         ArrayList<Entry> entry2 = new ArrayList<>();
 
 
-        for (int i = 0; i < accX.size(); i++) {
+        for (int i = 200; i < 400; i++) {
             float res = (float) Math.sqrt(Math.pow(accX.get(i), 2) + Math.pow(accY.get(i), 2) + Math.pow(accZ.get(i), 2));
             double a = dataX.get(i);
             double b = dataY.get(i);
@@ -182,6 +182,11 @@ public class MainActivity2 extends AppCompatActivity {
         LineData dat = new LineData(dataSets);
 
         // ******그래프 디자인*********
+
+        // 격자 없애기
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getXAxis().setDrawGridLines(false);
+
         // 사용자 측정 Graph
         set1.setColor(Color.rgb(153, 204, 255));
         set1.setDrawCircles(false);
@@ -233,6 +238,13 @@ public class MainActivity2 extends AppCompatActivity {
                         final Intent intent2 = new Intent(MainActivity2.this, CalendarActivity.class);
                         startActivity(intent2);
 
+                        finish();
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                        return true;
+
+                    case R.id.step:
+                        final Intent intent3 = new Intent(MainActivity2.this, StepCountChart.class);
+                        startActivity(intent3);
                         finish();
                         overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
                         return true;

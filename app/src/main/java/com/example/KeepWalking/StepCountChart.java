@@ -3,8 +3,10 @@ package com.example.keepwalking;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarChart;
@@ -19,6 +21,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -90,7 +93,7 @@ public class StepCountChart extends AppCompatActivity {
 //                barEntries.add(new BarEntry(0f, list.get(0)));
                 barEntries.add(new BarEntry(list.size() - 1, (Integer) list.get(list.size() - 1)));
 
-                BarDataSet barDataSet = new BarDataSet(barEntries, "Dates");
+                BarDataSet barDataSet = new BarDataSet(barEntries, "");
                 ArrayList<String> theDates = new ArrayList<>();
                 theDates.add("월");
                 theDates.add("화");
@@ -102,11 +105,19 @@ public class StepCountChart extends AppCompatActivity {
                 barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(theDates));
                 BarData theData = new BarData(barDataSet);//----Line of error
                 barChart.setData(theData);
-//                barChart.setTouchEnabled(true);
-//                barChart.setDragEnabled(true);
+
+                // 라벨 제거
+                barChart.getLegend().setEnabled(false);
+
                 barChart.setScaleEnabled(true);
-                barChart.setDrawGridBackground(false);
                 barChart.setTouchEnabled(false);
+
+                // 격자 없애기
+                barChart.getAxisLeft().setDrawGridLines(false);
+                barChart.getAxisRight().setDrawGridLines(false);
+                barChart.getXAxis().setDrawGridLines(false);
+
+
                 barDataSet.setValueFormatter(new MyValueFormatter());
                 XAxis xAxis = barChart.getXAxis();
                 xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -115,12 +126,40 @@ public class StepCountChart extends AppCompatActivity {
 
                 barChart.animateY(1000);
 
-                Description description = new Description();
-                description.setEnabled(false);
-                barChart.setDescription(description);
+                // description 삭제
+                barChart.getDescription().setEnabled(false);
                 barDataSet.setValueTextSize(15f);
             }
         });
+
+        /************* 하단바 *************/
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_menu2);
+
+        // item selection part
+        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.home:
+                        final Intent intent = new Intent(StepCountChart.this, MainActivity.class);
+                        startActivity(intent);
+
+                        finish();
+                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                        return true;
+
+                    case R.id.calendar:
+                        final Intent intent2 = new Intent(StepCountChart.this, CalendarActivity.class);
+                        startActivity(intent2);
+
+                        finish();
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                        return true;
+                }
+                return false;
+            }
+        });
+        /************* 하단바 *************/
     }
 
     private void readData(FirebaseCallback firebaseCallback) {

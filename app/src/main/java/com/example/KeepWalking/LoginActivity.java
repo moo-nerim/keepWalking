@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -60,17 +62,8 @@ public class LoginActivity extends AppCompatActivity {
          */
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
-//        if (Session.getCurrentSession().checkAndImplicitOpen()) {
-//            // 카카오 로그인 시도 (창이 안뜬다.)
-////            callback.requestMe();
-//            redirectSignupActivity();
-//        } else {
-//            Session.getCurrentSession().open(AuthType.KAKAO_LOGIN_ALL, LoginActivity.this);
-//        }
-
         Session.getCurrentSession().checkAndImplicitOpen();
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -92,18 +85,21 @@ public class LoginActivity extends AppCompatActivity {
         private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
+        private Handler mHandler = new Handler();
+
         // 로그인에 성공한 상태
         @Override
         public void onSessionOpened() {
-            try
-            {
-                requestMe();
-                sleep(5000);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-            redirectSignupActivity();
+            requestMe();
+            mHandler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+
+                    if (msg.what == 0) {
+                        redirectSignupActivity();
+                    }
+                }
+            };
         }
 
         // 로그인에 실패한 상태
@@ -162,11 +158,12 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     if (snapshot.getValue() != null) {
-                                        ((GlobalApplication)getApplication()).setSteps(snapshot.getValue(Integer.class));
+                                        ((GlobalApplication) getApplication()).setSteps(snapshot.getValue(Integer.class));
                                     } else {
-                                        ((GlobalApplication)getApplication()).setSteps(0);
+                                        ((GlobalApplication) getApplication()).setSteps(0);
                                     }
-                                    Log.e("오늘의 걸음수:", "" + ((GlobalApplication)getApplication()).getSteps());
+                                    Log.e("오늘의 걸음수:", "" + ((GlobalApplication) getApplication()).getSteps());
+                                    mHandler.sendEmptyMessage(0);
                                 }
 
                                 @Override
@@ -175,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
                                     //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
                                 }
                             });
-
 
                             if (kakaoAccount != null) {
 
@@ -212,9 +208,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
-
         }
-
     }
 
     public void redirectSignupActivity() {

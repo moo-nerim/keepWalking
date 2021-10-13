@@ -4,16 +4,16 @@
 
     <item
         android:id="@+id/calendar"
-        android:icon="@drawable/ic_run"
+        android:icon="@drawable/bottom1"
         android:title="달력" />
 
     <item
         android:id="@+id/home"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/bottom2"
         android:title="홈" />
 
     <item
         android:id="@+id/step"
-        android:icon="@drawable/ic_run"
+        android:icon="@drawable/bottom3"
         android:title="걸음수" />
 </menu>

@@ -10,10 +10,10 @@
 <img src="https://img.shields.io/badge/Keras-D00000?style=for-the-badge&logo=Keras&logoColor=white">
 <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white">
 
-[![GitHub Open Issues](https://img.shields.io/github/issues-raw/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
+<!-- [![GitHub Open Issues](https://img.shields.io/github/issues-raw/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
 [![GitHub Closed Issues](https://img.shields.io/github/issues-closed-raw/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
 [![GitHub Open PR](https://img.shields.io/github/issues-pr-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
-[![GitHub Closed PR](https://img.shields.io/github/issues-pr-closed-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
+[![GitHub Closed PR](https://img.shields.io/github/issues-pr-closed-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues) -->
 
 
 </div align="center">

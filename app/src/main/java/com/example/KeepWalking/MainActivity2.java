@@ -250,6 +250,8 @@ public class MainActivity2 extends AppCompatActivity {
             return false;
         });
         /************* 하단바 *************/
+        Toast.makeText(this.getApplicationContext(), "측정 기록이 자동 저장되었습니다.", Toast.LENGTH_SHORT).show();
+
     }
 
     public void onPause(){
@@ -305,7 +307,7 @@ public class MainActivity2 extends AppCompatActivity {
             Log.e(TAG, "업로드 실패");
 
         }).addOnSuccessListener(taskSnapshot -> {
-            Toast.makeText(this.getApplicationContext(), "측정 기록이 자동 저장되었습니다.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this.getApplicationContext(), "측정 기록이 자동 저장되었습니다.", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "업로드 성공");
         });
     }

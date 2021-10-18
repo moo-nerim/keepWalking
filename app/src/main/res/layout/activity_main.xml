@@ -26,7 +26,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:fontFamily="@font/jalnan"
-        android:text="01:00"
+        android:text="00:00"
         android:textColor="#2D416E"
         android:textSize="70sp"
         app:layout_constraintBottom_toBottomOf="parent"

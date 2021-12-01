@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.keepwalking" >
+    package="com.example.keepwalking">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Include required permissions for Google Mobile Ads to run -->
@@ -23,13 +23,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        <activity android:name=".StepCountChart" >
-        </activity>
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity android:name=".UserInfo"></activity>
+        <activity android:name=".StepCountChart"></activity>
         <activity android:name=".MainActivity2" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
-
-        <activity android:name=".LogoActivity" >
+        <activity android:name=".LogoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,11 +46,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".CalendarActivity" >
-        </activity> <!-- <activity android:name=".DialogActivity" -->
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".CalendarActivity"></activity> <!-- <activity android:name=".DialogActivity" -->
         <!-- android:theme="@style/DialogTheme"/> -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"

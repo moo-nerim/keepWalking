@@ -16,4 +16,9 @@
         android:id="@+id/step"
         android:icon="@drawable/bottom3"
         android:title="걸음수" />
+
+    <item
+        android:id="@+id/user"
+        android:icon="@drawable/bottom4"
+        android:title="사용자" />
 </menu>

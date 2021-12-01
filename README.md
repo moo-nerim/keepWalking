@@ -3,7 +3,7 @@
 <div align="center">
 
 ![pupago_banner](https://user-images.githubusercontent.com/59702552/137264487-e17524f9-6ce7-4c2e-9af4-8aacb91666b5.png)
-</br>
+<br></br>
 <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=Android&logoColor=white">
 <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white">
 <img src="https://img.shields.io/badge/Tensorflow-FF6F00?style=for-the-badge&logo=Tensorflow&logoColor=white">

@@ -1,0 +1,155 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    package=\"com.example.keepwalking\" >\r\n\r\n    <uses-permission android:name=\"android.permission.GET_ACCOUNTS\" />\r\n    <uses-permission android:name=\"android.permission.READ_EXTERNAL_STORAGE\" /> <!-- Include required permissions for Google Mobile Ads to run -->\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\" />\r\n\r\n    <uses-feature android:name=\"android.hardware.sensor.stepcounter\" />\r\n    <uses-feature android:name=\"android.hardware.sensor.stepdetector\" />\r\n\r\n    <uses-permission android:name=\"android.permission.ACCESS_FINE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.READ_PHONE_STATE\" />\r\n    <uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\" />\r\n    <uses-permission android:name=\"android.permission.ACTIVITY_RECOGNITION\" />\r\n    <uses-permission android:name=\"android.permission.RECORD_AUDIO\" />\r\n\r\n    <application\r\n        android:name=\".GlobalApplication\"\r\n        android:allowBackup=\"true\"\r\n        android:icon=\"@mipmap/logo\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/logo\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.AppCompat.Light.NoActionBar\" >\r\n        <activity android:name=\".StepCountChart\" >\r\n        </activity>\r\n        <activity android:name=\".MainActivity2\" />\r\n        <activity android:name=\"com.kakao.sdk.auth.AuthCodeHandlerActivity\" />\r\n\r\n        <activity android:name=\".LogoActivity\" >\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.VIEW\" />\r\n\r\n                <category android:name=\"android.intent.category.DEFAULT\" />\r\n                <category android:name=\"android.intent.category.BROWSABLE\" />\r\n\r\n                <data\r\n                    android:host=\"@string/kakaolink_host\"\r\n                    android:scheme=\"@string/kakao_scheme\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity android:name=\".LoginActivity\" />\r\n        <activity android:name=\".MainActivity\"\r\n            android:screenOrientation=\"portrait\"/>\r\n\r\n        <activity android:name=\".CalendarActivity\" >\r\n        </activity> <!-- <activity android:name=\".DialogActivity\" -->\r\n        <!-- android:theme=\"@style/DialogTheme\"/> -->\r\n        <meta-data\r\n            android:name=\"com.kakao.sdk.AppKey\"\r\n            android:value=\"@string/kakao_app_key\" />\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ app/src/main/AndroidManifest.xml	(date 1638371318981)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-    package="com.example.keepwalking" >
++    package="com.example.keepwalking">
+ 
+     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Include required permissions for Google Mobile Ads to run -->
+@@ -23,13 +23,12 @@
+         android:label="@string/app_name"
+         android:roundIcon="@mipmap/logo"
+         android:supportsRtl="true"
+-        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+-        <activity android:name=".StepCountChart" >
+-        </activity>
++        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
++        <activity android:name=".UserInfo"></activity>
++        <activity android:name=".StepCountChart"></activity>
+         <activity android:name=".MainActivity2" />
+         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
+-
+-        <activity android:name=".LogoActivity" >
++        <activity android:name=".LogoActivity">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+ 
+@@ -47,11 +46,10 @@
+             </intent-filter>
+         </activity>
+         <activity android:name=".LoginActivity" />
+-        <activity android:name=".MainActivity"
+-            android:screenOrientation="portrait"/>
+-
+-        <activity android:name=".CalendarActivity" >
+-        </activity> <!-- <activity android:name=".DialogActivity" -->
++        <activity
++            android:name=".MainActivity"
++            android:screenOrientation="portrait" />
++        <activity android:name=".CalendarActivity"></activity> <!-- <activity android:name=".DialogActivity" -->
+         <!-- android:theme="@style/DialogTheme"/> -->
+         <meta-data
+             android:name="com.kakao.sdk.AppKey"
+Index: app/src/main/res/menu/menu_bottom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\">\r\n\r\n    <item\r\n        android:id=\"@+id/calendar\"\r\n        android:icon=\"@drawable/bottom1\"\r\n        android:title=\"달력\" />\r\n\r\n    <item\r\n        android:id=\"@+id/home\"\r\n        android:icon=\"@drawable/bottom2\"\r\n        android:title=\"홈\" />\r\n\r\n    <item\r\n        android:id=\"@+id/step\"\r\n        android:icon=\"@drawable/bottom3\"\r\n        android:title=\"걸음수\" />\r\n</menu>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/menu_bottom.xml	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ app/src/main/res/menu/menu_bottom.xml	(date 1638371319155)
+@@ -16,4 +16,9 @@
+         android:id="@+id/step"
+         android:icon="@drawable/bottom3"
+         android:title="걸음수" />
++
++    <item
++        android:id="@+id/user"
++        android:icon="@drawable/bottom4"
++        android:title="사용자" />
+ </menu>
+Index: settings.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>rootProject.name = \"KeepWalking\"\r\ninclude ':app'\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- settings.gradle	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ settings.gradle	(date 1638372413049)
+@@ -1,2 +1,2 @@
+-rootProject.name = "KeepWalking"
++rootProject.name = "keepwalking"
+ include ':app'
+Index: .idea/modules/KeepWalking.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<module external.linked.project.id=\"KeepWalking\" external.linked.project.path=\"$MODULE_DIR$/../..\" external.root.project.path=\"$MODULE_DIR$/../..\" external.system.id=\"GRADLE\" external.system.module.group=\"\" external.system.module.version=\"unspecified\" type=\"JAVA_MODULE\" version=\"4\">\r\n  <component name=\"FacetManager\">\r\n    <facet type=\"java-gradle\" name=\"Java-Gradle\">\r\n      <configuration>\r\n        <option name=\"BUILD_FOLDER_PATH\" value=\"$MODULE_DIR$/../../build\" />\r\n        <option name=\"BUILDABLE\" value=\"false\" />\r\n      </configuration>\r\n    </facet>\r\n  </component>\r\n  <component name=\"NewModuleRootManager\" inherit-compiler-output=\"true\">\r\n    <exclude-output />\r\n    <content url=\"file://$MODULE_DIR$/../..\">\r\n      <excludeFolder url=\"file://$MODULE_DIR$/../../.gradle\" />\r\n      <excludeFolder url=\"file://$MODULE_DIR$/../../build\" />\r\n    </content>\r\n    <orderEntry type=\"inheritedJdk\" />\r\n    <orderEntry type=\"sourceFolder\" forTests=\"false\" />\r\n  </component>\r\n</module>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/modules/KeepWalking.iml	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ .idea/modules/KeepWalking.iml	(date 1638372421538)
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+-<module external.linked.project.id="KeepWalking" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
++<module external.linked.project.id="keepwalking" external.linked.project.path="$MODULE_DIR$/../.." external.root.project.path="$MODULE_DIR$/../.." external.system.id="GRADLE" external.system.module.group="" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+   <component name="FacetManager">
+     <facet type="java-gradle" name="Java-Gradle">
+       <configuration>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_14\" default=\"false\" project-jdk-name=\"11\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ .idea/misc.xml	(date 1638373305682)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_14" default="false" project-jdk-name="11" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_15_PREVIEW" default="false" project-jdk-name="11" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/KeepWalking.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/KeepWalking.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/app/KeepWalking.app.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/app/KeepWalking.app.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/modules.xml	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ .idea/modules.xml	(date 1638372421580)
+@@ -2,8 +2,8 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
+-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/KeepWalking.iml" filepath="$PROJECT_DIR$/.idea/modules/KeepWalking.iml" />
+-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/KeepWalking.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/KeepWalking.app.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/keepwalking.iml" filepath="$PROJECT_DIR$/.idea/modules/keepwalking.iml" />
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/keepwalking.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/keepwalking.app.iml" />
+     </modules>
+   </component>
+ </project>
+\ No newline at end of file
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># 보행 건강 관리 서비스, 킵워킹\r\n\r\n<div align=\"center\">\r\n\r\n![pupago_banner](https://user-images.githubusercontent.com/59702552/137264487-e17524f9-6ce7-4c2e-9af4-8aacb91666b5.png)\r\n</br>\r\n<img src=\"https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=Android&logoColor=white\">\r\n<img src=\"https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white\">\r\n<img src=\"https://img.shields.io/badge/Tensorflow-FF6F00?style=for-the-badge&logo=Tensorflow&logoColor=white\">\r\n<img src=\"https://img.shields.io/badge/Keras-D00000?style=for-the-badge&logo=Keras&logoColor=white\">\r\n<img src=\"https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=Java&logoColor=white\">\r\n\r\n<!-- [![GitHub Open Issues](https://img.shields.io/github/issues-raw/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)\r\n[![GitHub Closed Issues](https://img.shields.io/github/issues-closed-raw/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)\r\n[![GitHub Open PR](https://img.shields.io/github/issues-pr-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)\r\n[![GitHub Closed PR](https://img.shields.io/github/issues-pr-closed-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues) -->\r\n\r\n\r\n</div align=\"center\">\r\n\r\n<br></br>\r\n\r\n\r\n## \uD83D\uDCE2 프로젝트 소개\r\n\r\n킵워킹은 보행 데이터를 모니터링하여 스스로 보행 건강관리를 할 수 있도록 도와주는 애플리케이션입니다.\r\n\r\n킵워킹과 함께 건강을 사전에 점검하고 보행 건강을 관리해보세요!\r\n\r\n</div>\r\n\r\n<br></br>\r\n\r\n## \uD83D\uDCA1 기능 설명\r\n#### \uD83D\uDCE1 카카오톡 연동\r\n> - 번거로운 회원가입 절차를 거치지 않고 간편 로그인을 할 수 있습니다.\r\n> - 매번 로그인을 하지 않아도 자동으로 로그인이 됩니다.\r\n> - 보행측정 결과를 카카오톡 메시지로 보호자에게 공유할 수 있습니다.\r\n#### \uD83D\uDC5F 보행측정\r\n> - 제한된 시간동안 보행을 측정합니다.\r\n> - 보행 측정외에 일일 걸음 수와 최대 걸음 속도를 측정할 수 있습니다. \r\n> - 정상인 보행 형태와 사용자의 보행 형태를 그래프로 비교하여 나타냅니다.\r\n#### \uD83D\uDD0A 안내음성 알림\r\n> - 측정이 완료된 후 안내 음성으로 알림을 해줍니다.\r\n> - 측정결과로 양호/개선 필요를 음성으로 안내합니다. \r\n#### \uD83D\uDCC6 달력을 통한 날짜별 측정기록 확인\r\n> - 달 별로 보행 측정 결과를 확인할 수 있습니다!\r\n#### \uD83D\uDCCA 걸음 수 그래프 \r\n> - 주간 별로 일일 걸음 수를 그래프로 비교할 수 있습니다.\r\n#### \uD83D\uDCBB 시간대별 테마변경\r\n> - 측정 시간대별로 메인 테마가 변경됩니다.\r\n\r\n<br></br>\r\n\r\n## \uD83D\uDCF1 미리보기\r\n> 킵워킹 애플리케이션의 미리보기 화면입니다 ✨\r\n\r\n| <img src=\"https://user-images.githubusercontent.com/59702552/137313884-98750736-5208-4a45-b1c7-5e41077bd794.gif\" width=\"400px\"> | <img src=\"https://user-images.githubusercontent.com/59702552/137319254-eca8438a-4a08-4395-b02f-9ac93e4d209c.gif\" width=\"400px\"> | <img src=\"https://user-images.githubusercontent.com/59702552/137323550-8eabfe92-2ced-4896-a648-d26cb6d6bae2.gif\" width=\"400px\"> | <img src=\"https://user-images.githubusercontent.com/59702552/137318665-aff2ac70-a8c7-45ba-9df0-f09dbbc94681.gif\" width=\"400px\"> |\r\n| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |\r\n|                           `카카오톡 로그인`                           |                             `보행측정`                             |                        `걸음 수 & 속도 측정`                         |                             `측정결과`                             |\r\n| <img src=\"https://user-images.githubusercontent.com/59702552/137320290-d35d20ec-7baf-43dd-b12d-283c84fe2783.gif\" width=\"400px\"> | <img src = \"https://user-images.githubusercontent.com/59702552/137334339-ee11bf0a-34a8-4ef6-bb8a-a7e4a833e5c8.gif\" width=\"400px\"> | <img src = \"https://user-images.githubusercontent.com/59702552/137333800-983e2fd6-97df-454f-8e05-1266de47310c.gif\" width=\"400px\"> | <img src = \"https://user-images.githubusercontent.com/59702552/137311510-0e5c4a29-26c9-44e7-a6be-f3f46930bb05.gif\" width=\"400px\"> |\r\n|                          `날짜별 기록저장`                           |                           `주간 걸음수`                          |                           `측정결과 공유`                           |                           `시간대별 테마변경`                           |\r\n\r\n\r\n<br></br>\r\n\r\n\r\n## \uD83D\uDC69\uD83D\uDC67 팀원 & 역할 소개\r\n\r\n|<div align = \"center\"><img src=\"https://avatars.githubusercontent.com/u/59702552?v=4\" width = 150></div>|<div align = \"center\"><img align = \"center\" src=\"https://avatars.githubusercontent.com/u/67141218?v=4\" width=150></div>|\r\n| :--------: | :--------: |\r\n| 문혜림 <br>[@moo-nerim](https://github.com/moo-nerim)| 이주영 <br>[@JuYeong-Lee](https://github.com/JuYeong-Lee)|\r\n|DL model 개발|DL model 개발|\r\n|애플리케이션 기능 메인 개발|애플리케이션 기능 서브 개발|\r\n|데이터수집 및 서버연결 서브 개발|데이터수집 및 서버연결 메인 개발|\r\n\r\n<br></br>\r\n\r\n\r\n## \uD83D\uDCBB 기술 소개\r\n\r\n| 범위 | 스택 |\r\n|:---:|:---:|\r\n| Front End / Back End | <img src=\"https://w.namu.la/s/95f3898eb4996f6ba5a3930b212b295da56e062e9427da87331a510d3d868bd81f24d10d242ca0d93f4ad94053b9321549cb4590ea815a8d39ba92cde1a7da44319a89455283cfb451f0f8523d0ac072d724c4a22347e5eae4bdb5e0eac147b4\" alt=\"\" height=\"80\"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src=\"https://www.gstatic.com/devrel-devsite/prod/v7d29b723aef4d149fe98fb5331f45df163ead31f4cb33149234e59d978e54b1e/android/images/lockup.svg\" alt=\"\" height=\"50\"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/XML.svg/450px-XML.svg.png\" alt=\"\" height=\"100\"/>|\r\n| DeepLearning | <img src=\"https://keras.io/img/logo.png\" alt=\"Keras\" height=\"50\"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src=\"https://www.gstatic.com/devrel-devsite/prod/v7d29b723aef4d149fe98fb5331f45df163ead31f4cb33149234e59d978e54b1e/tensorflow/images/lockup.svg\" alt=\"Tensorflow\" height=\"50\"/> |\r\n| DataBase | <img src=\"https://www.gstatic.com/devrel-devsite/prod/v7d29b723aef4d149fe98fb5331f45df163ead31f4cb33149234e59d978e54b1e/firebase/images/lockup.png\" alt=\"Firebase\" height=\"50\"/>\r\n| Version Control | <img src=\"https://about.gitlab.com/images/icons/logos/slp-logo.svg\" alt=\"\" height=\"50\"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src=\"https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original-wordmark.svg\" alt=\"\" height=\"50\"/> |\r\n\r\n<br></br>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- README.md	(revision 89bc6d4530bf9c123dcf070ccadd207f0d46b3da)
++++ README.md	(date 1638371318974)
+@@ -3,7 +3,7 @@
+ <div align="center">
+ 
+ ![pupago_banner](https://user-images.githubusercontent.com/59702552/137264487-e17524f9-6ce7-4c2e-9af4-8aacb91666b5.png)
+-</br>
++<br></br>
+ <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=Android&logoColor=white">
+ <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white">
+ <img src="https://img.shields.io/badge/Tensorflow-FF6F00?style=for-the-badge&logo=Tensorflow&logoColor=white">

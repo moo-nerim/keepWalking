@@ -178,6 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                                 // 이메일
                                 String email = kakaoAccount.getEmail();
                                 Profile profile = kakaoAccount.getProfile();
+
                                 if (profile == null) {
                                     Log.d("KAKAO_API", "onSuccess:profile null ");
                                 } else {
@@ -190,6 +191,32 @@ public class LoginActivity extends AppCompatActivity {
 
                                 // 프로필
                                 Profile _profile = kakaoAccount.getProfile();
+                                ((GlobalApplication) getApplication()).setKakaoProfile(_profile.getProfileImageUrl());
+
+                                // 걸음수 Firebase 저장
+                                databaseReference.child("KAKAOID").child(id).child("PROFILE").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.getValue() == null) {
+                                            if (_profile.getProfileImageUrl() == null) {
+                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").push().setValue("null");
+
+                                            } else {
+                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").push().setValue(_profile.getProfileImageUrl());
+                                            }
+                                        } else {
+                                            if (_profile.getProfileImageUrl() != null) {
+                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").setValue(_profile.getProfileImageUrl());
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        // 디비를 가져오던중 에러 발생 시
+                                        //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                                    }
+                                });
 
                                 if (_profile != null) {
 
@@ -202,8 +229,6 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.d("KAKAO_API", "thumbnail image: " + _profile.getThumbnailImageUrl());
 
                                 } else if (kakaoAccount.profileNeedsAgreement() == OptionalBoolean.TRUE) {
-                                    // 동의 요청 후 프로필 정보 획득 가능
-
                                 } else {
                                     // 프로필 획득 불가
                                 }

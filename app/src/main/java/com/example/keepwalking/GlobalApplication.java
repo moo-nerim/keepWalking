@@ -24,8 +24,15 @@ import java.util.Map;
 
 public class GlobalApplication extends Application {
     private static GlobalApplication instance;
+
+    // 카카오 로그인
     public String KakaoID;
     public String KakaoName;
+    public String KakaoProfile;
+
+    // 기본 로그인
+    public String BasicEmail;
+    public String BasicName;
     public int steps;
 
     // Firebase
@@ -56,6 +63,33 @@ public class GlobalApplication extends Application {
     public String setKakaoName(String KakaoName) {
         this.KakaoName = KakaoName;
         return KakaoName;
+    }
+
+    public String getKakaoProfile() {
+        return KakaoProfile;
+    }
+
+    public String setKakaoProfile(String KakaoProfile) {
+        this.KakaoProfile = KakaoProfile;
+        return KakaoProfile;
+    }
+
+    public String getBasicEmail() {
+        return BasicEmail;
+    }
+
+    public String setBasicEmail(String BasicEmail) {
+        this.BasicEmail = BasicEmail;
+        return BasicEmail;
+    }
+
+    public String getBasicName() {
+        return BasicName;
+    }
+
+    public String setBasicName(String BasicName) {
+        this.BasicName = BasicName;
+        return BasicName;
     }
 
     public static GlobalApplication getGlobalApplicationContext() {

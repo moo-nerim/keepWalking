@@ -119,6 +119,13 @@ public class CalendarActivity extends AppCompatActivity {
                         finish();
                         overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
                         return true;
+
+                    case R.id.user:
+                        final Intent intent3 = new Intent(CalendarActivity.this, UserInfo.class);
+                        startActivity(intent3);
+                        finish();
+                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                        return true;
                 }
                 return false;
             }

@@ -62,6 +62,7 @@ public class LoginActivity2 extends AppCompatActivity {
                         // 로그인 성공
                         Toast.makeText(LoginActivity2.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                         firebaseAuth.addAuthStateListener(firebaseAuthListener);
+                        ((GlobalApplication) getApplication()).setBasicEmail(email);
                     } else {
                         // 로그인 실패
                         Toast.makeText(LoginActivity2.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();

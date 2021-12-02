@@ -26,6 +26,7 @@ public class GlobalApplication extends Application {
     private static GlobalApplication instance;
     public String KakaoID;
     public String KakaoName;
+    public String KakaoProfile;
     public int steps;
 
     // Firebase
@@ -56,6 +57,15 @@ public class GlobalApplication extends Application {
     public String setKakaoName(String KakaoName) {
         this.KakaoName = KakaoName;
         return KakaoName;
+    }
+
+    public String getKakaoProfile() {
+        return KakaoProfile;
+    }
+
+    public String setKakaoProfile(String KakaoProfile) {
+        this.KakaoProfile = KakaoProfile;
+        return KakaoProfile;
     }
 
     public static GlobalApplication getGlobalApplicationContext() {

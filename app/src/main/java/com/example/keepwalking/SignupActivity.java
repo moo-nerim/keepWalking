@@ -48,7 +48,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
     private void signUp() {
-        String id = ((EditText) findViewById(R.id.user_id)).getText().toString();
+        String id = ((EditText) findViewById(R.id.user_id)).getText().toString(); // 이메일
         String password = ((EditText) findViewById(R.id.user_id)).getText().toString();
         String passwordCheck = ((EditText) findViewById(R.id.user_id)).getText().toString();
 
@@ -78,7 +78,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void addUserToDB(String id) {
-        databaseReference.child("EMAIL").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("EMAIL").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
@@ -87,7 +87,7 @@ public class SignupActivity extends AppCompatActivity {
                     // Toast.makeText(getApplicationContext(),"이미 존재하는 그룹명입니다.",Toast.LENGTH_SHORT).show();//토스메세지 출력
                 } else {
                     // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
-                    databaseReference.child("EMAIL").child(id).push().setValue(id);
+                    databaseReference.child("EMAIL").push().setValue(id);
                 }
             }
 

@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,16 +46,26 @@ public class LoginActivity extends AppCompatActivity {
     SimpleDateFormat df;
     String formattedDate;
 
+    // 로그인
+    ImageView loginBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        loginBtn = findViewById(R.id.login);
 
         //카카오톡 로그인 init
         if (KakaoSDK.getAdapter() == null) {
             KakaoSDK.init(new GlobalApplication.KakaoSDKAdapter());
         }
+
+        loginBtn.setOnClickListener(view -> {
+            final Intent intent = new Intent(this, LoginActivity2.class);
+            startActivity(intent);
+            finish();
+        });
 
         /**
          * 로그인 버튼을 클릭 했을시 access token을 요청하도록 설정한다.
@@ -193,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Profile _profile = kakaoAccount.getProfile();
                                 ((GlobalApplication) getApplication()).setKakaoProfile(_profile.getProfileImageUrl());
 
-                                // 걸음수 Firebase 저장
+                                // 프로필 이미지 Firebase 저장
                                 databaseReference.child("KAKAOID").child(id).child("PROFILE").addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -205,11 +217,15 @@ public class LoginActivity extends AppCompatActivity {
                                                 databaseReference.child("KAKAOID").child(id).child("PROFILE").push().setValue(_profile.getProfileImageUrl());
                                             }
                                         } else {
-                                            if (_profile.getProfileImageUrl() != null) {
+                                            if (_profile.getProfileImageUrl() == null) {
+                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").setValue("null");
+
+                                            } else {
                                                 databaseReference.child("KAKAOID").child(id).child("PROFILE").setValue(_profile.getProfileImageUrl());
                                             }
                                         }
                                     }
+
 
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {

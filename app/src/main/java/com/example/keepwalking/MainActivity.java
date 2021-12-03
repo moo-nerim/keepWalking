@@ -494,22 +494,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         formattedDate = df.format(c);
 
         // 걸음수 Firebase 저장
-        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if(((GlobalApplication) getApplication()).getKakaoID() == null | ((GlobalApplication) getApplication()).getKakaoID() == ""){ // 이메일
+            databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).setValue(mSteps);
+                    databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child("STEPS").child(formattedDate).setValue(mSteps);
 
-                Log.e("걸음수DB: ", "" + ((GlobalApplication) getApplication()).getSteps());
-                // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
-            }
+                    Log.e("걸음수DB: ", "" + ((GlobalApplication) getApplication()).getSteps());
+                    // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // 디비를 가져오던중 에러 발생 시
-                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // 디비를 가져오던중 에러 발생 시
+                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                }
+            });
+        }
+        else{
+            databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(formattedDate).setValue(mSteps);
+
+                    Log.e("걸음수DB: ", "" + ((GlobalApplication) getApplication()).getSteps());
+                    // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // 디비를 가져오던중 에러 발생 시
+                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                }
+            });
+        }
     }
 
     /**

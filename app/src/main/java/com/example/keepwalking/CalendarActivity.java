@@ -101,35 +101,31 @@ public class CalendarActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_menu3);
 
         // item selection part
-        bottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.home:
-                        final Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
-                        startActivity(intent);
+        bottomNav.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.home:
+                    final Intent intent = new Intent(CalendarActivity.this, MainActivity.class);
+                    startActivity(intent);
 
-                        finish();
-                        overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
-                        return true;
+                    finish();
+                    overridePendingTransition(R.anim.slide_left_enter, R.anim.slide_left_exit);
+                    return true;
 
-                    case R.id.step:
-                        final Intent intent2 = new Intent(CalendarActivity.this, StepCountChart.class);
-                        startActivity(intent2);
-                        finish();
-                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
-                        return true;
+                case R.id.step:
+                    final Intent intent2 = new Intent(CalendarActivity.this, StepCountChart.class);
+                    startActivity(intent2);
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                    return true;
 
-                    case R.id.user:
-                        final Intent intent3 = new Intent(CalendarActivity.this, UserInfo.class);
-                        startActivity(intent3);
-                        finish();
-                        overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
-                        return true;
-                }
-                return false;
+                case R.id.user:
+                    final Intent intent3 = new Intent(CalendarActivity.this, UserInfo.class);
+                    startActivity(intent3);
+                    finish();
+                    overridePendingTransition(R.anim.slide_right_enter, R.anim.slide_right_exit);
+                    return true;
             }
-
+            return false;
         });
         /************* 하단바 *************/
     }
@@ -186,7 +182,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
 
-    private void downLoadImageFromStorage(Date dateClicked) {
+    private void downLoadImageFromStorage(Date dateClicked) { // 달력 관련 접근 고치기
         String kakaoid = ((GlobalApplication) getApplication()).getKakaoID();
         StorageReference storageReference = storage.getReference().child(kakaoid + "/" + DateFormat.format(dateClicked));
         getGaitCount(dateClicked);
@@ -219,22 +215,42 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void getGaitCount(Date dateClicked) {
-
-        databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(DateFormat.format(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.getValue() != null) {
-                    who =  (int)snapshot.getValue(Integer.class);
-                }else{
-                    who = 0;
+        if (((GlobalApplication) getApplication()).getKakaoID() == null | ((GlobalApplication) getApplication()).getKakaoID() == "") { // 이메일
+            databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child("STEPS").child(DateFormat.format(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        who = (int) snapshot.getValue(Integer.class);
+                    } else {
+                        who = 0;
+                    }
                 }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // 디비를 가져오던중 에러 발생 시
-                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
-            }
-        });
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // 디비를 가져오던중 에러 발생 시
+                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                }
+            });
+        } else {
+            databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(DateFormat.format(dateClicked)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.getValue() != null) {
+                        who = (int) snapshot.getValue(Integer.class);
+                    } else {
+                        who = 0;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // 디비를 가져오던중 에러 발생 시
+                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                }
+            });
+        }
+
     }
 
 

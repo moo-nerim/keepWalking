@@ -197,31 +197,61 @@ public class StepCountChart extends AppCompatActivity {
             final int index;
             index = i;
             // 걸음수 Firebase 저장
-            databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(days.get(index)).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if(((GlobalApplication) getApplication()).getKakaoID() == null | ((GlobalApplication) getApplication()).getKakaoID() == "") { // 이메일
+                databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child("STEPS").child(days.get(index)).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
 //                    snapshot.child(days.get(index));
-                    if (snapshot.getValue() != null) {
-                        Log.e("날짜:", "" + snapshot.getValue(Integer.class));
-                        Fsteps.add(index, snapshot.getValue(Integer.class));
+                        if (snapshot.getValue() != null) {
+                            Log.e("날짜:", "" + snapshot.getValue(Integer.class));
+                            Fsteps.add(index, snapshot.getValue(Integer.class));
 //                        Log.e("인덱스", "" + Fsteps[index]);
 //                        barEntries.add(new BarEntry(index, Fsteps[index]));
 
-                        Log.e("타입", "" + snapshot.getValue(Integer.class).getClass().getName());
-                    } else {
+                            Log.e("타입", "" + snapshot.getValue(Integer.class).getClass().getName());
+                        } else {
 //                        barEntries.add(new BarEntry(index, 0));
-                        Fsteps.add(index, 0);
+                            Fsteps.add(index, 0);
+                        }
+                        firebaseCallback.onCallback(Fsteps);
                     }
-                    firebaseCallback.onCallback(Fsteps);
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // 디비를 가져오던중 에러 발생 시
-                    //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // 디비를 가져오던중 에러 발생 시
+                        //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                    }
+                });
+            }
+            else{
+                databaseReference.child("KAKAOID").child(((GlobalApplication) getApplication()).getKakaoID()).child("STEPS").child(days.get(index)).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+//                    snapshot.child(days.get(index));
+                        if (snapshot.getValue() != null) {
+                            Log.e("날짜:", "" + snapshot.getValue(Integer.class));
+                            Fsteps.add(index, snapshot.getValue(Integer.class));
+//                        Log.e("인덱스", "" + Fsteps[index]);
+//                        barEntries.add(new BarEntry(index, Fsteps[index]));
+
+                            Log.e("타입", "" + snapshot.getValue(Integer.class).getClass().getName());
+                        } else {
+//                        barEntries.add(new BarEntry(index, 0));
+                            Fsteps.add(index, 0);
+                        }
+                        firebaseCallback.onCallback(Fsteps);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // 디비를 가져오던중 에러 발생 시
+                        //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                    }
+                });
+            }
+
         }
     }
 

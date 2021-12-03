@@ -118,7 +118,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
         ok.setOnClickListener(v -> shareResult(result));
     }
 
-    private void downLoadImageFromStorage(ImageView imageView, Context mContext, String date, String time, String result) {
+    private void downLoadImageFromStorage(ImageView imageView, Context mContext, String date, String time, String result) { // 달력관련접근 고치기
         String fileName = kakaoid + "/" + date + "/" + time + "_" + result;
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference().child(fileName);

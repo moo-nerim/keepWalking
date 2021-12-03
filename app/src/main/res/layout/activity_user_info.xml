@@ -36,7 +36,7 @@
         android:id="@+id/withdraw"
         android:layout_width="145dp"
         android:layout_height="55dp"
-        android:layout_marginEnd="36dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="372dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

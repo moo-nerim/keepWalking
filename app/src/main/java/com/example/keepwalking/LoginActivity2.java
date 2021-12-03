@@ -4,6 +4,7 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -105,6 +106,20 @@ public class LoginActivity2 extends AppCompatActivity {
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                                 // 디비를 가져오던중 에러 발생 시
                                 //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                            }
+                        });
+
+                        // email setter
+                        String delEmail = email.substring(0, email.indexOf(".")) + "@" + email.substring(email.indexOf(".") + 1);
+                        databaseReference.child("EMAIL").child(delEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ((GlobalApplication) getApplication()).setBasicEmail(snapshot.getValue(String.class));
+                                Log.e("emaiiiiil : ",((GlobalApplication) getApplication()).getBasicEmail());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
                         });
 

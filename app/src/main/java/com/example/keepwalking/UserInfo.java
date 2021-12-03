@@ -37,7 +37,7 @@ public class UserInfo extends AppCompatActivity {
         }
 
         // ***** 카카오 닉네임 *****
-        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName()+" 님");
+        KakaoName.setText(((GlobalApplication) getApplication()).getKakaoName() + " 님");
 
         /************* 하단바 *************/
         BottomNavigationView bottomNav = findViewById(R.id.bottom_menu4);

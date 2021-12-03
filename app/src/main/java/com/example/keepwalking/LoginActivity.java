@@ -8,15 +8,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.kakao.auth.AuthType;
 import com.kakao.auth.ISessionCallback;
 import com.kakao.auth.KakaoSDK;
 import com.kakao.auth.Session;
@@ -28,7 +26,6 @@ import com.kakao.usermgmt.response.model.Profile;
 import com.kakao.usermgmt.response.model.UserAccount;
 import com.kakao.util.OptionalBoolean;
 import com.kakao.util.exception.KakaoException;
-import com.kakao.util.helper.log.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,30 +38,28 @@ public class LoginActivity extends AppCompatActivity {
 
     private SessionCallback callback;
 
+
     // 날짜
     Date c;
     SimpleDateFormat df;
     String formattedDate;
 
     // 로그인
-    ImageView loginBtn;
+    Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        loginBtn = findViewById(R.id.login);
+        loginBtn = findViewById(R.id.btn_login);
 
         //카카오톡 로그인 init
         if (KakaoSDK.getAdapter() == null) {
             KakaoSDK.init(new GlobalApplication.KakaoSDKAdapter());
         }
 
-        loginBtn.setOnClickListener(view -> {
-            final Intent intent = new Intent(this, LoginActivity2.class);
-            startActivity(intent);
-            finish();
+        loginBtn.setOnClickListener(view -> {((LoginActivity3) LoginActivity3.mContext).test();
         });
 
         /**
@@ -75,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
         Session.getCurrentSession().checkAndImplicitOpen();
+
+
     }
 
     @Override

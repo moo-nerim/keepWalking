@@ -89,8 +89,8 @@ public class SignupActivity extends AppCompatActivity {
                 if (map != null) {
                     // Toast.makeText(getApplicationContext(),"이미 존재하는 그룹명입니다.",Toast.LENGTH_SHORT).show();//토스메세지 출력
                 } else {
-                    // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
-                    databaseReference.child("EMAIL").child(name).push().setValue(id);
+                    String delEmail = id.substring(0, id.indexOf(".")) + "@" + id.substring(id.indexOf(".") + 1);
+                    databaseReference.child("EMAIL").child(delEmail).push().setValue(name);
                 }
             }
 

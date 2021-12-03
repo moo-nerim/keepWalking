@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
     Date c;
     SimpleDateFormat df;
     String formattedDate;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     // 로그인
     ImageView loginBtn;
@@ -119,7 +121,43 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                         firebaseAuth.addAuthStateListener(firebaseAuthListener);
                         ((GlobalApplication) getApplication()).setBasicEmail(email);
-                        // db에서 이름 가져오기 -> setterㅔ 저장
+
+                        c = Calendar.getInstance().getTime();
+                        df = new SimpleDateFormat("yyyy-MM-dd");
+                        formattedDate = df.format(c);
+
+                        // 걸음수 Firebase 저장
+                        databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.getValue() != null) {
+                                    ((GlobalApplication) getApplication()).setSteps(snapshot.getValue(Integer.class));
+                                } else {
+                                    ((GlobalApplication) getApplication()).setSteps(0);
+                                }
+                                Log.e("오늘의 걸음수:", "" + ((GlobalApplication) getApplication()).getSteps());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // 디비를 가져오던중 에러 발생 시
+                                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                            }
+                        });
+
+                        // email setter
+                        String delEmail = email.substring(0, email.indexOf(".")) + "@" + email.substring(email.indexOf(".") + 1);
+                        databaseReference.child("EMAIL").child(delEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ((GlobalApplication) getApplication()).setBasicEmail(snapshot.getValue(String.class));
+                                Log.e("emaiiiiil : ", ((GlobalApplication) getApplication()).getBasicEmail());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
 
                     } else {
                         // 로그인 실패

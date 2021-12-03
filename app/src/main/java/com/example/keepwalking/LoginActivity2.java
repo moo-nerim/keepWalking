@@ -1,14 +1,26 @@
 package com.example.keepwalking;
 
 import android.content.Intent;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class LoginActivity2 extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
@@ -17,6 +29,15 @@ public class LoginActivity2 extends AppCompatActivity {
     private EditText editTextPassword;
     private Button buttonLogIn;
     private Button buttonSignUp;
+
+    // 날짜
+    Date c;
+    SimpleDateFormat df;
+    String formattedDate;
+
+
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +84,30 @@ public class LoginActivity2 extends AppCompatActivity {
                         Toast.makeText(LoginActivity2.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                         firebaseAuth.addAuthStateListener(firebaseAuthListener);
                         ((GlobalApplication) getApplication()).setBasicEmail(email);
+
+                        c = Calendar.getInstance().getTime();
+                        df = new SimpleDateFormat("yyyy-MM-dd");
+                        formattedDate = df.format(c);
+
+                        // 걸음수 Firebase 저장
+                        databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.getValue() != null) {
+                                    ((GlobalApplication) getApplication()).setSteps(snapshot.getValue(Integer.class));
+                                } else {
+                                    ((GlobalApplication) getApplication()).setSteps(0);
+                                }
+                                Log.e("오늘의 걸음수:", "" + ((GlobalApplication) getApplication()).getSteps());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // 디비를 가져오던중 에러 발생 시
+                                //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
+                            }
+                        });
+
                     } else {
                         // 로그인 실패
                         Toast.makeText(LoginActivity2.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();

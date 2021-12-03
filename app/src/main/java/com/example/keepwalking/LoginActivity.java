@@ -205,35 +205,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Profile _profile = kakaoAccount.getProfile();
                                 ((GlobalApplication) getApplication()).setKakaoProfile(_profile.getProfileImageUrl());
 
-                                // 프로필 이미지 Firebase 저장
-                                databaseReference.child("KAKAOID").child(id).child("PROFILE").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        if (snapshot.getValue() == null) {
-                                            if (_profile.getProfileImageUrl() == null) {
-                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").push().setValue("null");
-
-                                            } else {
-                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").push().setValue(_profile.getProfileImageUrl());
-                                            }
-                                        } else {
-                                            if (_profile.getProfileImageUrl() == null) {
-                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").setValue("null");
-
-                                            } else {
-                                                databaseReference.child("KAKAOID").child(id).child("PROFILE").setValue(_profile.getProfileImageUrl());
-                                            }
-                                        }
-                                    }
-
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                                        // 디비를 가져오던중 에러 발생 시
-                                        //Log.e("MainActivity", String.valueOf(databaseError.toException())); // 에러문 출력
-                                    }
-                                });
-
                                 if (_profile != null) {
 
                                     Log.d("KAKAO_API", "nickname: " + _profile.getNickname());

@@ -61,7 +61,9 @@ public class SignupActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(SignupActivity.this, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
-                                    addUserToDB(id);
+                                    addUserToDB(id, name);
+                                    ((GlobalApplication) getApplication()).setBasicEmail(id);
+                                    ((GlobalApplication) getApplication()).setBasicName(name);
                                 } else {
                                     if (task.getException().toString() != null) {
 //                                        Toast.makeText(SignupActivity.this, "회원가입에 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -78,7 +80,7 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-    private void addUserToDB(String id) {
+    private void addUserToDB(String id, String name) {
         databaseReference.child("EMAIL").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -88,7 +90,7 @@ public class SignupActivity extends AppCompatActivity {
                     // Toast.makeText(getApplicationContext(),"이미 존재하는 그룹명입니다.",Toast.LENGTH_SHORT).show();//토스메세지 출력
                 } else {
                     // addGroup(Gname_edit.getText().toString(),Gintro_edit.getText().toString(),Gcate_tv.getText().toString(), goaltime, gmp);
-                    databaseReference.child("EMAIL").push().setValue(id);
+                    databaseReference.child("EMAIL").child(name).push().setValue(id);
                 }
             }
 

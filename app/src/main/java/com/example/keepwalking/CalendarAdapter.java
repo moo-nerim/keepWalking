@@ -141,53 +141,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
     }
 
     private void shareResult(String result) {
-<<<<<<< Updated upstream
-        String userKakaoID = GlobalApplication.getGlobalApplicationContext().getKakaoID();
         String userEmail = GlobalApplication.getGlobalApplicationContext().getBasicEmail();
         String userName = GlobalApplication.getGlobalApplicationContext().getBasicName();
-
-        if (userKakaoID == null | userKakaoID == "") {
-            Intent email = new Intent(Intent.ACTION_SEND);
-            email.setType("plain/text");
-
-            // email setting 배열로 해놔서 복수 발송 가능
-            String[] address = {userEmail};
-            email.putExtra(Intent.EXTRA_EMAIL, address);
-            email.putExtra(Intent.EXTRA_SUBJECT, "[킵워킹] " + userName + "님의 측정결과입니다.");
-            email.putExtra(Intent.EXTRA_TEXT, "다음 링크를 통해 측정 결과를 확인해보세요.\n" + url);
-            mContext.startActivity(email);
-        } else {
-            FeedTemplate params = FeedTemplate
-                    .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리, 킵워킹", url,
-                            LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-                                    .setMobileWebUrl("https://developers.kakao.com").build())
-                            .setDescrption("나의 측정결과: " + result)
-                            .build())
-                    .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
-                            .setSharedCount(30).setViewCount(40).build())
-                    .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com").setMobileWebUrl("https://developers.kakao.com").build()))
-                    .build();
-
-            Map<String, String> serverCallbackArgs = new HashMap<String, String>();
-            serverCallbackArgs.put("user_id", "${current_user_id}");
-            serverCallbackArgs.put("product_id", "${shared_product_id}");
-
-            KakaoLinkService.getInstance().sendDefault(mContext, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
-                @Override
-                public void onFailure(ErrorResult errorResult) {
-                    Logger.e(errorResult.toString());
-                }
-
-                @Override
-                public void onSuccess(KakaoLinkResponse result) {
-                }
-            });
-        }
-=======
-
-        String userEmail = GlobalApplication.getGlobalApplicationContext().getBasicEmail();
-        String userName = GlobalApplication.getGlobalApplicationContext().getBasicName();
-        Log.e("dddd : ",userName);
+        Log.e("dddd : ", userName);
         int tempIdx = userEmail.lastIndexOf("@");
         String tempStr1 = userEmail.substring(0, tempIdx) + ".";
         String tempstr2 = userEmail.substring(tempIdx + 1);
@@ -205,31 +161,30 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHo
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         );
 
-//        FeedTemplate params = FeedTemplate
-//                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리, 킵워킹", url,
-//                        LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
-//                                .setMobileWebUrl("https://developers.kakao.com").build())
-//                        .setDescrption("나의 측정결과: " + result)
-//                        .build())
-//                .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
-//                        .setSharedCount(30).setViewCount(40).build())
-//                .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com").setMobileWebUrl("https://developers.kakao.com").build()))
-//                .build();
-//
-//        Map<String, String> serverCallbackArgs = new HashMap<String, String>();
-//        serverCallbackArgs.put("user_id", "${current_user_id}");
-//        serverCallbackArgs.put("product_id", "${shared_product_id}");
-//
-//        KakaoLinkService.getInstance().sendDefault(mContext, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
-//            @Override
-//            public void onFailure(ErrorResult errorResult) {
-//                Logger.e(errorResult.toString());
-//            }
-//
-//            @Override
-//            public void onSuccess(KakaoLinkResponse result) {
-//            }
-//        });
->>>>>>> Stashed changes
+        FeedTemplate params = FeedTemplate
+                .newBuilder(ContentObject.newBuilder("딥러닝을 통한 보행 건강 관리, 킵워킹", url,
+                        LinkObject.newBuilder().setWebUrl("https://developers.kakao.com")
+                                .setMobileWebUrl("https://developers.kakao.com").build())
+                        .setDescrption("나의 측정결과: " + result)
+                        .build())
+                .setSocial(SocialObject.newBuilder().setLikeCount(10).setCommentCount(20)
+                        .setSharedCount(30).setViewCount(40).build())
+                .addButton(new ButtonObject("앱에서 보기", LinkObject.newBuilder().setWebUrl("https://developers.kakao.com").setMobileWebUrl("https://developers.kakao.com").build()))
+                .build();
+
+        Map<String, String> serverCallbackArgs = new HashMap<String, String>();
+        serverCallbackArgs.put("user_id", "${current_user_id}");
+        serverCallbackArgs.put("product_id", "${shared_product_id}");
+
+        KakaoLinkService.getInstance().sendDefault(mContext, params, serverCallbackArgs, new ResponseCallback<KakaoLinkResponse>() {
+            @Override
+            public void onFailure(ErrorResult errorResult) {
+                Logger.e(errorResult.toString());
+            }
+
+            @Override
+            public void onSuccess(KakaoLinkResponse result) {
+            }
+        });
     }
 }

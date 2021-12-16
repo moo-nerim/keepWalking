@@ -26,6 +26,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <!--        <activity android:name=".UserInfo"></activity>-->
         <activity android:name=".StepCountChart"></activity>
+        <activity android:name=".UserInfo"></activity>
         <activity android:name=".MainActivity2" />
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" />
 

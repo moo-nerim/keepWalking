@@ -162,6 +162,18 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         });
 
+                        databaseReference.child("EMAIL").child(delEmail).child("NAME").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                ((GlobalApplication) getApplication()).setBasicName(snapshot.getValue(String.class));
+                                Log.e("이름 : ", ((GlobalApplication) getApplication()).getBasicName());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+
                     } else {
                         // 로그인 실패
                         Toast.makeText(LoginActivity.this, "아이디 또는 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();

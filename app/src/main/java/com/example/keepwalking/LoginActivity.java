@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                         databaseReference.child("EMAIL").child(delEmail).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                ((GlobalApplication) getApplication()).setBasicEmail(snapshot.getValue(String.class));
+                                ((GlobalApplication) getApplication()).setBasicEmail(snapshot.getKey());
                                 Log.e("emaiiiiil : ", ((GlobalApplication) getApplication()).getBasicEmail());
                             }
 

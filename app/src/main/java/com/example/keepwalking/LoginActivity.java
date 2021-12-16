@@ -116,6 +116,8 @@ public class LoginActivity extends AppCompatActivity {
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
+                    Log.e("email : ",email);
+                    Log.e("password : ",password);
                     if (task.isSuccessful()) {
                         // 로그인 성공
                         Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
@@ -126,8 +128,10 @@ public class LoginActivity extends AppCompatActivity {
                         df = new SimpleDateFormat("yyyy-MM-dd");
                         formattedDate = df.format(c);
 
-                        // 걸음수 Firebase 저장
-                        databaseReference.child("EMAIL").child(((GlobalApplication) getApplication()).getBasicName()).child(((GlobalApplication) getApplication()).getBasicEmail()).child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
+                        // email setter
+                        String delEmail = email.substring(0, email.indexOf(".")) + "@" + email.substring(email.indexOf(".") + 1);
+
+                        databaseReference.child("EMAIL").child(delEmail).child("STEPS").child(formattedDate).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if (snapshot.getValue() != null) {
@@ -145,8 +149,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         });
 
-                        // email setter
-                        String delEmail = email.substring(0, email.indexOf(".")) + "@" + email.substring(email.indexOf(".") + 1);
+
                         databaseReference.child("EMAIL").child(delEmail).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -197,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void handleMessage(Message msg) {
 
                     if (msg.what == 0) {
-                        redirectSignupActivity();
+//                        redirectSignupActivity();
                     }
                 }
             };

@@ -50,6 +50,14 @@
 #### 💻 시간대별 테마변경
 > - 사용자 시간을 기준으로 측정 화면의 테마를 변경하여 시각적 재미를 제공합니다.
 
+## 🎈 기대효과 및 활용분야
+#### 1. 기대효과
+> - 보다 간편한 방법을 통한 어르신들의 걸음걸이 모니터링을 통하여 건강 이상을 조기 발견할 수 있습니다.
+> - 걸음걸이 자가 교정 효과를 기대할 수 있습니다.
+#### 2. 활용분야
+> - 건강 관리 및 보행 건강에 관심 있는 사람들이 APP을 다운받아 전문 기관에 방문하지 않아도 개별적으로 건강을 관리할 수 있습니다.
+> - 보험회사 및 요양 보호 시설의 모니터링 대상자에 대한 맞춤식 care service 제공용으로 활용이 가능합니다.
+> - 국민보험공단 및 보건소와 같은 기관에서 노령인구 보행 현황 모니터링용 활용이 가능합니다.
 <br></br>
 
 ## 📱 미리보기
@@ -87,8 +95,4 @@
 | Version Control | <img src="https://about.gitlab.com/images/icons/logos/slp-logo.svg" alt="" height="50"/> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/github/github-original-wordmark.svg" alt="" height="50"/> |
 
 <br></br>
-
-
-## 📢 프로젝트 장점
-
 

@@ -15,10 +15,7 @@
 [![GitHub Open PR](https://img.shields.io/github/issues-pr-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=green)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues)
 [![GitHub Closed PR](https://img.shields.io/github/issues-pr-closed-raw/boostcamp-2020/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone?color=red)](https://github.com/JuYeong-Lee/Gait-Health-Prediction-AndroidPhone/issues) -->
 
-
 </div align="center">
-
-<br></br>
 
 
 ## 📢 프로젝트 소개
